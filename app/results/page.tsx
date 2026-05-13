@@ -30,13 +30,13 @@ const PURPOSE_NAMES: Record<string, string> = {
 }
 
 const DIMS = [
-  { id: 'hpi', icon: '🏠', name: '买房压力 HPI', score: 6, max: 30, label: '压垮性', level: 1 },
-  { id: 'rpi', icon: '🔑', name: '租房压力 RPI', score: 3, max: 15, label: '难以为继', level: 1 },
-  { id: 'cpi', icon: '🚗', name: '买车压力 CPI', score: 4, max: 8, label: '沉重', level: 3 },
-  { id: 'eqi', icon: '🌿', name: '环境质量 EQI', score: 8, max: 10, label: '优秀', level: 5 },
-  { id: 'edi', icon: '📚', name: '教育质量 EDI', score: 8, max: 10, label: '优秀', level: 5 },
-  { id: 'hci', icon: '🏥', name: '医疗可及 HCI', score: 6, max: 10, label: '良好', level: 4 },
-  { id: 'tci', icon: '🚇', name: '交通便利 TCI', score: 7, max: 10, label: '良好', level: 4 },
+  { id: 'hpi', icon: '🏠', name: '买房指数 HPI', score: 6, max: 30, label: '压垮性', level: 1 },
+  { id: 'rpi', icon: '🔑', name: '租房指数 RPI', score: 3, max: 15, label: '难以为继', level: 1 },
+  { id: 'cpi', icon: '🚗', name: '买车指数 CPI', score: 4, max: 8, label: '沉重', level: 3 },
+  { id: 'eqi', icon: '🌿', name: '环境指数 EQI', score: 8, max: 10, label: '优秀', level: 5 },
+  { id: 'edi', icon: '📚', name: '教育指数 EDI', score: 8, max: 10, label: '优秀', level: 5 },
+  { id: 'hci', icon: '🏥', name: '医疗指数 HCI', score: 6, max: 10, label: '良好', level: 4 },
+  { id: 'tci', icon: '🚇', name: '交通指数 TCI', score: 7, max: 10, label: '良好', level: 4 },
 ]
 
 const LEVEL_COLORS: Record<number, { bg: string; text: string; bar: string }> = {
@@ -316,11 +316,17 @@ function ResultsContent() {
   style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
   对比其他城市 →
 </a>
-          <button className="px-4 py-3 rounded-xl text-sm font-medium text-[#374151]"
-            style={{ background: 'white', border: '1.5px solid #E5E7EB' }}>
-            分享 ↗
-          </button>
+          <a href={`/share?city=${city}&occupation=${occupation}`}
+  className="px-4 py-3 rounded-xl text-sm font-medium text-[#374151] text-center"
+  style={{ background: 'white', border: '1.5px solid #E5E7EB' }}>
+  分享 ↗
+</a>
         </div>
+        <a href={`/subscribe?city=${city}&occupation=${occupation}`}
+  className="w-full py-3 rounded-xl text-sm font-medium text-center mt-2 block"
+  style={{ background: 'white', border: '1.5px solid #E5E7EB', color: '#6B7280' }}>
+  📊 订阅城市生活报告
+</a>
       </div>
     </main>
   )
