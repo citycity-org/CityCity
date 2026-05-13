@@ -16,9 +16,9 @@ const DIMS = [
   { id: 'rpi', name: '租房指数 RPI' },
   { id: 'cpi', name: '买车指数 CPI' },
   { id: 'eqi', name: '环境质量 EQI' },
-  { id: 'edi', name: '教育质量 EDI' },
-  { id: 'hci', name: '医疗可及 HCI' },
-  { id: 'tci', name: '交通便利 TCI' },
+  { id: 'edi', name: '教育指数 EDI' },
+  { id: 'hci', name: '医疗指数 HCI' },
+  { id: 'tci', name: '交通指数 TCI' },
 ]
 
 const CITY_DATA = [
