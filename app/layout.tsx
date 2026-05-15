@@ -57,12 +57,12 @@ export default function RootLayout({
           {/* 右边：语言切换 */}
           <div className="flex items-center gap-3">
             <div className="flex gap-1 bg-[#F3F4F6] rounded-lg p-1">
-              <button className="px-3 py-1 rounded-md text-sm font-medium bg-white text-[#111827] shadow-sm">
-                中文
-              </button>
-              <button className="px-3 py-1 rounded-md text-sm font-medium text-[#9CA3AF]">
-                EN
-              </button>
+              <a href="/" className="px-3 py-1 rounded-md text-sm font-medium bg-white text-[#111827] shadow-sm">
+  中文
+</a>
+<a href="/en" className="px-3 py-1 rounded-md text-sm font-medium text-[#9CA3AF] hover:text-[#111827]">
+  EN
+</a>
             </div>
           </div>
 

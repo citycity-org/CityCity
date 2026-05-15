@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
 
 const OCCUPATION_NAMES: Record<string, string> = {
   nurse: '注册护士',
@@ -145,19 +146,42 @@ function ResultsContent() {
   const purposeName = PURPOSE_NAMES[purpose] || '买房'
   const occupationName = OCCUPATION_NAMES[occupation] || '注册护士'
 
-  const [loaded, setLoaded] = useState(false)
-  const [years, setYears] = useState(0)
-  const [months, setMonths] = useState(0)
+const [loaded, setLoaded] = useState(false)
+const [years, setYears] = useState(0)
+const [months, setMonths] = useState(0)
+const [dbYears, setDbYears] = useState<number | null>(null)
+const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 300)
     return () => clearTimeout(t)
   }, [])
 
+useEffect(() => {
+  async function fetchData() {
+    const { data, error } = await supabase
+      .from('housing_years')
+      .select('years_current, years_2019, years_1995')
+      .eq('city_id', city)
+      .eq('occupation_id', occupation)
+      .eq('property_type', '2br_condo')
+      .single()
+
+    console.log('Supabase data:', data)
+    console.log('Supabase error:', error)
+
+    if (data && !error) {
+      setDbYears(data.years_current)
+    }
+    setLoading(false)
+  }
+  fetchData()
+}, [city, occupation])
+
   useEffect(() => {
     if (!loaded) return
-    const targetYears = 10
-    const targetMonths = 2
+  const targetYears = dbYears ? Math.floor(dbYears) : 10
+  const targetMonths = dbYears ? Math.round((dbYears % 1) * 12) : 2
     const duration = 2500
     const steps = 60
     const interval = duration / steps

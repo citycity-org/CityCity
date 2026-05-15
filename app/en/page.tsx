@@ -1,93 +1,34 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const CITIES = [
-  { id: 'vancouver', name: '温哥华', nameEn: 'Vancouver', province: 'British Columbia' },
-  { id: 'toronto', name: '多伦多', nameEn: 'Toronto', province: 'Ontario' },
-  { id: 'calgary', name: '卡尔加里', nameEn: 'Calgary', province: 'Alberta' },
-  { id: 'montreal', name: '蒙特利尔', nameEn: 'Montréal', province: 'Québec' },
-  { id: 'ottawa', name: '渥太华', nameEn: 'Ottawa', province: 'Ontario' },
+  { id: 'vancouver', name: 'Vancouver', province: 'British Columbia' },
+  { id: 'toronto', name: 'Toronto', province: 'Ontario' },
+  { id: 'calgary', name: 'Calgary', province: 'Alberta' },
+  { id: 'montreal', name: 'Montréal', province: 'Québec' },
+  { id: 'ottawa', name: 'Ottawa', province: 'Ontario' },
 ]
 
 const PURPOSES = [
-  {
-    id: 'buy',
-    icon: '🏠',
-    name: '买房',
-    nameEn: 'Buying',
-    desc: '我需要工作多少年才能买得起？',
-    descEn: 'How many years of work does it actually take?',
-  },
-  {
-    id: 'rent',
-    icon: '🔑',
-    name: '租房',
-    nameEn: 'Renting',
-    desc: '我每月多少收入被租金吃掉？',
-    descEn: 'What share of my income goes to rent every month?',
-  },
-  {
-    id: 'car',
-    icon: '🚗',
-    name: '买车',
-    nameEn: 'Car',
-    desc: '买一辆车要花我几个月薪水？',
-    descEn: 'How many months of salary does a car cost here?',
-  },
+  { id: 'buy', icon: '🏠', name: 'Buying', desc: 'How many years of work does it actually take?' },
+  { id: 'rent', icon: '🔑', name: 'Renting', desc: 'What share of my income goes to rent every month?' },
+  { id: 'car', icon: '🚗', name: 'Car', desc: 'How many months of salary does a car cost here?' },
 ]
 
 const OCCUPATIONS = [
-  { id: 'nurse', name: '注册护士', nameEn: 'Registered Nurse', industry: '医疗' },
-  { id: 'software_eng', name: '软件工程师', nameEn: 'Software Engineer', industry: '科技' },
-  { id: 'teacher', name: '中学教师', nameEn: 'High School Teacher', industry: '教育' },
-  { id: 'electrician', name: '电工', nameEn: 'Electrician', industry: '建筑' },
-  { id: 'truck_driver', name: '卡车司机', nameEn: 'Truck Driver', industry: '运输' },
-  { id: 'accountant', name: '会计师', nameEn: 'Accountant', industry: '金融' },
-  { id: 'police', name: '警察', nameEn: 'Police Officer', industry: '公共服务' },
-  { id: 'chef', name: '厨师', nameEn: 'Chef', industry: '餐饮' },
-  { id: 'retail', name: '零售店员', nameEn: 'Retail Worker', industry: '零售' },
-  { id: 'engineer', name: '土木工程师', nameEn: 'Civil Engineer', industry: '建筑' },
-  { id: 'doctor', name: '家庭医生', nameEn: 'Family Doctor', industry: '医疗' },
-  { id: 'pharmacist', name: '药剂师', nameEn: 'Pharmacist', industry: '医疗' },
-  { id: 'dentist', name: '牙医', nameEn: 'Dentist', industry: '医疗' },
-  { id: 'lawyer', name: '律师', nameEn: 'Lawyer', industry: '法律' },
-  { id: 'financial_advisor', name: '财务顾问', nameEn: 'Financial Advisor', industry: '金融' },
-  { id: 'real_estate', name: '房产经纪', nameEn: 'Real Estate Agent', industry: '房产' },
-  { id: 'mechanic', name: '汽车技师', nameEn: 'Auto Mechanic', industry: '汽车' },
-  { id: 'carpenter', name: '木工', nameEn: 'Carpenter', industry: '建筑' },
-  { id: 'plumber', name: '水管工', nameEn: 'Plumber', industry: '建筑' },
-  { id: 'welder', name: '焊工', nameEn: 'Welder', industry: '制造' },
-  { id: 'it_support', name: 'IT技术支持', nameEn: 'IT Support', industry: '科技' },
-  { id: 'data_analyst', name: '数据分析师', nameEn: 'Data Analyst', industry: '科技' },
-  { id: 'marketing', name: '市场营销专员', nameEn: 'Marketing Specialist', industry: '商业' },
-  { id: 'hr', name: '人力资源专员', nameEn: 'HR Specialist', industry: '商业' },
-  { id: 'social_worker', name: '社会工作者', nameEn: 'Social Worker', industry: '社会服务' },
-  { id: 'firefighter', name: '消防员', nameEn: 'Firefighter', industry: '公共服务' },
-  { id: 'pilot', name: '商业飞行员', nameEn: 'Commercial Pilot', industry: '航空' },
-  { id: 'chef_executive', name: '行政总厨', nameEn: 'Executive Chef', industry: '餐饮' },
-  { id: 'security', name: '保安', nameEn: 'Security Guard', industry: '保安' },
-  { id: 'cleaner', name: '清洁工', nameEn: 'Cleaner', industry: '服务' },
+  { id: 'nurse', name: 'Registered Nurse', industry: 'Healthcare' },
+  { id: 'software_eng', name: 'Software Engineer', industry: 'Tech' },
+  { id: 'teacher', name: 'High School Teacher', industry: 'Education' },
+  { id: 'electrician', name: 'Electrician', industry: 'Trades' },
+  { id: 'truck_driver', name: 'Truck Driver', industry: 'Transport' },
+  { id: 'accountant', name: 'Accountant', industry: 'Finance' },
+  { id: 'police', name: 'Police Officer', industry: 'Public Service' },
+  { id: 'chef', name: 'Chef', industry: 'Food & Beverage' },
+  { id: 'retail', name: 'Retail Worker', industry: 'Retail' },
+  { id: 'engineer', name: 'Civil Engineer', industry: 'Construction' },
 ]
 
-function AnimatedNumber({ target, duration = 3000 }: { target: number, duration?: number }) {
-  const [current, setCurrent] = useState(0)
-  useEffect(() => {
-    const steps = 60
-    const increment = target / steps
-    const interval = duration / steps
-    let step = 0
-    const timer = setInterval(() => {
-      step++
-      if (step >= steps) { setCurrent(target); clearInterval(timer) }
-      else setCurrent(Math.floor(increment * step * 10) / 10)
-    }, interval)
-    return () => clearInterval(timer)
-  }, [target, duration])
-  return <span>{current.toFixed(1)}</span>
-}
-
-export default function Home() {
+export default function EnHome() {
   const [started, setStarted] = useState(false)
   const [selectedCity, setSelectedCity] = useState(CITIES[0])
   const [showCityDropdown, setShowCityDropdown] = useState(false)
@@ -129,12 +70,10 @@ export default function Home() {
               📍 {selectedCity.name}, {selectedCity.province.split(' ')[0]}
               <span className={`transition-transform duration-200 ${showCityDropdown ? 'rotate-180' : ''}`}>▾</span>
             </button>
-
-            {/* 下拉菜单 */}
             {showCityDropdown && (
               <div className="absolute top-full mt-2 left-0 w-56 bg-white rounded-2xl shadow-2xl overflow-hidden z-50">
                 <div className="px-4 py-3 border-b border-gray-100">
-                  <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">选择城市</div>
+                  <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Select City</div>
                 </div>
                 {CITIES.map(city => (
                   <button key={city.id}
@@ -148,27 +87,27 @@ export default function Home() {
                   </button>
                 ))}
                 <div className="px-4 py-2 border-t border-gray-100 text-center text-xs text-gray-400">
-                  共5个城市 · 持续扩展中
+                  5 cities · More coming soon
                 </div>
               </div>
             )}
           </div>
-          <span className="text-white/30 text-sm">· IP已识别</span>
+          <span className="text-white/30 text-sm">· Auto-detected</span>
         </div>
 
         {/* 主标题 */}
         <div className={`text-center mb-10 transition-all duration-700 delay-200 ${started ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <h1 className="text-4xl font-bold text-white leading-tight mb-3" style={{ letterSpacing: '-1px' }}>
-            在{selectedCity.name}，<br />
-            这些事要花你多少<span style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>人生</span>？
+            In {selectedCity.name},<br />
+            what's really costing you your <span style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>life</span>?
           </h1>
-          <p className="text-white/40 text-base">In {selectedCity.nameEn}, what's really costing you your life?</p>
+          
         </div>
 
-        {/* 第一步：选择目的 */}
+        {/* 选择目的 */}
         <div className={`mb-8 transition-all duration-700 delay-300 ${started ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-4">
-            第一步 · 选择你关心的
+            Step 1 · What are you planning?
           </div>
           <div className="flex flex-col gap-3">
             {PURPOSES.map(purpose => (
@@ -193,13 +132,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 第二步：选择职业 */}
+        {/* 选择职业 */}
         {showOccupations && (
-          <div className="transition-all duration-500 animate-in fade-in slide-in-from-bottom-4">
+          <div className="transition-all duration-500">
             <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-4">
-              第二步 · 选择你的职业
+              Step 2 · Select your occupation
             </div>
-            <div className="flex flex-col gap-2 mb-6 overflow-y-auto scrollbar-thin" style={{ maxHeight: "320px", scrollbarColor: "rgba(91,92,240,0.6) rgba(255,255,255,0.05)", scrollbarWidth: "thin" }}>
+            <div className="grid grid-cols-2 gap-2 mb-6">
               {OCCUPATIONS.map(occ => (
                 <button key={occ.id}
                   onClick={() => setSelectedOccupation(occ.id)}
@@ -220,20 +159,17 @@ export default function Home() {
               ))}
             </div>
 
-            {/* 查询按钮 */}
             {selectedOccupation && (
               <a href={`/results?city=${selectedCity.id}&purpose=${selectedPurpose}&occupation=${selectedOccupation}`}
-  className="block w-full py-4 rounded-2xl text-white font-semibold text-base text-center transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
-  style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
-  查看结论 →
-</a>
+                className="block w-full py-4 rounded-2xl text-white font-semibold text-base text-center transition-all duration-200 hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
+                See My Results →
+              </a>
             )}
           </div>
         )}
-
       </div>
 
-      {/* 点击外部关闭下拉 */}
       {showCityDropdown && (
         <div className="fixed inset-0 z-40" onClick={() => setShowCityDropdown(false)} />
       )}
