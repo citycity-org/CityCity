@@ -108,7 +108,7 @@ export default function Home() {
         </div>
 
         <div className={`flex items-center gap-1 mb-8 transition-all duration-700 ${started ? 'opacity-100' : 'opacity-0'}`}>
-          {['选城市', '选目的', selectedPurpose === 'car' ? '选车型' : '选房型', '选职业'].map((label, i) => (
+          {['选城市', '选目的', '选房型', '选职业'].map((label, i) => (
             <div key={i} className="flex items-center flex-1">
               <div className="flex items-center gap-1">
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
