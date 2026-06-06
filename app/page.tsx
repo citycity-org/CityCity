@@ -15,28 +15,44 @@ const PURPOSES = [
   { id: 'car', icon: '🚗', name: '买车', desc: '买一辆车要花我几个月薪水？' },
 ]
 
-const PROPERTY_TYPES: Record<string, { id: string; name: string; desc?: string }[]> = {
-  buy: [
-    { id: '1br_condo', name: '1居室公寓' },
-    { id: '2br_condo', name: '2居室公寓' },
-    { id: '3br_condo', name: '3居室公寓' },
-    { id: 'townhouse', name: '城市屋' },
-    { id: 'detached', name: '独立屋' },
-  ],
-  rent: [
-    { id: '1br_condo', name: '1居室公寓' },
-    { id: '2br_condo', name: '2居室公寓' },
-    { id: '3br_condo', name: '3居室公寓' },
-    { id: 'townhouse', name: '城市屋' },
-  ],
-  car: [
-    { id: 'economy', name: '经济型', desc: 'Toyota Corolla' },
-    { id: 'compact', name: '紧凑型', desc: 'Honda Civic' },
-    { id: 'suv', name: '中档SUV', desc: 'Toyota RAV4' },
-    { id: 'sedan', name: '中档轿车', desc: 'Honda Accord' },
-    { id: 'luxury', name: '豪华型', desc: 'BMW 3 Series' },
-  ],
-}
+const HOUSE_TYPES = [
+  { id: '1br_condo', name: '1居室公寓', desc: 'Condo' },
+  { id: '2br_condo', name: '2居室公寓', desc: 'Condo' },
+  { id: '3br_condo', name: '3居室公寓', desc: 'Condo' },
+  { id: 'townhouse', name: '联排别墅', desc: 'Townhouse' },
+  { id: 'house', name: '独立屋', desc: 'Detached House' },
+]
+
+const VEHICLES = [
+  { id: 'bmw_3series', brand: 'BMW', model: '3 Series', price: 49900 },
+  { id: 'bmw_x3', brand: 'BMW', model: 'X3', price: 57900 },
+  { id: 'chevrolet_equinox', brand: 'Chevrolet', model: 'Equinox', price: 37498 },
+  { id: 'chevrolet_silverado', brand: 'Chevrolet', model: 'Silverado 1500', price: 46498 },
+  { id: 'ford_bronco', brand: 'Ford', model: 'Bronco', price: 49995 },
+  { id: 'ford_escape', brand: 'Ford', model: 'Escape', price: 35995 },
+  { id: 'ford_f150', brand: 'Ford', model: 'F-150', price: 49995 },
+  { id: 'honda_civic', brand: 'Honda', model: 'Civic', price: 28690 },
+  { id: 'honda_crv', brand: 'Honda', model: 'CR-V', price: 37890 },
+  { id: 'hyundai_elantra', brand: 'Hyundai', model: 'Elantra', price: 23599 },
+  { id: 'hyundai_tucson', brand: 'Hyundai', model: 'Tucson', price: 35349 },
+  { id: 'kia_sportage', brand: 'Kia', model: 'Sportage', price: 34395 },
+  { id: 'kia_telluride', brand: 'Kia', model: 'Telluride', price: 49995 },
+  { id: 'mazda_3', brand: 'Mazda', model: 'Mazda3', price: 25300 },
+  { id: 'mazda_cx5', brand: 'Mazda', model: 'CX-5', price: 35100 },
+  { id: 'nissan_rogue', brand: 'Nissan', model: 'Rogue', price: 37998 },
+  { id: 'nissan_sentra', brand: 'Nissan', model: 'Sentra', price: 24498 },
+  { id: 'ram_1500', brand: 'Ram', model: '1500', price: 52495 },
+  { id: 'subaru_outback', brand: 'Subaru', model: 'Outback', price: 37995 },
+  { id: 'tesla_model3', brand: 'Tesla', model: 'Model 3', price: 53990 },
+  { id: 'tesla_modely', brand: 'Tesla', model: 'Model Y', price: 59990 },
+  { id: 'toyota_camry', brand: 'Toyota', model: 'Camry', price: 32025 },
+  { id: 'toyota_corolla', brand: 'Toyota', model: 'Corolla', price: 25025 },
+  { id: 'toyota_highlander', brand: 'Toyota', model: 'Highlander', price: 52025 },
+  { id: 'toyota_rav4', brand: 'Toyota', model: 'RAV4', price: 38025 },
+  { id: 'toyota_tacoma', brand: 'Toyota', model: 'Tacoma', price: 43025 },
+  { id: 'vw_golf', brand: 'Volkswagen', model: 'Golf', price: 31395 },
+  { id: 'vw_tiguan', brand: 'Volkswagen', model: 'Tiguan', price: 39395 },
+]
 
 const OCCUPATIONS = [
   { id: 'nurse', name: '注册护士', industry: '医疗' },
@@ -84,7 +100,7 @@ export default function Home() {
     return () => clearTimeout(timer)
   }, [])
 
-  const propertyOptions = selectedPurpose ? PROPERTY_TYPES[selectedPurpose] || [] : []
+  const canProceedStep2 = selectedPurpose && selectedProperty
 
   return (
     <main className="min-h-screen relative overflow-hidden"
@@ -107,9 +123,9 @@ export default function Home() {
           <p className="text-white/40 text-sm">In {selectedCity.name}, what's really costing you your life?</p>
         </div>
 
-        <div className={`flex items-center gap-1 mb-8 transition-all duration-700 ${started ? 'opacity-100' : 'opacity-0'}`}>
-          {['选城市', '选目的', selectedPurpose === 'car' ? '选车型' : '选房型', '选职业'].map((label, i) => (
-            <div key={i} className="flex items-center flex-1">
+        <div className={`flex items-center justify-center gap-4 mb-8 transition-all duration-700 ${started ? 'opacity-100' : 'opacity-0'}`}>
+          {['选城市', '选目的', '选职业'].map((label, i) => (
+            <div key={i} className="flex items-center">
               <div className="flex items-center gap-1">
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
                   step > i + 1 ? 'bg-[#059669] text-white' :
@@ -121,7 +137,7 @@ export default function Home() {
                   {label}
                 </span>
               </div>
-              {i < 3 && <div className="flex-1 h-px mx-1" style={{ background: step > i + 1 ? '#059669' : 'rgba(255,255,255,0.1)' }} />}
+              {i < 2 && <div className="w-12 h-px mx-2" style={{ background: step > i + 1 ? '#059669' : 'rgba(255,255,255,0.1)' }} />}
             </div>
           ))}
         </div>
@@ -129,26 +145,22 @@ export default function Home() {
         {step === 1 && (
           <div className={`transition-all duration-500 ${started ? 'opacity-100' : 'opacity-0'}`}>
             <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-4">第一步 · 选择你的城市</div>
-            <div className="flex flex-col gap-3 mb-6">
-              {CITIES.map(city => (
-                <button key={city.id}
-                  onClick={() => setSelectedCity(city)}
-                  className={`flex items-center justify-between p-4 rounded-2xl border transition-all duration-200 text-left ${
-                    selectedCity.id === city.id ? 'border-[#5B5CF0] bg-[#5B5CF0]/20' : 'border-white/10 bg-white/5 hover:bg-white/10'
-                  }`}>
-                  <div>
-                    <div className="text-white font-semibold">{city.name}</div>
-                    <div className="text-white/40 text-sm">{city.province}</div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-white/30 font-mono">{city.provinceShort}</span>
-                    {selectedCity.id === city.id && (
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
-                        style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>✓</div>
-                    )}
-                  </div>
-                </button>
-              ))}
+            <div className="relative mb-6">
+              <select
+                value={selectedCity.id}
+                onChange={(e) => {
+                  const city = CITIES.find(c => c.id === e.target.value)
+                  if (city) setSelectedCity(city)
+                }}
+                className="w-full p-4 rounded-2xl border border-white/10 text-white text-base appearance-none cursor-pointer focus:outline-none focus:border-[#5B5CF0]"
+                style={{ background: '#1a2744' }}>
+                {CITIES.map(city => (
+                  <option key={city.id} value={city.id} style={{ background: '#1a2744' }}>
+                    {city.name} · {city.province}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none">▼</div>
             </div>
             <button onClick={() => setStep(2)}
               className="w-full py-4 rounded-2xl text-white font-semibold text-base"
@@ -161,7 +173,7 @@ export default function Home() {
         {step === 2 && (
           <div className="transition-all duration-500">
             <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-4">第二步 · 选择你关心的</div>
-            <div className="flex flex-col gap-3 mb-6">
+            <div className="flex flex-col gap-3 mb-4">
               {PURPOSES.map(purpose => (
                 <button key={purpose.id}
                   onClick={() => { setSelectedPurpose(purpose.id); setSelectedProperty(null) }}
@@ -180,14 +192,54 @@ export default function Home() {
                 </button>
               ))}
             </div>
+
+            {selectedPurpose && (
+              <div className="mb-4">
+                <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-3">
+                  {selectedPurpose === 'car' ? '选择车型' : '选择房型'}
+                </div>
+                {selectedPurpose === 'car' ? (
+                  <div className="relative">
+                    <select
+                      value={selectedProperty || ''}
+                      onChange={(e) => setSelectedProperty(e.target.value)}
+                      className="w-full p-4 rounded-2xl border border-white/10 text-white text-base appearance-none cursor-pointer focus:outline-none focus:border-[#5B5CF0]"
+                      style={{ background: '#1a2744' }}>
+                      <option value="" disabled style={{ background: '#1a2744' }}>选择品牌和车型...</option>
+                      {VEHICLES.map(v => (
+                        <option key={v.id} value={v.id} style={{ background: '#1a2744' }}>
+                          {v.brand} {v.model} — ${v.price.toLocaleString()}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none">▼</div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    {HOUSE_TYPES.map(item => (
+                      <button key={item.id}
+                        onClick={() => setSelectedProperty(item.id)}
+                        className={`p-3 rounded-xl border transition-all duration-200 text-left ${
+                          selectedProperty === item.id ? 'border-[#5B5CF0] bg-[#5B5CF0]/20' : 'border-white/10 bg-white/5 hover:bg-white/10'
+                        }`}>
+                        <div className="text-white text-sm font-semibold">{item.name}</div>
+                        <div className="text-white/40 text-xs">{item.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="flex gap-3">
               <button onClick={() => setStep(1)}
                 className="px-6 py-4 rounded-2xl text-white/50 text-sm border border-white/10">← 返回</button>
-              <button onClick={() => { if (selectedPurpose) setStep(3) }}
-                disabled={!selectedPurpose}
+              <button
+                onClick={() => { if (canProceedStep2) setStep(3) }}
+                disabled={!canProceedStep2}
                 className="flex-1 py-4 rounded-2xl text-white font-semibold text-base transition-all"
-                style={{ background: selectedPurpose ? 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' : 'rgba(255,255,255,0.1)' }}>
-                下一步：选择{selectedPurpose === 'car' ? '车型' : '房型'} →
+                style={{ background: canProceedStep2 ? 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' : 'rgba(255,255,255,0.1)' }}>
+                下一步：选择职业 →
               </button>
             </div>
           </div>
@@ -195,43 +247,7 @@ export default function Home() {
 
         {step === 3 && (
           <div className="transition-all duration-500">
-            <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-4">
-              第三步 · 选择{selectedPurpose === 'car' ? '车型' : '房型'}
-            </div>
-            <div className="flex flex-col gap-3 mb-6">
-              {propertyOptions.map(option => (
-                <button key={option.id}
-                  onClick={() => setSelectedProperty(option.id)}
-                  className={`flex items-center justify-between p-4 rounded-2xl border transition-all duration-200 text-left ${
-                    selectedProperty === option.id ? 'border-[#5B5CF0] bg-[#5B5CF0]/20' : 'border-white/10 bg-white/5 hover:bg-white/10'
-                  }`}>
-                  <div>
-                    <div className="text-white font-semibold">{option.name}</div>
-                    {option.desc && <div className="text-white/40 text-sm">{option.desc}</div>}
-                  </div>
-                  {selectedProperty === option.id && (
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
-                      style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>✓</div>
-                  )}
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setStep(2)}
-                className="px-6 py-4 rounded-2xl text-white/50 text-sm border border-white/10">← 返回</button>
-              <button onClick={() => { if (selectedProperty) setStep(4) }}
-                disabled={!selectedProperty}
-                className="flex-1 py-4 rounded-2xl text-white font-semibold text-base transition-all"
-                style={{ background: selectedProperty ? 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' : 'rgba(255,255,255,0.1)' }}>
-                下一步：选择职业 →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div className="transition-all duration-500">
-            <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-4">第四步 · 选择你的职业</div>
+            <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-4">第三步 · 选择你的职业</div>
             <div className="flex flex-col gap-2 mb-4 overflow-y-auto"
               style={{ maxHeight: '320px', scrollbarColor: 'rgba(91,92,240,0.6) rgba(255,255,255,0.05)', scrollbarWidth: 'thin' }}>
               {OCCUPATIONS.map(occ => (
@@ -252,7 +268,7 @@ export default function Home() {
               ))}
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setStep(3)}
+              <button onClick={() => setStep(2)}
                 className="px-6 py-4 rounded-2xl text-white/50 text-sm border border-white/10">← 返回</button>
               <a href={selectedOccupation ? `/results?city=${selectedCity.id}&purpose=${selectedPurpose}&property=${selectedProperty}&occupation=${selectedOccupation}` : '#'}
                 className={`flex-1 py-4 rounded-2xl text-white font-semibold text-base text-center ${!selectedOccupation ? 'pointer-events-none opacity-40' : ''}`}

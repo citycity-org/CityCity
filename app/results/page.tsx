@@ -4,30 +4,49 @@ import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const OCCUPATION_NAMES: Record<string, string> = {
-  nurse: '注册护士',
-  software_eng: '软件工程师',
-  teacher: '中学教师',
-  electrician: '电工',
-  truck_driver: '卡车司机',
-  accountant: '会计师',
-  police: '警察',
-  chef: '厨师',
-  retail: '零售店员',
-  engineer: '土木工程师',
+  nurse: '注册护士', software_eng: '软件工程师', teacher: '中学教师',
+  electrician: '电工', truck_driver: '卡车司机', accountant: '会计师',
+  police: '警察', chef: '厨师', retail: '零售店员', engineer: '土木工程师',
+  doctor: '家庭医生', pharmacist: '药剂师', dentist: '牙医', lawyer: '律师',
+  financial_advisor: '财务顾问', real_estate: '房产经纪', mechanic: '汽车技师',
+  carpenter: '木工', plumber: '水管工', welder: '焊工', it_support: 'IT技术支持',
+  data_analyst: '数据分析师', marketing: '市场营销专员', hr: '人力资源专员',
+  social_worker: '社会工作者', firefighter: '消防员', pilot: '商业飞行员',
+  chef_executive: '行政总厨', security: '保安', cleaner: '清洁工',
 }
 
 const CITY_NAMES: Record<string, string> = {
-  vancouver: '温哥华',
-  toronto: '多伦多',
-  calgary: '卡尔加里',
-  montreal: '蒙特利尔',
-  ottawa: '渥太华',
+  vancouver: '温哥华', toronto: '多伦多', calgary: '卡尔加里',
+  montreal: '蒙特利尔', ottawa: '渥太华',
 }
 
 const PURPOSE_NAMES: Record<string, string> = {
-  buy: '买房',
-  rent: '租房',
-  car: '买车',
+  buy: '买房', rent: '租房', car: '买车',
+}
+
+const PROPERTY_NAMES: Record<string, string> = {
+  '1br_condo': '1居室公寓', '2br_condo': '2居室公寓', '3br_condo': '3居室公寓',
+  townhouse: '联排别墅', house: '独立屋',
+}
+
+const VEHICLE_NAMES: Record<string, string> = {
+  bmw_3series: 'BMW 3 Series', bmw_x3: 'BMW X3',
+  chevrolet_equinox: 'Chevrolet Equinox', chevrolet_silverado: 'Chevrolet Silverado 1500',
+  ford_bronco: 'Ford Bronco', ford_escape: 'Ford Escape', ford_f150: 'Ford F-150',
+  honda_civic: 'Honda Civic', honda_crv: 'Honda CR-V',
+  hyundai_elantra: 'Hyundai Elantra', hyundai_tucson: 'Hyundai Tucson',
+  kia_sportage: 'Kia Sportage', kia_telluride: 'Kia Telluride',
+  mazda_3: 'Mazda Mazda3', mazda_cx5: 'Mazda CX-5',
+  nissan_rogue: 'Nissan Rogue', nissan_sentra: 'Nissan Sentra',
+  ram_1500: 'Ram 1500', subaru_outback: 'Subaru Outback',
+  tesla_model3: 'Tesla Model 3', tesla_modely: 'Tesla Model Y',
+  toyota_camry: 'Toyota Camry', toyota_corolla: 'Toyota Corolla',
+  toyota_highlander: 'Toyota Highlander', toyota_rav4: 'Toyota RAV4',
+  toyota_tacoma: 'Toyota Tacoma', vw_golf: 'Volkswagen Golf', vw_tiguan: 'Volkswagen Tiguan',
+}
+
+const CITY_RPI: Record<string, number> = {
+  vancouver: 43.6, toronto: 41.2, calgary: 24.1, montreal: 30.2, ottawa: 28.4,
 }
 
 const DIMS = [
@@ -62,12 +81,9 @@ function ScoreRing({ score, total }: { score: number; total: number }) {
     let step = 0
     const timer = setInterval(() => {
       step++
-      if (step >= steps) {
-        setCurrent(score)
-        clearInterval(timer)
-      } else {
-        const progress = step / steps
-        const eased = 1 - Math.pow(1 - progress, 3)
+      if (step >= steps) { setCurrent(score); clearInterval(timer) }
+      else {
+        const eased = 1 - Math.pow(1 - step / steps, 3)
         setCurrent(Math.floor(eased * score))
       }
     }, interval)
@@ -80,8 +96,7 @@ function ScoreRing({ score, total }: { score: number; total: number }) {
       <circle cx="48" cy="48" r={r} fill="none" stroke={color} strokeWidth="7"
         strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset}
         transform="rotate(-90 48 48)" style={{ transition: 'stroke-dashoffset 0.05s ease' }} />
-      <text x="48" y="44" textAnchor="middle" fill={color} fontSize="20" fontWeight="bold"
-        fontFamily="monospace">{current}</text>
+      <text x="48" y="44" textAnchor="middle" fill={color} fontSize="20" fontWeight="bold" fontFamily="monospace">{current}</text>
       <text x="48" y="58" textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize="10">/100</text>
     </svg>
   )
@@ -120,8 +135,7 @@ function DimIcon({ level }: { level: number }) {
     <div style={{ background: bg }} className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">
       <svg width="14" height="14" viewBox="0 0 14 14">
         <circle cx="7" cy="7" r="5.5" fill="none" stroke={color} strokeWidth="1.8" />
-        <polyline points="4.5,7.5 6.5,9.5 10,5.5" fill="none" stroke={color} strokeWidth="1.8"
-          strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+        <polyline points="4.5,7.5 6.5,9.5 10,5.5" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
       </svg>
     </div>
   )
@@ -129,8 +143,7 @@ function DimIcon({ level }: { level: number }) {
     <div style={{ background: bg }} className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0">
       <svg width="14" height="14" viewBox="0 0 14 14">
         <circle cx="7" cy="7" r="5.5" fill="none" stroke={color} strokeWidth="1.8" />
-        <polyline points="4,7 6.5,9.5 10,5" fill="none" stroke={color} strokeWidth="1.8"
-          strokeLinecap="round" strokeLinejoin="round" />
+        <polyline points="4,7 6.5,9.5 10,5" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   )
@@ -140,69 +153,111 @@ function ResultsContent() {
   const searchParams = useSearchParams()
   const city = searchParams.get('city') || 'vancouver'
   const purpose = searchParams.get('purpose') || 'buy'
+  const property = searchParams.get('property') || '2br_condo'
   const occupation = searchParams.get('occupation') || 'nurse'
 
   const cityName = CITY_NAMES[city] || '温哥华'
   const purposeName = PURPOSE_NAMES[purpose] || '买房'
   const occupationName = OCCUPATION_NAMES[occupation] || '注册护士'
+  const propertyLabel = purpose === 'car'
+    ? (VEHICLE_NAMES[property] || property)
+    : (PROPERTY_NAMES[property] || property)
 
-const [loaded, setLoaded] = useState(false)
-const [years, setYears] = useState(0)
-const [months, setMonths] = useState(0)
-const [dbYears, setDbYears] = useState<number | null>(null)
-const [loading, setLoading] = useState(true)
+  const [loaded, setLoaded] = useState(false)
+  const [years, setYears] = useState(0)
+  const [months, setMonths] = useState(0)
+  const [dbCurrent, setDbCurrent] = useState<number | null>(null)
+  const [db2019, setDb2019] = useState<number | null>(null)
+  const [db1995, setDb1995] = useState<number | null>(null)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 300)
     return () => clearTimeout(t)
   }, [])
 
-useEffect(() => {
-  async function fetchData() {
-    const { data, error } = await supabase
-      .from('housing_years')
-      .select('years_current, years_2019, years_1995')
-      .eq('city_id', city)
-      .eq('occupation_id', occupation)
-      .eq('property_type', '2br_condo')
-      .single()
+  useEffect(() => {
+    async function fetchData() {
+      if (purpose === 'buy' || purpose === 'rent') {
+        const { data, error } = await supabase
+          .from('housing_years')
+          .select('years_current, years_2019, years_1995')
+          .eq('city_id', city)
+          .eq('occupation_id', occupation)
+          .eq('property_type', property)
+          .eq('purpose', purpose)
+          .single()
 
-    console.log('Supabase data:', data)
-    console.log('Supabase error:', error)
-
-    if (data && !error) {
-      setDbYears(data.years_current)
+        if (data) {
+          setDbCurrent(data.years_current)
+          setDb2019(data.years_2019)
+          setDb1995(data.years_1995)
+        } else if (error?.code === '42703') {
+          // purpose 列尚未迁移：buy 回退查询，rent 用城市 RPI 估算
+          if (purpose === 'buy') {
+            const { data: fallback } = await supabase
+              .from('housing_years')
+              .select('years_current, years_2019, years_1995')
+              .eq('city_id', city)
+              .eq('occupation_id', occupation)
+              .eq('property_type', property)
+              .single()
+            if (fallback) {
+              setDbCurrent(fallback.years_current)
+              setDb2019(fallback.years_2019)
+              setDb1995(fallback.years_1995)
+            }
+          } else {
+            const base = CITY_RPI[city] ?? 35
+            setDbCurrent(base)
+            setDb2019(parseFloat((base * 0.92).toFixed(1)))
+            setDb1995(parseFloat((base * 0.73).toFixed(1)))
+          }
+        }
+      } else if (purpose === 'car') {
+        const { data } = await supabase
+          .from('vehicle_months')
+          .select('months_current, months_2019, months_1995')
+          .eq('city_id', city)
+          .eq('occupation_id', occupation)
+          .eq('vehicle_id', property)
+          .single()
+        if (data) {
+          setDbCurrent(data.months_current)
+          setDb2019(data.months_2019)
+          setDb1995(data.months_1995)
+        }
+      }
     }
-    setLoading(false)
-  }
-  fetchData()
-}, [city, occupation])
+    fetchData()
+  }, [city, occupation, purpose, property])
 
   useEffect(() => {
-    if (!loaded) return
-  const targetYears = dbYears ? Math.floor(dbYears) : 10
-  const targetMonths = dbYears ? Math.round((dbYears % 1) * 12) : 2
+    if (!loaded || dbCurrent === null) return
+    const target = purpose === 'buy' ? Math.floor(dbCurrent) : Math.round(dbCurrent)
+    const targetMonths = purpose === 'buy' ? Math.round((dbCurrent % 1) * 12) : 0
     const duration = 2500
     const steps = 60
-    const interval = duration / steps
     let step = 0
     const timer = setInterval(() => {
       step++
       if (step >= steps) {
-        setYears(targetYears)
+        setYears(target)
         setMonths(targetMonths)
         clearInterval(timer)
       } else {
-        const progress = step / steps
-        const eased = 1 - Math.pow(1 - progress, 3)
-        setYears(Math.floor(eased * targetYears))
-        setMonths(Math.floor(eased * targetMonths * 6) % 12)
+        const eased = 1 - Math.pow(1 - step / steps, 3)
+        setYears(Math.floor(eased * target))
+        setMonths(Math.floor(eased * targetMonths))
       }
-    }, interval)
+    }, duration / steps)
     return () => clearInterval(timer)
-  }, [loaded])
+  }, [loaded, dbCurrent, purpose])
 
   const totalScore = 38
+  const maxVal = dbCurrent || 10
+  const val1995 = db1995 || 0
+  const val2019 = db2019 || 0
+  const unit = purpose === 'car' ? '月薪' : '年'
 
   return (
     <main className="min-h-screen bg-[#F5F7FB]">
@@ -215,7 +270,7 @@ useEffect(() => {
             <span className="text-white/60 text-sm">📍 {cityName}</span>
             <div className="flex gap-2">
               <span className="text-xs px-3 py-1 rounded-full border border-white/20 text-white/70"
-                style={{ background: 'rgba(79,142,247,0.2)' }}>🏠 {purposeName}</span>
+                style={{ background: 'rgba(79,142,247,0.2)' }}>{purposeName}</span>
               <span className="text-xs px-3 py-1 rounded-full border border-white/10 text-white/50"
                 style={{ background: 'rgba(255,255,255,0.05)' }}>{occupationName}</span>
             </div>
@@ -224,10 +279,17 @@ useEffect(() => {
             <div className="flex-1">
               <div className="text-7xl font-bold text-white leading-none mb-2"
                 style={{ fontFamily: 'monospace', letterSpacing: '-3px' }}>
-                {years}<span className="text-3xl text-white/55 ml-1">年 {months}月</span>
+                {years}
+                <span className="text-3xl text-white/55 ml-1">
+                  {purpose === 'car' ? '月薪' : `年 ${months}月`}
+                </span>
               </div>
-              <div className="text-white/50 text-sm mb-2">才能买一套 2居室公寓</div>
-              <div className="text-[#F59E0B] text-sm font-semibold">= 你职业生涯的四分之一</div>
+              <div className="text-white/50 text-sm mb-2">
+                {purpose === 'car' ? `才能买一辆 ${propertyLabel}` : `才能买一套 ${propertyLabel}`}
+              </div>
+              <div className="text-[#F59E0B] text-sm font-semibold">
+                {purpose === 'car' ? '基于 Edmunds 20/4/10 规则' : '= 你职业生涯的四分之一'}
+              </div>
             </div>
             <div className="flex-shrink-0 text-center">
               <ScoreRing score={totalScore} total={100} />
@@ -237,13 +299,13 @@ useEffect(() => {
           <div className="rounded-xl p-4"
             style={{ background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.07)' }}>
             <div className="text-xs text-white/25 uppercase tracking-widest mb-3">
-              同一职业 · 三个时代 · 2居室公寓
+              同一职业 · 三个时代 · {purpose === 'car' ? propertyLabel : propertyLabel}
             </div>
             <div className="space-y-3">
               {[
-                { year: '1995', width: '38%', color: '#10B981', val: '4 年' },
-                { year: '2019', width: '72%', color: '#F59E0B', val: '8 年', label: '疫情前' },
-                { year: '2026', width: '100%', color: '#EF4444', val: '10.2 年', bold: true },
+                { year: '1995', val: val1995, color: '#10B981' },
+                { year: '2019', val: val2019, color: '#F59E0B' },
+                { year: '2026', val: maxVal, color: '#EF4444', bold: true },
               ].map(row => (
                 <div key={row.year} className="flex items-center gap-3">
                   <span className={`text-xs font-mono w-8 flex-shrink-0 ${row.bold ? 'text-white font-bold' : 'text-white/40'}`}>
@@ -252,12 +314,14 @@ useEffect(() => {
                   <div className="flex-1 h-1.5 rounded-full overflow-hidden"
                     style={{ background: 'rgba(255,255,255,0.07)' }}>
                     <div className="h-full rounded-full transition-all duration-1000"
-                      style={{ width: loaded ? row.width : '0%', background: row.color }} />
+                      style={{ width: loaded ? `${(row.val / maxVal) * 100}%` : '0%', background: row.color }} />
                   </div>
-                  {row.label && <span className="text-xs text-white/25 w-12 flex-shrink-0">{row.label}</span>}
-                  {!row.label && <span className="w-12 flex-shrink-0" />}
-                  <span className="text-xs font-bold font-mono w-14 text-right flex-shrink-0"
-                    style={{ color: row.color }}>{row.val}</span>
+                  <span className="text-xs font-bold font-mono w-16 text-right flex-shrink-0"
+                    style={{ color: row.color }}>
+                    {purpose === 'buy'
+                      ? `${Math.floor(row.val)}年${Math.round((row.val % 1) * 12)}月`
+                      : `${row.val}${unit}`}
+                  </span>
                 </div>
               ))}
             </div>
@@ -273,15 +337,12 @@ useEffect(() => {
               style={{ background: '#FEE2E2', color: '#DC2626' }}>38 / 100</div>
           </div>
           <div className="px-5 py-4">
-            <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">
-              生存成本层 · 60分
-            </div>
+            <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">生存成本层 · 60分</div>
             <div className="space-y-2">
               {DIMS.filter(d => ['hpi', 'rpi', 'cpi'].includes(d.id)).map(dim => {
                 const colors = LEVEL_COLORS[dim.level]
                 return (
-                  <div key={dim.id} className="flex items-center gap-3 p-2.5 rounded-xl"
-                    style={{ background: '#F9FAFB' }}>
+                  <div key={dim.id} className="flex items-center gap-3 p-2.5 rounded-xl" style={{ background: '#F9FAFB' }}>
                     <DimIcon level={dim.level} />
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-medium text-[#374151] mb-1">{dim.name}</div>
@@ -302,15 +363,12 @@ useEffect(() => {
           </div>
           <div className="h-px bg-[#F3F4F6] mx-5" />
           <div className="px-5 py-4">
-            <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">
-              环境指数层 · 40分
-            </div>
+            <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">环境指数层 · 40分</div>
             <div className="space-y-2">
               {DIMS.filter(d => ['eqi', 'edi', 'hci', 'tci'].includes(d.id)).map(dim => {
                 const colors = LEVEL_COLORS[dim.level]
                 return (
-                  <div key={dim.id} className="flex items-center gap-3 p-2.5 rounded-xl"
-                    style={{ background: '#F9FAFB' }}>
+                  <div key={dim.id} className="flex items-center gap-3 p-2.5 rounded-xl" style={{ background: '#F9FAFB' }}>
                     <DimIcon level={dim.level} />
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-medium text-[#374151] mb-1">{dim.name}</div>
@@ -335,22 +393,22 @@ useEffect(() => {
           </div>
         </div>
         <div className="flex gap-3 mt-4">
-<a href={`/compare?city=${city}&occupation=${occupation}`}
-  className="flex-1 py-3 rounded-xl text-white text-sm font-semibold text-center block"
-  style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
-  对比其他城市 →
-</a>
+          <a href={`/compare?city=${city}&occupation=${occupation}`}
+            className="flex-1 py-3 rounded-xl text-white text-sm font-semibold text-center block"
+            style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
+            对比其他城市 →
+          </a>
           <a href={`/share?city=${city}&occupation=${occupation}`}
-  className="px-4 py-3 rounded-xl text-sm font-medium text-[#374151] text-center"
-  style={{ background: 'white', border: '1.5px solid #E5E7EB' }}>
-  分享 ↗
-</a>
+            className="px-4 py-3 rounded-xl text-sm font-medium text-[#374151] text-center"
+            style={{ background: 'white', border: '1.5px solid #E5E7EB' }}>
+            分享 ↗
+          </a>
         </div>
         <a href={`/subscribe?city=${city}&occupation=${occupation}`}
-  className="w-full py-3 rounded-xl text-sm font-medium text-center mt-2 block"
-  style={{ background: 'white', border: '1.5px solid #E5E7EB', color: '#6B7280' }}>
-  📊 订阅城市生活报告
-</a>
+          className="w-full py-3 rounded-xl text-sm font-medium text-center mt-2 block"
+          style={{ background: 'white', border: '1.5px solid #E5E7EB', color: '#6B7280' }}>
+          📊 订阅城市生活报告
+        </a>
       </div>
     </main>
   )
