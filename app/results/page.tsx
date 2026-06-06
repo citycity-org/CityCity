@@ -32,8 +32,8 @@ const PROPERTY_NAMES: Record<string, string> = {
 const VEHICLE_NAMES: Record<string, string> = {
   bmw_3series: 'BMW 3 Series', bmw_x3: 'BMW X3',
   chevrolet_equinox: 'Chevrolet Equinox', chevrolet_silverado: 'Chevrolet Silverado 1500',
-  ford_bronco: 'Ford Bronco', ford_escape: 'Ford Escape', ford_f150: 'Ford F-150',
-  honda_civic: 'Honda Civic', honda_crv: 'Honda CR-V',
+  ford_bronco: 'Ford Bronco', ford_escape: 'Ford Escape', ford_f150: 'Ford F-150', ford_mustang: 'Ford Mustang',
+  honda_civic: 'Honda Civic', honda_crv: 'Honda CR-V', honda_accord: 'Honda Accord',
   hyundai_elantra: 'Hyundai Elantra', hyundai_tucson: 'Hyundai Tucson',
   kia_sportage: 'Kia Sportage', kia_telluride: 'Kia Telluride',
   mazda_3: 'Mazda Mazda3', mazda_cx5: 'Mazda CX-5',
