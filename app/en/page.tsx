@@ -1,34 +1,33 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-// region field reserved for expansion: canada | usa | europe | asia
 const CITIES = [
-  { id: 'vancouver', name: 'Vancouver', nameZh: '温哥华', province: 'British Columbia', provinceShort: 'BC', region: 'canada' },
-  { id: 'toronto',   name: 'Toronto',   nameZh: '多伦多', province: 'Ontario',          provinceShort: 'ON', region: 'canada' },
-  { id: 'calgary',   name: 'Calgary',   nameZh: '卡尔加里', province: 'Alberta',        provinceShort: 'AB', region: 'canada' },
-  { id: 'montreal',  name: 'Montréal',  nameZh: '蒙特利尔', province: 'Québec',         provinceShort: 'QC', region: 'canada' },
-  { id: 'ottawa',    name: 'Ottawa',    nameZh: '渥太华', province: 'Ontario',          provinceShort: 'ON', region: 'canada' },
+  { id: 'vancouver', name: 'Vancouver',  nameZh: '温哥华',   provinceShort: 'BC', province: 'British Columbia', region: 'canada' },
+  { id: 'toronto',   name: 'Toronto',    nameZh: '多伦多',   provinceShort: 'ON', province: 'Ontario',          region: 'canada' },
+  { id: 'calgary',   name: 'Calgary',    nameZh: '卡尔加里', provinceShort: 'AB', province: 'Alberta',          region: 'canada' },
+  { id: 'montreal',  name: 'Montréal',   nameZh: '蒙特利尔', provinceShort: 'QC', province: 'Quebec',           region: 'canada' },
+  { id: 'ottawa',    name: 'Ottawa',     nameZh: '渥太华',   provinceShort: 'ON', province: 'Ontario',          region: 'canada' },
 ]
 
 const PROVINCE_GROUPS = [
   { short: 'BC', name: 'British Columbia', cityIds: ['vancouver'] },
-  { short: 'ON', name: 'Ontario',          cityIds: ['toronto', 'ottawa'] },
-  { short: 'AB', name: 'Alberta',          cityIds: ['calgary'] },
-  { short: 'QC', name: 'Québec',           cityIds: ['montreal'] },
+  { short: 'ON', name: 'Ontario',           cityIds: ['toronto', 'ottawa'] },
+  { short: 'AB', name: 'Alberta',           cityIds: ['calgary'] },
+  { short: 'QC', name: 'Quebec',            cityIds: ['montreal'] },
 ]
 
 const PURPOSES = [
-  { id: 'buy',  icon: '🏠', name: 'Buying a Home', desc: 'How many years of work does it take?' },
-  { id: 'rent', icon: '🔑', name: 'Renting',       desc: 'What share of my income goes to rent?' },
-  { id: 'car',  icon: '🚗', name: 'Buying a Car',  desc: 'How many months of salary does it cost?' },
+  { id: 'buy',  icon: '🏠', name: 'Buy a Home',   desc: 'Years of work to afford it?' },
+  { id: 'rent', icon: '🔑', name: 'Rent a Place', desc: '% of income eaten by rent?' },
+  { id: 'car',  icon: '🚗', name: 'Buy a Car',    desc: 'Months of salary to buy it?' },
 ]
 
 const HOUSE_TYPES = [
-  { id: '1br_condo', name: '1-Bedroom Condo',  desc: 'Condo' },
-  { id: '2br_condo', name: '2-Bedroom Condo',  desc: 'Condo' },
-  { id: '3br_condo', name: '3-Bedroom Condo',  desc: 'Condo' },
-  { id: 'townhouse',  name: 'Townhouse',         desc: 'Townhouse' },
-  { id: 'house',      name: 'Detached House',    desc: 'Detached' },
+  { id: '1br_condo', name: '1-Bed Condo',     desc: 'Condo' },
+  { id: '2br_condo', name: '2-Bed Condo',     desc: 'Condo' },
+  { id: '3br_condo', name: '3-Bed Condo',     desc: 'Condo' },
+  { id: 'townhouse',  name: 'Townhouse',       desc: 'Townhouse' },
+  { id: 'house',      name: 'Detached House',  desc: 'Detached' },
 ]
 
 const VEHICLE_BRANDS = [
@@ -66,61 +65,53 @@ const VEHICLE_BRANDS = [
 ]
 
 const OCCUPATION_GROUPS = [
-  { industry: 'Healthcare', occupations: [
-    { id: 'nurse',      name: 'Registered Nurse' },
-    { id: 'doctor',     name: 'Family Physician' },
-    { id: 'pharmacist', name: 'Pharmacist' },
-    { id: 'dentist',    name: 'Dentist' },
+  { industry: 'Healthcare',           occupations: [
+    { id: 'nurse',      name: 'Registered Nurse' }, { id: 'doctor',     name: 'Family Doctor' },
+    { id: 'pharmacist', name: 'Pharmacist' },        { id: 'dentist',    name: 'Dentist' },
   ]},
-  { industry: 'Technology', occupations: [
-    { id: 'software_eng', name: 'Software Engineer' },
-    { id: 'data_analyst', name: 'Data Analyst' },
-    { id: 'it_support',   name: 'IT Support' },
+  { industry: 'Technology',           occupations: [
+    { id: 'software_eng', name: 'Software Engineer' }, { id: 'data_analyst', name: 'Data Analyst' },
+    { id: 'it_support',   name: 'IT Support Specialist' },
   ]},
-  { industry: 'Education', occupations: [
+  { industry: 'Education',            occupations: [
     { id: 'teacher', name: 'High School Teacher' },
   ]},
   { industry: 'Engineering & Trades', occupations: [
-    { id: 'engineer',    name: 'Civil Engineer' },
-    { id: 'electrician', name: 'Electrician' },
-    { id: 'carpenter',   name: 'Carpenter' },
-    { id: 'plumber',     name: 'Plumber' },
+    { id: 'engineer',    name: 'Civil Engineer' },  { id: 'electrician', name: 'Electrician' },
+    { id: 'carpenter',   name: 'Carpenter' },        { id: 'plumber',     name: 'Plumber' },
     { id: 'welder',      name: 'Welder' },
   ]},
-  { industry: 'Finance & Law', occupations: [
-    { id: 'lawyer',            name: 'Lawyer' },
-    { id: 'accountant',        name: 'Accountant' },
+  { industry: 'Law & Finance',        occupations: [
+    { id: 'lawyer',            name: 'Lawyer' },      { id: 'accountant',       name: 'Accountant' },
     { id: 'financial_advisor', name: 'Financial Advisor' },
   ]},
-  { industry: 'Business', occupations: [
-    { id: 'real_estate', name: 'Real Estate Agent' },
-    { id: 'marketing',   name: 'Marketing Specialist' },
+  { industry: 'Business',             occupations: [
+    { id: 'real_estate', name: 'Real Estate Agent' }, { id: 'marketing', name: 'Marketing Specialist' },
     { id: 'hr',          name: 'HR Specialist' },
   ]},
-  { industry: 'Public Service', occupations: [
-    { id: 'police',        name: 'Police Officer' },
-    { id: 'firefighter',   name: 'Firefighter' },
+  { industry: 'Public Service',       occupations: [
+    { id: 'police',        name: 'Police Officer' }, { id: 'firefighter',   name: 'Firefighter' },
     { id: 'social_worker', name: 'Social Worker' },
   ]},
-  { industry: 'Food & Hospitality', occupations: [
-    { id: 'chef',           name: 'Chef' },
-    { id: 'chef_executive', name: 'Executive Chef' },
+  { industry: 'Food & Hospitality',   occupations: [
+    { id: 'chef', name: 'Cook / Line Chef' }, { id: 'chef_executive', name: 'Executive Chef' },
   ]},
-  { industry: 'Other Services', occupations: [
-    { id: 'retail',       name: 'Retail Worker' },
-    { id: 'truck_driver', name: 'Truck Driver' },
-    { id: 'mechanic',     name: 'Auto Mechanic' },
-    { id: 'pilot',        name: 'Commercial Pilot' },
-    { id: 'security',     name: 'Security Guard' },
-    { id: 'cleaner',      name: 'Cleaner' },
+  { industry: 'Other',                occupations: [
+    { id: 'retail',       name: 'Retail Associate' }, { id: 'truck_driver', name: 'Truck Driver' },
+    { id: 'mechanic',     name: 'Auto Mechanic' },     { id: 'pilot',        name: 'Commercial Pilot' },
+    { id: 'security',     name: 'Security Guard' },    { id: 'cleaner',      name: 'Cleaner / Janitor' },
   ]},
 ]
 
 type City = typeof CITIES[0]
 
-export default function EnHome() {
+const BG_GRAD: React.CSSProperties = { background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }
+const SEL_CARD = 'border-[#5B5CF0] bg-[#5B5CF0]/20'
+const DEF_CARD = 'border-white/10 bg-white/5 hover:bg-white/10'
+
+export default function HomeEn() {
   const [started, setStarted] = useState(false)
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState<1 | 2 | 3>(1)
   const [selectedCity, setSelectedCity] = useState<City>(CITIES[0])
   const [selectedPurpose, setSelectedPurpose] = useState<string | null>(null)
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null)
@@ -131,26 +122,26 @@ export default function EnHome() {
     return () => clearTimeout(t)
   }, [])
 
-  const handlePurposeSelect = (id: string) => {
+  const selectPurpose = (id: string) => {
     setSelectedPurpose(id)
     setSelectedProperty(null)
   }
 
-  const canProceedStep2 = selectedPurpose !== null && selectedProperty !== null
+  const goStep = (n: 1 | 2 | 3) => {
+    if (n === 2) { setSelectedPurpose(null); setSelectedProperty(null) }
+    setStep(n)
+  }
 
+  const canGoStep3 = selectedPurpose !== null && selectedProperty !== null
   const resultsUrl = selectedOccupation
     ? `/results?city=${selectedCity.id}&purpose=${selectedPurpose}&property=${selectedProperty}&occupation=${selectedOccupation}`
     : '#'
-
-  const BG = { background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }
-  const CHECK = (
-    <div className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0" style={BG}>✓</div>
-  )
 
   return (
     <main className="min-h-screen relative overflow-hidden"
       style={{ background: 'linear-gradient(145deg, #151827, #1E2235)' }}>
 
+      {/* Background glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute rounded-full opacity-20 animate-pulse"
           style={{ width: '600px', height: '600px', background: 'radial-gradient(circle, #4F8EF7 0%, transparent 70%)', top: '-200px', right: '-100px', animationDuration: '4s' }} />
@@ -160,25 +151,24 @@ export default function EnHome() {
 
       <div className="relative z-10 max-w-2xl mx-auto px-6 py-10">
 
-        {/* Title */}
+        {/* Headline */}
         <div className={`text-center mb-7 transition-all duration-700 ${started ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <h1 className="text-4xl font-bold text-white leading-tight mb-2" style={{ letterSpacing: '-1px' }}>
             In {selectedCity.name},<br />
-            what's really costing you your{' '}
-            <span style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>life</span>?
+            how many years of your{' '}
+            <span style={{ ...BG_GRAD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>life</span>?
           </h1>
-          <p className="text-white/30 text-sm">{selectedCity.nameZh} · Canada</p>
+          <p className="text-white/30 text-sm">Real cost of living — in years and months, not dollars.</p>
         </div>
 
         {/* Step indicator */}
-        <div className={`flex items-center justify-center gap-3 mb-7 transition-all duration-700 ${started ? 'opacity-100' : 'opacity-0'}`}>
-          {['City', 'Goal', 'Occupation'].map((label, i) => (
+        <div className={`flex items-center justify-center gap-3 mb-8 transition-all duration-700 ${started ? 'opacity-100' : 'opacity-0'}`}>
+          {['City', 'Goal', 'Job'].map((label, i) => (
             <div key={i} className="flex items-center">
               <div className="flex items-center gap-1.5">
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                  step > i + 1 ? 'bg-[#059669] text-white' :
-                  step === i + 1 ? 'text-white' : 'bg-white/10 text-white/30'
-                }`} style={step === i + 1 ? BG : {}}>
+                  step > i + 1 ? 'bg-[#059669] text-white' : step === i + 1 ? 'text-white' : 'bg-white/10 text-white/30'
+                }`} style={step === i + 1 ? BG_GRAD : {}}>
                   {step > i + 1 ? '✓' : i + 1}
                 </div>
                 <span className={`text-xs whitespace-nowrap ${
@@ -193,10 +183,12 @@ export default function EnHome() {
           ))}
         </div>
 
-        {/* ── Step 1: Select City ── */}
+        {/* ═══════════════════════════════════════════
+            Step 1 — Choose a City
+        ═══════════════════════════════════════════ */}
         {step === 1 && (
           <div className={`transition-all duration-500 ${started ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">Step 1 · Select your city</div>
+            <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">Step 1 · Choose your city</p>
 
             <div className="space-y-4 mb-6">
               {PROVINCE_GROUPS.map(group => {
@@ -212,16 +204,13 @@ export default function EnHome() {
                       {cities.map(city => {
                         const sel = selectedCity.id === city.id
                         return (
-                          <button key={city.id}
-                            onClick={() => setSelectedCity(city)}
-                            className={`flex items-center justify-between p-4 rounded-2xl border transition-all duration-200 text-left ${
-                              sel ? 'border-[#5B5CF0] bg-[#5B5CF0]/20' : 'border-white/10 bg-white/5 hover:bg-white/10'
-                            }`}>
+                          <button key={city.id} onClick={() => setSelectedCity(city)}
+                            className={`flex items-center justify-between p-4 rounded-2xl border transition-all duration-200 text-left ${sel ? SEL_CARD : DEF_CARD}`}>
                             <div>
                               <div className="text-white font-semibold">{city.name}</div>
-                              <div className="text-white/40 text-xs">{city.province}</div>
+                              <div className="text-white/40 text-xs">{city.nameZh}</div>
                             </div>
-                            {sel && CHECK}
+                            {sel && <span className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0" style={BG_GRAD}>✓</span>}
                           </button>
                         )
                       })}
@@ -233,45 +222,44 @@ export default function EnHome() {
             </div>
 
             <button onClick={() => setStep(2)}
-              className="w-full py-4 rounded-2xl text-white font-semibold text-base" style={BG}>
-              Next: Choose Goal →
+              className="w-full py-4 rounded-2xl text-white font-semibold text-base" style={BG_GRAD}>
+              Next: Choose Your Goal →
             </button>
           </div>
         )}
 
-        {/* ── Step 2: Goal + Subtype ── */}
+        {/* ═══════════════════════════════════════════
+            Step 2 — Choose Goal + Subtype
+        ═══════════════════════════════════════════ */}
         {step === 2 && (
           <div className="transition-all duration-500">
-            <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">Step 2 · What are you planning?</div>
+            <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">Step 2 · What are you planning for?</p>
 
-            <div className="flex flex-col gap-3 mb-5">
+            {/* Purpose cards — always visible in step 2 */}
+            <div className="flex flex-col gap-3 mb-4">
               {PURPOSES.map(p => (
-                <button key={p.id}
-                  onClick={() => handlePurposeSelect(p.id)}
-                  className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 text-left ${
-                    selectedPurpose === p.id ? 'border-[#5B5CF0] bg-[#5B5CF0]/20' : 'border-white/10 bg-white/5 hover:bg-white/10'
-                  }`}>
+                <button key={p.id} onClick={() => selectPurpose(p.id)}
+                  className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 text-left ${selectedPurpose === p.id ? SEL_CARD : DEF_CARD}`}>
                   <span className="text-2xl">{p.icon}</span>
                   <div className="flex-1">
                     <div className="text-white font-semibold">{p.name}</div>
                     <div className="text-white/50 text-sm">{p.desc}</div>
                   </div>
-                  {selectedPurpose === p.id && CHECK}
+                  {selectedPurpose === p.id && (
+                    <span className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0" style={BG_GRAD}>✓</span>
+                  )}
                 </button>
               ))}
             </div>
 
-            {/* Subtype: Housing */}
+            {/* House types — appear after selecting buy or rent */}
             {(selectedPurpose === 'buy' || selectedPurpose === 'rent') && (
-              <div className="mb-5">
-                <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-3">Select property type</div>
+              <div className="mb-4">
+                <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-3">Choose property type</p>
                 <div className="grid grid-cols-2 gap-2">
                   {HOUSE_TYPES.map(item => (
-                    <button key={item.id}
-                      onClick={() => setSelectedProperty(item.id)}
-                      className={`p-3 rounded-xl border transition-all duration-200 text-left ${
-                        selectedProperty === item.id ? 'border-[#5B5CF0] bg-[#5B5CF0]/20' : 'border-white/10 bg-white/5 hover:bg-white/10'
-                      }`}>
+                    <button key={item.id} onClick={() => setSelectedProperty(item.id)}
+                      className={`p-3 rounded-xl border transition-all duration-200 text-left ${selectedProperty === item.id ? SEL_CARD : DEF_CARD}`}>
                       <div className="text-white text-sm font-semibold">{item.name}</div>
                       <div className="text-white/40 text-xs">{item.desc}</div>
                     </button>
@@ -280,24 +268,19 @@ export default function EnHome() {
               </div>
             )}
 
-            {/* Subtype: Vehicles by brand */}
+            {/* Vehicle picker — appears after selecting car */}
             {selectedPurpose === 'car' && (
-              <div className="mb-5">
-                <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-3">Select vehicle</div>
+              <div className="mb-4">
+                <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-3">Choose a vehicle</p>
                 <div className="space-y-3 max-h-64 overflow-y-auto pr-1"
                   style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(91,92,240,0.5) transparent' }}>
                   {VEHICLE_BRANDS.map(brand => (
                     <div key={brand.brand}>
-                      <div className="text-xs font-bold text-white/45 mb-2 px-1 uppercase tracking-wide">
-                        {brand.brand}
-                      </div>
+                      <p className="text-xs font-bold text-white/45 mb-2 px-0.5 uppercase tracking-wide">{brand.brand}</p>
                       <div className="flex flex-wrap gap-2">
                         {brand.models.map(v => (
-                          <button key={v.id}
-                            onClick={() => setSelectedProperty(v.id)}
-                            className={`flex flex-col items-start px-3 py-2 rounded-xl border transition-all duration-200 ${
-                              selectedProperty === v.id ? 'border-[#5B5CF0] bg-[#5B5CF0]/20' : 'border-white/10 bg-white/5 hover:bg-white/10'
-                            }`}>
+                          <button key={v.id} onClick={() => setSelectedProperty(v.id)}
+                            className={`flex flex-col items-start px-3 py-2 rounded-xl border transition-all duration-200 ${selectedProperty === v.id ? SEL_CARD : DEF_CARD}`}>
                             <span className="text-white text-sm font-semibold">{v.model}</span>
                             <span className="text-white/40 text-xs">${v.price.toLocaleString()}</span>
                           </button>
@@ -309,25 +292,28 @@ export default function EnHome() {
               </div>
             )}
 
-            <div className="flex gap-3">
-              <button onClick={() => setStep(1)}
+            {/* Nav: back always visible; next only appears when both purpose + subtype selected */}
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => goStep(1)}
                 className="px-6 py-4 rounded-2xl text-white/50 text-sm border border-white/10">← Back</button>
-              <button onClick={() => { if (canProceedStep2) setStep(3) }}
-                disabled={!canProceedStep2}
-                className="flex-1 py-4 rounded-2xl text-white font-semibold text-base transition-all"
-                style={{ background: canProceedStep2 ? 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' : 'rgba(255,255,255,0.1)' }}>
-                Next: Choose Occupation →
-              </button>
+              {canGoStep3 && (
+                <button onClick={() => setStep(3)}
+                  className="flex-1 py-4 rounded-2xl text-white font-semibold text-base" style={BG_GRAD}>
+                  Next: Choose Your Job →
+                </button>
+              )}
             </div>
           </div>
         )}
 
-        {/* ── Step 3: Select Occupation ── */}
+        {/* ═══════════════════════════════════════════
+            Step 3 — Choose Occupation
+        ═══════════════════════════════════════════ */}
         {step === 3 && (
           <div className="transition-all duration-500">
-            <div className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">Step 3 · Select your occupation</div>
+            <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">Step 3 · What&apos;s your job?</p>
 
-            <div className="space-y-4 mb-5 overflow-y-auto"
+            <div className="space-y-4 mb-4 overflow-y-auto"
               style={{ maxHeight: '360px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(91,92,240,0.5) transparent' }}>
               {OCCUPATION_GROUPS.map(group => (
                 <div key={group.industry}>
@@ -339,15 +325,11 @@ export default function EnHome() {
                     {group.occupations.map(occ => {
                       const sel = selectedOccupation === occ.id
                       return (
-                        <button key={occ.id}
-                          onClick={() => setSelectedOccupation(occ.id)}
-                          className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-150 text-left ${
-                            sel ? 'border-[#5B5CF0] bg-[#5B5CF0]/20' : 'border-white/10 bg-white/5 hover:bg-white/10'
-                          }`}>
+                        <button key={occ.id} onClick={() => setSelectedOccupation(occ.id)}
+                          className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-150 text-left ${sel ? SEL_CARD : DEF_CARD}`}>
                           <span className="text-white text-sm">{occ.name}</span>
                           {sel && (
-                            <div className="w-4 h-4 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0 ml-1"
-                              style={BG}>✓</div>
+                            <span className="w-4 h-4 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0 ml-1" style={BG_GRAD}>✓</span>
                           )}
                         </button>
                       )
@@ -357,14 +339,16 @@ export default function EnHome() {
               ))}
             </div>
 
-            <div className="flex gap-3">
-              <button onClick={() => setStep(2)}
+            {/* Nav: back always visible; See Results only after occupation selected */}
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => goStep(2)}
                 className="px-6 py-4 rounded-2xl text-white/50 text-sm border border-white/10">← Back</button>
-              <a href={resultsUrl}
-                className={`flex-1 py-4 rounded-2xl text-white font-semibold text-base text-center transition-all ${!selectedOccupation ? 'pointer-events-none opacity-40' : ''}`}
-                style={BG}>
-                See My Results →
-              </a>
+              {selectedOccupation && (
+                <a href={resultsUrl}
+                  className="flex-1 py-4 rounded-2xl text-white font-semibold text-base text-center" style={BG_GRAD}>
+                  See Results →
+                </a>
+              )}
             </div>
           </div>
         )}
