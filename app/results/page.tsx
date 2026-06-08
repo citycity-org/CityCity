@@ -219,7 +219,6 @@ function ResultsContent() {
           .select('months_current, months_2019, months_1995')
           .eq('city_id', city)
           .eq('occupation_id', occupation)
-          .eq('vehicle_id', property)
           .single()
         if (data) {
           setDbCurrent(data.months_current)
