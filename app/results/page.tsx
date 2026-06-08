@@ -214,17 +214,18 @@ function ResultsContent() {
           }
         }
       } else if (purpose === 'car') {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('vehicle_months')
           .select('months_current, months_2019, months_1995')
           .eq('city_id', city)
           .eq('occupation_id', occupation)
           .limit(1)
+        console.log('[vehicle_months] row:', data?.[0], 'error:', error)
         const row = data?.[0]
         if (row) {
-          setDbCurrent(row.months_current)
-          setDb2019(row.months_2019)
-          setDb1995(row.months_1995)
+          setDbCurrent(parseFloat(row.months_current))
+          setDb2019(parseFloat(row.months_2019))
+          setDb1995(parseFloat(row.months_1995))
         }
       }
     }
