@@ -214,12 +214,16 @@ function ResultsContent() {
           }
         }
       } else if (purpose === 'car') {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('vehicle_months')
           .select('months_current, months_2019, months_1995')
           .eq('city_id', city)
           .eq('occupation_id', occupation)
+          .limit(1)
           .single()
+        console.log('[vehicle_months] query params:', { city, occupation })
+        console.log('[vehicle_months] data:', data)
+        console.log('[vehicle_months] error:', error)
         if (data) {
           setDbCurrent(data.months_current)
           setDb2019(data.months_2019)
