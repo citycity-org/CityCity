@@ -220,6 +220,7 @@ function ResultsContent() {
           .eq('city_id', city)
           .eq('occupation_id', occupation)
           .limit(1)
+        console.log('[vehicle_months] params:', { city_id: city, occupation_id: occupation })
         console.log('[vehicle_months] row:', data?.[0], 'error:', error)
         const row = data?.[0]
         if (row) {
