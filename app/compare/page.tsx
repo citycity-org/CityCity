@@ -12,24 +12,30 @@ const CITY_DATA: Record<string, {
   edi: number
   hci: number
   tci: number
+  eoi: number
+  cli: number
+  psi: number
 }> = {
-  vancouver: { name: '温哥华', province: 'BC', score: 38, hpiYears: 10.2, rpi: 43.6, cpi: 7.6, eqi: 9, edi: 8, hci: 7, tci: 8 },
-  toronto: { name: '多伦多', province: 'ON', score: 41, hpiYears: 9.6, rpi: 41.2, cpi: 7.2, eqi: 7, edi: 8, hci: 7, tci: 9 },
-  calgary: { name: '卡尔加里', province: 'AB', score: 74, hpiYears: 3.9, rpi: 24.1, cpi: 4.8, eqi: 8, edi: 8, hci: 8, tci: 6 },
-  montreal: { name: '蒙特利尔', province: 'QC', score: 55, hpiYears: 7.4, rpi: 30.2, cpi: 6.8, eqi: 7, edi: 7, hci: 6, tci: 8 },
-  ottawa: { name: '渥太华', province: 'ON', score: 62, hpiYears: 6.8, rpi: 28.4, cpi: 6.2, eqi: 8, edi: 9, hci: 8, tci: 7 },
+  vancouver: { name: '温哥华', province: 'BC', score: 70, hpiYears: 10.2, rpi: 43.6, cpi: 7.6, eqi: 90, edi: 88, hci: 88, tci: 60, eoi: 80, cli: 95, psi: 72 },
+  toronto: { name: '多伦多', province: 'ON', score: 70, hpiYears: 9.6, rpi: 41.2, cpi: 7.2, eqi: 75, edi: 92, hci: 90, tci: 65, eoi: 92, cli: 68, psi: 68 },
+  calgary: { name: '卡尔加里', province: 'AB', score: 72, hpiYears: 3.9, rpi: 24.1, cpi: 4.8, eqi: 82, edi: 72, hci: 78, tci: 82, eoi: 65, cli: 42, psi: 78 },
+  montreal: { name: '蒙特利尔', province: 'QC', score: 75, hpiYears: 5.5, rpi: 30.2, cpi: 5.8, eqi: 78, edi: 85, hci: 75, tci: 72, eoi: 72, cli: 60, psi: 70 },
+  ottawa: { name: '渥太华', province: 'ON', score: 73, hpiYears: 6.8, rpi: 28.4, cpi: 6.2, eqi: 80, edi: 80, hci: 82, tci: 75, eoi: 75, cli: 55, psi: 82 },
 }
 
 const ALL_CITIES = Object.keys(CITY_DATA)
 
 const DIMS = [
-  { key: 'hpiYears', name: '买房指数', unit: '年', lowerBetter: true },
-  { key: 'rpi', name: '租房指数', unit: '%', lowerBetter: true },
-  { key: 'cpi', name: '买车指数', unit: '月薪', lowerBetter: true },
-  { key: 'eqi', name: '环境质量', unit: '/10', lowerBetter: false },
-  { key: 'edi', name: '教育指数', unit: '/10', lowerBetter: false },
-  { key: 'hci', name: '医疗指数', unit: '/10', lowerBetter: false },
-  { key: 'tci', name: '交通指数', unit: '/10', lowerBetter: false },
+  { key: 'hpiYears', name: '买房 HPI', unit: '年', lowerBetter: true },
+  { key: 'eoi', name: '就业 EOI', unit: '/100', lowerBetter: false },
+  { key: 'rpi', name: '租房 RPI', unit: '%', lowerBetter: true },
+  { key: 'cpi', name: '买车 CPI', unit: '月薪', lowerBetter: true },
+  { key: 'hci', name: '医疗 HCI', unit: '/100', lowerBetter: false },
+  { key: 'eqi', name: '环境 EQI', unit: '/100', lowerBetter: false },
+  { key: 'edi', name: '教育 EDI', unit: '/100', lowerBetter: false },
+  { key: 'cli', name: '气候 CLI', unit: '/100', lowerBetter: false },
+  { key: 'tci', name: '交通 TCI', unit: '/100', lowerBetter: false },
+  { key: 'psi', name: '治安 PSI', unit: '/100', lowerBetter: false },
 ]
 
 function CitySelector({
@@ -172,7 +178,7 @@ function CompareContent() {
       <div className="max-w-2xl mx-auto px-6 py-6">
         <div className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden shadow-sm">
           <div className="px-5 py-4 border-b border-[#F3F4F6]">
-            <div className="text-sm font-semibold text-[#111827]">七维指数对比</div>
+            <div className="text-sm font-semibold text-[#111827]">10维指数对比</div>
             <div className="flex items-center gap-4 mt-2">
               <div className="flex items-center gap-1.5">
                 <div className="w-3 h-3 rounded-full bg-[#4F8EF7]" />

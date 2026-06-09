@@ -12,13 +12,16 @@ const REGIONS = [
 
 const DIMS = [
   { id: 'overall', name: '综合指数' },
-  { id: 'hpi', name: '买房指数 HPI' },
-  { id: 'rpi', name: '租房指数 RPI' },
-  { id: 'cpi', name: '买车指数 CPI' },
-  { id: 'eqi', name: '环境质量 EQI' },
-  { id: 'edi', name: '教育指数 EDI' },
-  { id: 'hci', name: '医疗指数 HCI' },
-  { id: 'tci', name: '交通指数 TCI' },
+  { id: 'hpi', name: '买房 HPI' },
+  { id: 'eoi', name: '就业 EOI' },
+  { id: 'rpi', name: '租房 RPI' },
+  { id: 'cpi', name: '买车 CPI' },
+  { id: 'hci', name: '医疗 HCI' },
+  { id: 'eqi', name: '环境 EQI' },
+  { id: 'edi', name: '教育 EDI' },
+  { id: 'cli', name: '气候 CLI' },
+  { id: 'tci', name: '交通 TCI' },
+  { id: 'psi', name: '治安 PSI' },
 ]
 
 const OCCUPATION_NAMES: Record<string, string> = {
@@ -34,62 +37,78 @@ const OCCUPATION_NAMES: Record<string, string> = {
   pilot: '商业飞行员', security: '保安', cleaner: '清洁工',
 }
 
-// Baseline city data (fallback values; HPI gets overridden by Supabase)
+// 10维指数城市基础数据 (v3.6)
+// EOI/CLI/PSI 新增；综合分基于10维加权公式
 const CITIES_BASE = [
   {
     id: 'vancouver', name: '温哥华', province: 'British Columbia', region: 'bc',
-    score: 38,
+    score: 70,
     hpi: { years: 10.2, label: '压垮性', color: '#DC2626', bg: '#FEE2E2' },
+    eoi: { score: 80, label: '优秀', color: '#059669', bg: '#D1FAE5' },
     rpi: { value: 43.6, label: '难以为继', color: '#DC2626', bg: '#FEE2E2' },
     cpi: { months: 7.6, label: '沉重', color: '#D97706', bg: '#FEF3C7' },
-    eqi: { score: 9, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    edi: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    hci: { score: 7, label: '良好', color: '#65A30D', bg: '#ECFDF5' },
-    tci: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    hci: { score: 88, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    eqi: { score: 90, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    edi: { score: 88, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    cli: { score: 95, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    tci: { score: 60, label: '良好', color: '#65A30D', bg: '#F0FDF4' },
+    psi: { score: 72, label: '优秀', color: '#059669', bg: '#D1FAE5' },
   },
   {
     id: 'toronto', name: '多伦多', province: 'Ontario', region: 'on',
-    score: 41,
+    score: 70,
     hpi: { years: 9.6, label: '压垮性', color: '#DC2626', bg: '#FEE2E2' },
+    eoi: { score: 92, label: '卓越', color: '#047857', bg: '#ECFDF5' },
     rpi: { value: 41.2, label: '难以为继', color: '#DC2626', bg: '#FEE2E2' },
     cpi: { months: 7.2, label: '沉重', color: '#D97706', bg: '#FEF3C7' },
-    eqi: { score: 7, label: '良好', color: '#65A30D', bg: '#ECFDF5' },
-    edi: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    hci: { score: 7, label: '良好', color: '#65A30D', bg: '#ECFDF5' },
-    tci: { score: 9, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    hci: { score: 90, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    eqi: { score: 75, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    edi: { score: 92, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    cli: { score: 68, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    tci: { score: 65, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    psi: { score: 68, label: '优秀', color: '#059669', bg: '#D1FAE5' },
   },
   {
     id: 'montreal', name: '蒙特利尔', province: 'Québec', region: 'qc',
-    score: 55,
-    hpi: { years: 7.4, label: '沉重', color: '#D97706', bg: '#FEF3C7' },
+    score: 75,
+    hpi: { years: 5.5, label: '可承受', color: '#65A30D', bg: '#F0FDF4' },
+    eoi: { score: 72, label: '优秀', color: '#059669', bg: '#D1FAE5' },
     rpi: { value: 30.2, label: '捉襟见肘', color: '#D97706', bg: '#FEF3C7' },
-    cpi: { months: 6.8, label: '沉重', color: '#D97706', bg: '#FEF3C7' },
-    eqi: { score: 7, label: '良好', color: '#65A30D', bg: '#ECFDF5' },
-    edi: { score: 7, label: '良好', color: '#65A30D', bg: '#ECFDF5' },
-    hci: { score: 6, label: '尚可', color: '#D97706', bg: '#FEF3C7' },
-    tci: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    cpi: { months: 5.8, label: '尚可', color: '#D97706', bg: '#FEF3C7' },
+    hci: { score: 75, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    eqi: { score: 78, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    edi: { score: 85, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    cli: { score: 60, label: '良好', color: '#65A30D', bg: '#F0FDF4' },
+    tci: { score: 72, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    psi: { score: 70, label: '优秀', color: '#059669', bg: '#D1FAE5' },
   },
   {
     id: 'ottawa', name: '渥太华', province: 'Ontario', region: 'on',
-    score: 62,
+    score: 73,
     hpi: { years: 6.8, label: '严峻', color: '#EA580C', bg: '#FEF0E7' },
+    eoi: { score: 75, label: '优秀', color: '#059669', bg: '#D1FAE5' },
     rpi: { value: 28.4, label: '捉襟见肘', color: '#D97706', bg: '#FEF3C7' },
     cpi: { months: 6.2, label: '沉重', color: '#D97706', bg: '#FEF3C7' },
-    eqi: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    edi: { score: 9, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    hci: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    tci: { score: 7, label: '良好', color: '#65A30D', bg: '#ECFDF5' },
+    hci: { score: 82, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    eqi: { score: 80, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    edi: { score: 80, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    cli: { score: 55, label: '良好', color: '#65A30D', bg: '#F0FDF4' },
+    tci: { score: 75, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    psi: { score: 82, label: '卓越', color: '#047857', bg: '#ECFDF5' },
   },
   {
     id: 'calgary', name: '卡尔加里', province: 'Alberta', region: 'ab',
-    score: 74,
+    score: 72,
     hpi: { years: 3.9, label: '可负担', color: '#059669', bg: '#D1FAE5' },
-    rpi: { value: 24.1, label: '尚可', color: '#65A30D', bg: '#ECFDF5' },
+    eoi: { score: 65, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    rpi: { value: 24.1, label: '尚可', color: '#65A30D', bg: '#F0FDF4' },
     cpi: { months: 4.8, label: '可负担', color: '#059669', bg: '#D1FAE5' },
-    eqi: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    edi: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    hci: { score: 8, label: '优秀', color: '#059669', bg: '#D1FAE5' },
-    tci: { score: 6, label: '良好', color: '#65A30D', bg: '#ECFDF5' },
+    hci: { score: 78, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    eqi: { score: 82, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    edi: { score: 72, label: '优秀', color: '#059669', bg: '#D1FAE5' },
+    cli: { score: 42, label: '尚可', color: '#D97706', bg: '#FEF3C7' },
+    tci: { score: 82, label: '卓越', color: '#047857', bg: '#ECFDF5' },
+    psi: { score: 78, label: '优秀', color: '#059669', bg: '#D1FAE5' },
   },
 ]
 
@@ -238,6 +257,9 @@ export default function RankingPage() {
     if (activeDim === 'edi') return b.edi.score - a.edi.score
     if (activeDim === 'hci') return b.hci.score - a.hci.score
     if (activeDim === 'tci') return b.tci.score - a.tci.score
+    if (activeDim === 'eoi') return b.eoi.score - a.eoi.score
+    if (activeDim === 'cli') return b.cli.score - a.cli.score
+    if (activeDim === 'psi') return b.psi.score - a.psi.score
     return b.score - a.score
   })
 
@@ -252,7 +274,7 @@ export default function RankingPage() {
         <div className="max-w-2xl mx-auto relative z-10">
           <div className="text-white/40 text-sm mb-1">城市排行榜</div>
           <h1 className="text-2xl font-bold text-white mb-1">加拿大城市生活指数排行榜</h1>
-          <p className="text-white/40 text-sm">5个城市 · 8维生活指数 · 2026年Q1</p>
+          <p className="text-white/40 text-sm">5个城市 · 10维生活指数 · 2026年Q1</p>
         </div>
       </div>
 
@@ -392,7 +414,19 @@ export default function RankingPage() {
                     return (
                       <>
                         <div className="text-2xl font-bold font-mono" style={{ color: d.color, letterSpacing: '-0.5px' }}>
-                          {d.score}<span className="text-sm text-[#9CA3AF] ml-0.5">/10</span>
+                          {d.score}<span className="text-sm text-[#9CA3AF] ml-0.5">/100</span>
+                        </div>
+                        <div className="text-xs font-bold px-2 py-0.5 rounded-full mt-1 inline-block"
+                          style={{ background: d.bg, color: d.color }}>{d.label}</div>
+                      </>
+                    )
+                  })()}
+                  {(['eoi', 'cli', 'psi'] as const).includes(activeDim as 'eoi' | 'cli' | 'psi') && (() => {
+                    const d = city[activeDim as 'eoi' | 'cli' | 'psi']
+                    return (
+                      <>
+                        <div className="text-2xl font-bold font-mono" style={{ color: d.color, letterSpacing: '-0.5px' }}>
+                          {d.score}<span className="text-sm text-[#9CA3AF] ml-0.5">/100</span>
                         </div>
                         <div className="text-xs font-bold px-2 py-0.5 rounded-full mt-1 inline-block"
                           style={{ background: d.bg, color: d.color }}>{d.label}</div>
@@ -475,8 +509,8 @@ export default function RankingPage() {
         })}
 
         <div className="text-center py-3">
-          <p className="text-xs text-[#D1D5DB]">数据来源：StatCan · CREA · CMHC · Health Canada · Fraser · CIHI · Walk Score</p>
-          <p className="text-xs text-[#D1D5DB] mt-0.5">综合指数 = 生存成本60分 + 环境指数40分 · 更新于 2026年Q1 · citycity.org</p>
+          <p className="text-xs text-[#D1D5DB]">数据来源：StatCan · CREA · CMHC · CIHI · Environment Canada · Job Bank · Maclean's</p>
+          <p className="text-xs text-[#D1D5DB] mt-0.5">10维综合指数 = 生存层50分 + 环境层50分 · 更新于 2026年Q1 · citycity.org</p>
         </div>
       </div>
     </main>
