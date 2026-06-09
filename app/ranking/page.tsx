@@ -445,7 +445,7 @@ export default function RankingPage() {
                     { icon: '🏠', name: '买房', val: `${city.hpi.years}年`, color: city.hpi.color, bg: city.hpi.bg, label: city.hpi.label },
                     { icon: '🔑', name: '租房', val: `${city.rpi.value}%`, color: city.rpi.color, bg: city.rpi.bg, label: city.rpi.label },
                     { icon: '🚗', name: '买车', val: `${city.cpi.months}月`, color: city.cpi.color, bg: city.cpi.bg, label: city.cpi.label },
-                    { icon: '🌿', name: '环境', val: `${city.eqi.score}/10`, color: city.eqi.color, bg: city.eqi.bg, label: city.eqi.label },
+                    { icon: '🌿', name: '环境', val: `${city.eqi.score}/100`, color: city.eqi.color, bg: city.eqi.bg, label: city.eqi.label },
                   ].map(item => (
                     <div key={item.name} className="text-center p-2 rounded-xl" style={{ background: '#F9FAFB' }}>
                       <div className="text-xs text-[#9CA3AF] mb-1">{item.icon} {item.name}</div>
