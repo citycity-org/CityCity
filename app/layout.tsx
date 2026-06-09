@@ -27,7 +27,8 @@ export default function RootLayout({
             <img
               src="/logo3.png"
               alt="CityCity"
-              className="h-9 w-auto"
+              className="h-16 w-auto"
+              style={{ maxWidth: '160px', objectFit: 'contain' }}
             />
           </a>
 
