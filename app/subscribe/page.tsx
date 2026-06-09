@@ -1,6 +1,5 @@
 'use client'
-import { useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
 const CITY_NAMES: Record<string, string> = {
   vancouver: '温哥华',
@@ -18,11 +17,15 @@ const REPORT_ITEMS = [
 ]
 
 function SubscribeContent() {
-  const searchParams = useSearchParams()
-  const city = searchParams.get('city') || 'vancouver'
-  const cityName = CITY_NAMES[city] || '温哥华'
-
+  const [city, setCity] = useState('vancouver')
   const [frequency, setFrequency] = useState<'quarterly' | 'monthly'>('quarterly')
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setCity(params.get('city') || 'vancouver')
+  }, [])
+
+  const cityName = CITY_NAMES[city] || '温哥华'
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
 
@@ -226,13 +229,5 @@ function SubscribeContent() {
 }
 
 export default function SubscribePage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#151827] flex items-center justify-center">
-        <div className="text-white/50">加载中...</div>
-      </div>
-    }>
-      <SubscribeContent />
-    </Suspense>
-  )
+  return <SubscribeContent />
 }

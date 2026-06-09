@@ -1,6 +1,5 @@
 'use client'
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
 const CITY_DATA: Record<string, {
   name: string
@@ -87,15 +86,18 @@ function CitySelector({
 }
 
 function CompareContent() {
-  const searchParams = useSearchParams()
-  const initialCity = searchParams.get('city') || 'vancouver'
-  const occupation = searchParams.get('occupation') || 'nurse'
-
-  const [cityA, setCityA] = useState(initialCity)
-  const [cityB, setCityB] = useState(initialCity === 'vancouver' ? 'calgary' : 'vancouver')
+  const [cityA, setCityA] = useState('vancouver')
+  const [cityB, setCityB] = useState('calgary')
+  const [occupation, setOccupation] = useState('nurse')
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const city = params.get('city') || 'vancouver'
+    const occ = params.get('occupation') || 'nurse'
+    setCityA(city)
+    setCityB(city === 'vancouver' ? 'calgary' : 'vancouver')
+    setOccupation(occ)
     const t = setTimeout(() => setLoaded(true), 300)
     return () => clearTimeout(t)
   }, [])
@@ -248,13 +250,5 @@ function CompareContent() {
 }
 
 export default function Compare() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#151827] flex items-center justify-center">
-        <div className="text-white/50">加载中...</div>
-      </div>
-    }>
-      <CompareContent />
-    </Suspense>
-  )
+  return <CompareContent />
 }

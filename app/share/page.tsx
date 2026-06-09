@@ -1,6 +1,5 @@
 'use client'
-import { useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
 const CITY_NAMES: Record<string, string> = {
   vancouver: '温哥华',
@@ -51,15 +50,19 @@ const SHARE_PLATFORMS = [
 ]
 
 function ShareContent() {
-  const searchParams = useSearchParams()
-  const city = searchParams.get('city') || 'vancouver'
-  const occupation = searchParams.get('occupation') || 'nurse'
+  const [city, setCity] = useState('vancouver')
+  const [occupation, setOccupation] = useState('nurse')
+  const [activeCard, setActiveCard] = useState('buy')
+  const [activePlatform, setActivePlatform] = useState('xiaohongshu')
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setCity(params.get('city') || 'vancouver')
+    setOccupation(params.get('occupation') || 'nurse')
+  }, [])
 
   const cityName = CITY_NAMES[city] || '温哥华'
   const occupationName = OCCUPATION_NAMES[occupation] || '注册护士'
-
-  const [activeCard, setActiveCard] = useState('buy')
-  const [activePlatform, setActivePlatform] = useState('xiaohongshu')
 
   return (
     <main className="min-h-screen bg-[#F5F7FB]">
@@ -293,13 +296,5 @@ function ShareContent() {
 }
 
 export default function SharePage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#151827] flex items-center justify-center">
-        <div className="text-white/50">加载中...</div>
-      </div>
-    }>
-      <ShareContent />
-    </Suspense>
-  )
+  return <ShareContent />
 }
