@@ -123,10 +123,14 @@ export default function Home() {
     const topojson = window.topojson
     const dpr = window.devicePixelRatio || 1
 
-    const W  = canvas.offsetWidth
-    const H  = canvas.offsetHeight
+    // Use window dimensions directly — avoids display:none 0-size trap
+    const NAV_H = 56
+    const W = window.innerWidth
+    const H = window.innerHeight - NAV_H
     canvas.width  = W * dpr
     canvas.height = H * dpr
+    canvas.style.width  = W + 'px'
+    canvas.style.height = H + 'px'
     const ctx = canvas.getContext('2d')!
     ctx.scale(dpr, dpr)
 
@@ -435,11 +439,11 @@ export default function Home() {
         </div>
       )}
 
-      {/* Globe canvas */}
+      {/* Globe canvas — always in DOM so dimensions are available */}
       <canvas
         ref={canvasRef}
         className="w-full h-full"
-        style={{ cursor: dragging.current ? 'grabbing' : 'grab', display: ready ? 'block' : 'none' }}
+        style={{ cursor: 'grab' }}
       />
 
       {/* ── UI Overlays ─────────────────────────────────────────────────── */}
