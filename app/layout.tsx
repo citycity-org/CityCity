@@ -42,6 +42,10 @@ export default function RootLayout({
               className="px-3 py-2 rounded-lg text-sm font-medium text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] transition-all">
               城市对比
             </a>
+            <a href="/calculate"
+              className="px-3 py-2 rounded-lg text-sm font-medium text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] transition-all">
+              算成本
+            </a>
             <a href="/subscribe"
               className="px-3 py-2 rounded-lg text-sm font-medium text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] transition-all">
               订阅

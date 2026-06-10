@@ -1,359 +1,598 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
-const CITIES = [
-  { id: 'vancouver', name: '温哥华', nameEn: 'Vancouver',  provinceShort: 'BC', province: '不列颠哥伦比亚省', region: 'canada' },
-  { id: 'toronto',   name: '多伦多', nameEn: 'Toronto',    provinceShort: 'ON', province: '安大略省',          region: 'canada' },
-  { id: 'calgary',   name: '卡尔加里', nameEn: 'Calgary',  provinceShort: 'AB', province: '艾伯塔省',          region: 'canada' },
-  { id: 'montreal',  name: '蒙特利尔', nameEn: 'Montréal', provinceShort: 'QC', province: '魁北克省',          region: 'canada' },
-  { id: 'ottawa',    name: '渥太华', nameEn: 'Ottawa',     provinceShort: 'ON', province: '安大略省',          region: 'canada' },
+declare global {
+  interface Window { d3: any; topojson: any }
+}
+
+interface City {
+  id: string
+  name: string
+  nameEn: string
+  lat: number
+  lng: number
+  active: boolean
+  score?: number
+  hpiYears?: number
+  rpi?: number
+}
+
+const CITIES: City[] = [
+  // Active Canadian cities
+  { id: 'vancouver', name: '温哥华', nameEn: 'Vancouver',   lat: 49.25,  lng: -123.12, active: true,  score: 70, hpiYears: 10.2, rpi: 43.6 },
+  { id: 'toronto',   name: '多伦多', nameEn: 'Toronto',     lat: 43.65,  lng: -79.38,  active: true,  score: 70, hpiYears: 9.6,  rpi: 41.2 },
+  { id: 'calgary',   name: '卡尔加里', nameEn: 'Calgary',   lat: 51.05,  lng: -114.07, active: true,  score: 72, hpiYears: 3.9,  rpi: 24.1 },
+  { id: 'montreal',  name: '蒙特利尔', nameEn: 'Montréal',  lat: 45.50,  lng: -73.57,  active: true,  score: 75, hpiYears: 5.5,  rpi: 30.2 },
+  { id: 'ottawa',    name: '渥太华', nameEn: 'Ottawa',      lat: 45.42,  lng: -75.69,  active: true,  score: 73, hpiYears: 6.8,  rpi: 28.4 },
+  // Coming soon – global cities
+  { id: 'newyork',   name: '纽约',     nameEn: 'New York',       lat: 40.71, lng: -74.01,  active: false },
+  { id: 'london',    name: '伦敦',     nameEn: 'London',         lat: 51.51, lng: -0.13,   active: false },
+  { id: 'tokyo',     name: '东京',     nameEn: 'Tokyo',          lat: 35.68, lng: 139.69,  active: false },
+  { id: 'sydney',    name: '悉尼',     nameEn: 'Sydney',         lat: -33.87,lng: 151.21,  active: false },
+  { id: 'melbourne', name: '墨尔本',   nameEn: 'Melbourne',      lat: -37.81,lng: 144.96,  active: false },
+  { id: 'singapore', name: '新加坡',   nameEn: 'Singapore',      lat: 1.35,  lng: 103.82,  active: false },
+  { id: 'shanghai',  name: '上海',     nameEn: 'Shanghai',       lat: 31.23, lng: 121.47,  active: false },
+  { id: 'beijing',   name: '北京',     nameEn: 'Beijing',        lat: 39.91, lng: 116.39,  active: false },
+  { id: 'paris',     name: '巴黎',     nameEn: 'Paris',          lat: 48.85, lng: 2.35,    active: false },
+  { id: 'berlin',    name: '柏林',     nameEn: 'Berlin',         lat: 52.52, lng: 13.40,   active: false },
+  { id: 'amsterdam', name: '阿姆斯特丹', nameEn: 'Amsterdam',    lat: 52.37, lng: 4.90,    active: false },
+  { id: 'zurich',    name: '苏黎世',   nameEn: 'Zürich',         lat: 47.38, lng: 8.54,    active: false },
+  { id: 'dubai',     name: '迪拜',     nameEn: 'Dubai',          lat: 25.20, lng: 55.27,   active: false },
+  { id: 'seoul',     name: '首尔',     nameEn: 'Seoul',          lat: 37.57, lng: 126.98,  active: false },
+  { id: 'hongkong',  name: '香港',     nameEn: 'Hong Kong',      lat: 22.32, lng: 114.16,  active: false },
+  { id: 'taipei',    name: '台北',     nameEn: 'Taipei',         lat: 25.05, lng: 121.53,  active: false },
+  { id: 'sf',        name: '旧金山',   nameEn: 'San Francisco',  lat: 37.77, lng: -122.42, active: false },
+  { id: 'losangeles',name: '洛杉矶',   nameEn: 'Los Angeles',    lat: 34.05, lng: -118.24, active: false },
+  { id: 'chicago',   name: '芝加哥',   nameEn: 'Chicago',        lat: 41.88, lng: -87.63,  active: false },
+  { id: 'miami',     name: '迈阿密',   nameEn: 'Miami',          lat: 25.77, lng: -80.19,  active: false },
+  { id: 'seattle',   name: '西雅图',   nameEn: 'Seattle',        lat: 47.61, lng: -122.33, active: false },
+  { id: 'auckland',  name: '奥克兰',   nameEn: 'Auckland',       lat: -36.85,lng: 174.76,  active: false },
+  { id: 'dublin',    name: '都柏林',   nameEn: 'Dublin',         lat: 53.34, lng: -6.27,   active: false },
+  { id: 'stockholm', name: '斯德哥尔摩', nameEn: 'Stockholm',    lat: 59.33, lng: 18.07,   active: false },
+  { id: 'nairobi',   name: '内罗毕',   nameEn: 'Nairobi',        lat: -1.29, lng: 36.82,   active: false },
+  { id: 'mexico',    name: '墨西哥城', nameEn: 'Mexico City',    lat: 19.43, lng: -99.13,  active: false },
+  { id: 'saopaulo',  name: '圣保罗',   nameEn: 'São Paulo',      lat: -23.55,lng: -46.63,  active: false },
 ]
 
-const PROVINCE_GROUPS = [
-  { short: 'BC', name: '不列颠哥伦比亚省', cityIds: ['vancouver'] },
-  { short: 'ON', name: '安大略省',          cityIds: ['toronto', 'ottawa'] },
-  { short: 'AB', name: '艾伯塔省',          cityIds: ['calgary'] },
-  { short: 'QC', name: '魁北克省',          cityIds: ['montreal'] },
-]
-
-const PURPOSES = [
-  { id: 'buy',  icon: '🏠', name: '买房', desc: '工作几年才买得起？' },
-  { id: 'rent', icon: '🔑', name: '租房', desc: '月薪多少被租金吃掉？' },
-  { id: 'car',  icon: '🚗', name: '买车', desc: '要花几个月薪水？' },
-]
-
-const HOUSE_TYPES = [
-  { id: '1br_condo', name: '1居室公寓', desc: 'Condo' },
-  { id: '2br_condo', name: '2居室公寓', desc: 'Condo' },
-  { id: '3br_condo', name: '3居室公寓', desc: 'Condo' },
-  { id: 'townhouse',  name: '联排别墅',  desc: 'Townhouse' },
-  { id: 'house',      name: '独立屋',    desc: 'Detached House' },
-]
-
-const VEHICLE_BRANDS = [
-  { brand: 'Honda',     models: [
-    { id: 'honda_civic',  model: 'Civic',  price: 28690 },
-    { id: 'honda_crv',    model: 'CR-V',   price: 37890 },
-    { id: 'honda_accord', model: 'Accord', price: 32595 },
-  ]},
-  { brand: 'Toyota',    models: [
-    { id: 'toyota_corolla', model: 'Corolla', price: 25025 },
-    { id: 'toyota_rav4',    model: 'RAV4',    price: 38025 },
-    { id: 'toyota_camry',   model: 'Camry',   price: 32025 },
-  ]},
-  { brand: 'Ford',      models: [
-    { id: 'ford_f150',    model: 'F-150',   price: 49995 },
-    { id: 'ford_escape',  model: 'Escape',  price: 35995 },
-    { id: 'ford_mustang', model: 'Mustang', price: 38995 },
-  ]},
-  { brand: 'Chevrolet', models: [
-    { id: 'chevrolet_silverado', model: 'Silverado 1500', price: 46498 },
-    { id: 'chevrolet_equinox',   model: 'Equinox',        price: 37498 },
-  ]},
-  { brand: 'Tesla',     models: [
-    { id: 'tesla_model3', model: 'Model 3', price: 53990 },
-    { id: 'tesla_modely', model: 'Model Y', price: 59990 },
-  ]},
-  { brand: 'BMW',       models: [
-    { id: 'bmw_3series', model: '3 Series', price: 49900 },
-    { id: 'bmw_x3',      model: 'X3',       price: 57900 },
-  ]},
-  { brand: 'Hyundai',   models: [
-    { id: 'hyundai_elantra', model: 'Elantra', price: 23599 },
-    { id: 'hyundai_tucson',  model: 'Tucson',  price: 35349 },
-  ]},
-]
-
-const OCCUPATION_GROUPS = [
-  { industry: '医疗',       occupations: [
-    { id: 'nurse',      name: '注册护士' }, { id: 'doctor',     name: '家庭医生' },
-    { id: 'pharmacist', name: '药剂师' },   { id: 'dentist',    name: '牙医' },
-  ]},
-  { industry: '科技',       occupations: [
-    { id: 'software_eng', name: '软件工程师' }, { id: 'data_analyst', name: '数据分析师' },
-    { id: 'it_support',   name: 'IT技术支持' },
-  ]},
-  { industry: '教育',       occupations: [
-    { id: 'teacher', name: '中学教师' },
-  ]},
-  { industry: '工程与建筑', occupations: [
-    { id: 'engineer',    name: '土木工程师' }, { id: 'electrician', name: '电工' },
-    { id: 'carpenter',   name: '木工' },       { id: 'plumber',     name: '水管工' },
-    { id: 'welder',      name: '焊工' },
-  ]},
-  { industry: '法律与金融', occupations: [
-    { id: 'lawyer',            name: '律师' },   { id: 'accountant',       name: '会计师' },
-    { id: 'financial_advisor', name: '财务顾问' },
-  ]},
-  { industry: '商业',       occupations: [
-    { id: 'real_estate', name: '房产经纪' }, { id: 'marketing', name: '市场营销专员' },
-    { id: 'hr',          name: '人力资源专员' },
-  ]},
-  { industry: '公共服务',   occupations: [
-    { id: 'police',       name: '警察' },       { id: 'firefighter',   name: '消防员' },
-    { id: 'social_worker',name: '社会工作者' },
-  ]},
-  { industry: '餐饮',       occupations: [
-    { id: 'chef', name: '厨师' }, { id: 'chef_executive', name: '行政总厨' },
-  ]},
-  { industry: '其他',       occupations: [
-    { id: 'retail',       name: '零售店员' }, { id: 'truck_driver', name: '卡车司机' },
-    { id: 'mechanic',     name: '汽车技师' }, { id: 'pilot',        name: '商业飞行员' },
-    { id: 'security',     name: '保安' },     { id: 'cleaner',      name: '清洁工' },
-  ]},
-]
-
-type City = typeof CITIES[0]
-
-const BG_GRAD: React.CSSProperties = { background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }
-const SEL_CARD = 'border-[#5B5CF0] bg-[#5B5CF0]/20'
-const DEF_CARD = 'border-white/10 bg-white/5 hover:bg-white/10'
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return }
+    const s = document.createElement('script')
+    s.src = src
+    s.onload = () => resolve()
+    s.onerror = reject
+    document.head.appendChild(s)
+  })
+}
 
 export default function Home() {
-  const [started, setStarted] = useState(false)
-  const [step, setStep] = useState<1 | 2 | 3>(1)
-  const [selectedCity, setSelectedCity] = useState<City>(CITIES[0])
-  const [selectedPurpose, setSelectedPurpose] = useState<string | null>(null)
-  const [selectedProperty, setSelectedProperty] = useState<string | null>(null)
-  const [selectedOccupation, setSelectedOccupation] = useState<string | null>(null)
+  const canvasRef     = useRef<HTMLCanvasElement>(null)
+  const rotRef        = useRef<[number, number]>([-100, -30])
+  const scaleRef      = useRef(0)
+  const minScaleRef   = useRef(0)
+  const maxScaleRef   = useRef(0)
+  const projRef       = useRef<any>(null)
+  const dragging      = useRef(false)
+  const pointerStart  = useRef<[number, number]>([0, 0])
+  const lastPos       = useRef<[number, number]>([0, 0])
+  const autoRotate    = useRef(true)
+  const animFrame     = useRef(0)
+  const worldData     = useRef<any>(null)
+  const pulseT        = useRef(0)
+  // pinch zoom
+  const pinchDist     = useRef(0)
 
-  useEffect(() => {
-    const t = setTimeout(() => setStarted(true), 400)
-    return () => clearTimeout(t)
+  const [ready,        setReady]        = useState(false)
+  const [selectedCity, setSelectedCity] = useState<City | null>(null)
+  const [panelOpen,    setPanelOpen]    = useState(false)
+  const [zoomLevel,    setZoomLevel]    = useState(0) // 0–100
+
+  const openCity = useCallback((city: City) => {
+    setSelectedCity(city)
+    setPanelOpen(true)
+    autoRotate.current = false
   }, [])
 
-  const selectPurpose = (id: string) => {
-    setSelectedPurpose(id)
-    setSelectedProperty(null) // 切换目的时重置子类型
-  }
+  const closePanel = useCallback(() => {
+    setPanelOpen(false)
+    autoRotate.current = true
+  }, [])
 
-  const goStep = (n: 1 | 2 | 3) => {
-    if (n === 2) { setSelectedPurpose(null); setSelectedProperty(null) }
-    setStep(n)
-  }
+  // ── Load D3 + TopoJSON + world atlas ───────────────────────────────────────
+  useEffect(() => {
+    Promise.all([
+      loadScript('https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js'),
+      loadScript('https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js'),
+    ])
+      .then(() =>
+        fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')
+          .then(r => r.json())
+      )
+      .then(data => {
+        worldData.current = data
+        setReady(true)
+      })
+      .catch(console.error)
+  }, [])
 
-  const canGoStep3 = selectedPurpose !== null && selectedProperty !== null
-  const resultsUrl = selectedOccupation
-    ? `/results?city=${selectedCity.id}&purpose=${selectedPurpose}&property=${selectedProperty}&occupation=${selectedOccupation}`
-    : '#'
+  // ── Globe renderer ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!ready || !canvasRef.current) return
+    const canvas = canvasRef.current
+    const d3       = window.d3
+    const topojson = window.topojson
+    const dpr = window.devicePixelRatio || 1
+
+    const W  = canvas.offsetWidth
+    const H  = canvas.offsetHeight
+    canvas.width  = W * dpr
+    canvas.height = H * dpr
+    const ctx = canvas.getContext('2d')!
+    ctx.scale(dpr, dpr)
+
+    const baseR  = Math.min(W, H) * 0.40
+    const cx     = W / 2
+    const cy     = H / 2
+    minScaleRef.current = baseR * 0.75
+    maxScaleRef.current = baseR * 5
+    if (scaleRef.current === 0) scaleRef.current = baseR
+
+    const projection = d3.geoOrthographic()
+      .scale(scaleRef.current)
+      .translate([cx, cy])
+      .clipAngle(90)
+      .rotate(rotRef.current)
+    projRef.current = projection
+
+    const path     = d3.geoPath().context(ctx)
+    const land     = topojson.feature(worldData.current, worldData.current.objects.land)
+    const graticule = d3.geoGraticule()()
+
+    // ── draw one frame ─────────────────────────────────────────────────────
+    function draw() {
+      ctx.clearRect(0, 0, W, H)
+      pulseT.current += 0.04
+
+      const r = projection.scale()
+
+      // Ocean sphere (full clip)
+      projection.clipAngle(180)
+      ctx.beginPath(); path({ type: 'Sphere' })
+      const oceanGrad = ctx.createRadialGradient(cx - r * 0.28, cy - r * 0.22, 0, cx, cy, r)
+      oceanGrad.addColorStop(0, '#1c3a70')
+      oceanGrad.addColorStop(0.55, '#0d1f44')
+      oceanGrad.addColorStop(1, '#04091a')
+      ctx.fillStyle = oceanGrad; ctx.fill()
+      projection.clipAngle(90)
+
+      // Graticules
+      ctx.beginPath(); path(graticule)
+      ctx.strokeStyle = 'rgba(79,142,247,0.07)'; ctx.lineWidth = 0.6; ctx.stroke()
+
+      // Land
+      ctx.beginPath(); path(land)
+      const landGrad = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r)
+      landGrad.addColorStop(0, '#1d3b6a')
+      landGrad.addColorStop(1, '#132b50')
+      ctx.fillStyle = landGrad; ctx.fill()
+      ctx.strokeStyle = 'rgba(79,142,247,0.22)'; ctx.lineWidth = 0.5; ctx.stroke()
+
+      // Atmosphere glow (outside clip)
+      projection.clipAngle(180)
+      ctx.beginPath(); path({ type: 'Sphere' })
+      const atm = ctx.createRadialGradient(cx, cy, r * 0.93, cx, cy, r * 1.08)
+      atm.addColorStop(0,   'rgba(79,142,247,0.00)')
+      atm.addColorStop(0.4, 'rgba(79,142,247,0.18)')
+      atm.addColorStop(1,   'rgba(79,142,247,0.00)')
+      ctx.strokeStyle = atm; ctx.lineWidth = r * 0.15; ctx.stroke()
+      projection.clipAngle(90)
+
+      // ── Cities ────────────────────────────────────────────────────────────
+      CITIES.forEach(city => {
+        // Visibility check
+        const dist = d3.geoDistance(
+          [city.lng, city.lat],
+          [-projection.rotate()[0], -projection.rotate()[1]]
+        )
+        if (dist >= Math.PI / 2) return
+
+        const pos = projection([city.lng, city.lat])
+        if (!pos) return
+        const [x, y] = pos
+
+        if (city.active) {
+          const phase = pulseT.current + (city.lat + city.lng) * 0.05
+          const pulse = 0.5 + 0.5 * Math.sin(phase)
+
+          // Outer pulse ring
+          const pR = 10 + pulse * 8
+          const ringGrad = ctx.createRadialGradient(x, y, 0, x, y, pR)
+          ringGrad.addColorStop(0, `rgba(253,212,36,${0.35 * pulse})`)
+          ringGrad.addColorStop(1, 'rgba(253,212,36,0)')
+          ctx.beginPath(); ctx.arc(x, y, pR, 0, Math.PI * 2)
+          ctx.fillStyle = ringGrad; ctx.fill()
+
+          // Inner glow
+          const gGrad = ctx.createRadialGradient(x, y, 0, x, y, 10)
+          gGrad.addColorStop(0, 'rgba(255,230,80,0.7)')
+          gGrad.addColorStop(1, 'rgba(251,191,36,0)')
+          ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI * 2)
+          ctx.fillStyle = gGrad; ctx.fill()
+
+          // Core
+          ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI * 2)
+          ctx.fillStyle = '#FDE047'; ctx.fill()
+          ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 1; ctx.stroke()
+
+          // Label (always show name, hide when zoomed out a lot)
+          if (r > baseR * 0.85) {
+            ctx.save()
+            ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 6
+            ctx.font = `bold ${Math.max(8, Math.min(11, r / baseR * 9))}px -apple-system,system-ui,sans-serif`
+            ctx.textAlign = 'center'
+            ctx.fillStyle = 'rgba(255,255,255,0.92)'
+            ctx.fillText(city.nameEn, x, y - 18)
+            ctx.restore()
+          }
+        } else {
+          // Coming soon: small blue dot
+          const opacity = Math.max(0.25, 0.6 - dist * 0.5)
+          ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(147,197,253,${opacity})`; ctx.fill()
+        }
+      })
+    }
+
+    // ── animation loop ─────────────────────────────────────────────────────
+    function animate() {
+      if (autoRotate.current) {
+        const rot = projection.rotate()
+        const newLng = rot[0] + 0.12
+        projection.rotate([newLng, rot[1]])
+        rotRef.current = [newLng, rot[1]]
+      }
+      draw()
+      animFrame.current = requestAnimationFrame(animate)
+    }
+    animFrame.current = requestAnimationFrame(animate)
+
+    // ── pointer (mouse + touch) events ─────────────────────────────────────
+    function getXY(e: PointerEvent): [number, number] {
+      const rect = canvas.getBoundingClientRect()
+      return [e.clientX - rect.left, e.clientY - rect.top]
+    }
+
+    function onPointerDown(e: PointerEvent) {
+      dragging.current    = true
+      autoRotate.current  = false
+      const [x, y]        = getXY(e)
+      pointerStart.current = [x, y]
+      lastPos.current      = [x, y]
+      canvas.setPointerCapture(e.pointerId)
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      if (!dragging.current) return
+      const [x, y] = getXY(e)
+      const dx = x - lastPos.current[0]
+      const dy = y - lastPos.current[1]
+      lastPos.current = [x, y]
+      const sensitivity = 250 / projection.scale()
+      const rot = projection.rotate()
+      const newRot: [number, number] = [
+        rot[0] + dx * sensitivity,
+        Math.max(-80, Math.min(80, rot[1] - dy * sensitivity))
+      ]
+      projection.rotate(newRot)
+      rotRef.current = newRot
+    }
+
+    function onPointerUp(e: PointerEvent) {
+      if (!dragging.current) return
+      dragging.current = false
+      const [x, y] = getXY(e)
+      const moved = Math.hypot(
+        x - pointerStart.current[0],
+        y - pointerStart.current[1]
+      )
+      if (moved < 8) {
+        // Treat as click — find nearest city
+        const rect = canvas.getBoundingClientRect()
+        const mx = e.clientX - rect.left
+        const my = e.clientY - rect.top
+        handleClick(mx, my)
+      }
+    }
+
+    function handleClick(mx: number, my: number) {
+      let closest: City | null = null
+      let closestDist = Infinity
+      const hitR = Math.max(18, 32 / (projection.scale() / baseR))
+
+      CITIES.forEach(city => {
+        const dist = d3.geoDistance(
+          [city.lng, city.lat],
+          [-projection.rotate()[0], -projection.rotate()[1]]
+        )
+        if (dist >= Math.PI / 2) return
+        const pos = projection([city.lng, city.lat])
+        if (!pos) return
+        const [x, y] = pos
+        const d = Math.hypot(mx - x, my - y)
+        const threshold = city.active ? hitR : hitR * 0.5
+        if (d < threshold && d < closestDist) {
+          closestDist = d
+          closest = city
+        }
+      })
+
+      if (closest) {
+        openCity(closest)
+      } else {
+        closePanel()
+      }
+    }
+
+    // ── Wheel zoom ──────────────────────────────────────────────────────────
+    function onWheel(e: WheelEvent) {
+      e.preventDefault()
+      const factor = e.deltaY < 0 ? 1.12 : 0.89
+      const newScale = Math.max(
+        minScaleRef.current,
+        Math.min(maxScaleRef.current, projection.scale() * factor)
+      )
+      projection.scale(newScale)
+      scaleRef.current = newScale
+      const pct = (newScale - minScaleRef.current) / (maxScaleRef.current - minScaleRef.current)
+      setZoomLevel(Math.round(pct * 100))
+    }
+
+    // ── Touch pinch zoom ────────────────────────────────────────────────────
+    const activeTouches = new Map<number, [number, number]>()
+
+    function onTouchStart(e: TouchEvent) {
+      for (const t of Array.from(e.changedTouches)) {
+        const rect = canvas.getBoundingClientRect()
+        activeTouches.set(t.identifier, [t.clientX - rect.left, t.clientY - rect.top])
+      }
+      if (activeTouches.size === 2) {
+        const pts = Array.from(activeTouches.values())
+        pinchDist.current = Math.hypot(pts[1][0] - pts[0][0], pts[1][1] - pts[0][1])
+      }
+    }
+
+    function onTouchMove(e: TouchEvent) {
+      e.preventDefault()
+      const rect = canvas.getBoundingClientRect()
+      for (const t of Array.from(e.changedTouches)) {
+        activeTouches.set(t.identifier, [t.clientX - rect.left, t.clientY - rect.top])
+      }
+      if (activeTouches.size === 2 && pinchDist.current > 0) {
+        const pts = Array.from(activeTouches.values())
+        const newDist = Math.hypot(pts[1][0] - pts[0][0], pts[1][1] - pts[0][1])
+        const factor = newDist / pinchDist.current
+        pinchDist.current = newDist
+        const newScale = Math.max(
+          minScaleRef.current,
+          Math.min(maxScaleRef.current, projection.scale() * factor)
+        )
+        projection.scale(newScale)
+        scaleRef.current = newScale
+        const pct = (newScale - minScaleRef.current) / (maxScaleRef.current - minScaleRef.current)
+        setZoomLevel(Math.round(pct * 100))
+      }
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+      for (const t of Array.from(e.changedTouches)) activeTouches.delete(t.identifier)
+      if (activeTouches.size < 2) pinchDist.current = 0
+    }
+
+    canvas.addEventListener('pointerdown', onPointerDown)
+    canvas.addEventListener('pointermove', onPointerMove)
+    canvas.addEventListener('pointerup',   onPointerUp)
+    canvas.addEventListener('wheel', onWheel, { passive: false })
+    canvas.addEventListener('touchstart', onTouchStart, { passive: false })
+    canvas.addEventListener('touchmove',  onTouchMove,  { passive: false })
+    canvas.addEventListener('touchend',   onTouchEnd)
+
+    return () => {
+      cancelAnimationFrame(animFrame.current)
+      canvas.removeEventListener('pointerdown', onPointerDown)
+      canvas.removeEventListener('pointermove', onPointerMove)
+      canvas.removeEventListener('pointerup',   onPointerUp)
+      canvas.removeEventListener('wheel', onWheel)
+      canvas.removeEventListener('touchstart', onTouchStart)
+      canvas.removeEventListener('touchmove',  onTouchMove)
+      canvas.removeEventListener('touchend',   onTouchEnd)
+    }
+  }, [ready, openCity, closePanel])
+
+  // ── Zoom buttons ───────────────────────────────────────────────────────────
+  const applyZoom = useCallback((factor: number) => {
+    const proj = projRef.current
+    if (!proj) return
+    const newScale = Math.max(
+      minScaleRef.current,
+      Math.min(maxScaleRef.current, proj.scale() * factor)
+    )
+    proj.scale(newScale)
+    scaleRef.current = newScale
+    const pct = (newScale - minScaleRef.current) / (maxScaleRef.current - minScaleRef.current)
+    setZoomLevel(Math.round(pct * 100))
+  }, [])
 
   return (
-    <main className="min-h-screen relative overflow-hidden"
-      style={{ background: 'linear-gradient(145deg, #151827, #1E2235)' }}>
-
-      {/* 光晕背景 */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute rounded-full opacity-20 animate-pulse"
-          style={{ width: '600px', height: '600px', background: 'radial-gradient(circle, #4F8EF7 0%, transparent 70%)', top: '-200px', right: '-100px', animationDuration: '4s' }} />
-        <div className="absolute rounded-full opacity-10 animate-pulse"
-          style={{ width: '500px', height: '500px', background: 'radial-gradient(circle, #5B5CF0 0%, transparent 70%)', bottom: '-150px', left: '-100px', animationDuration: '6s', animationDelay: '1s' }} />
-      </div>
-
-      <div className="relative z-10 max-w-2xl mx-auto px-6 py-10">
-
-        {/* 标题 */}
-        <div className={`text-center mb-7 transition-all duration-700 ${started ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <h1 className="text-4xl font-bold text-white leading-tight mb-2" style={{ letterSpacing: '-1px' }}>
-            在{selectedCity.name}，<br />
-            这些事要花你多少
-            <span style={{ ...BG_GRAD, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>人生</span>？
-          </h1>
-          <p className="text-white/30 text-sm">In {selectedCity.nameEn}, what's really costing you your life?</p>
+    <main
+      className="relative overflow-hidden select-none"
+      style={{ height: 'calc(100vh - 56px)', background: '#04091a' }}
+    >
+      {/* Loading state */}
+      {!ready && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
+          <div className="w-12 h-12 rounded-full border-2 border-[#4F8EF7]/20 border-t-[#4F8EF7] animate-spin mb-4" />
+          <div className="text-white/40 text-sm">加载地球数据...</div>
         </div>
+      )}
 
-        {/* 步骤指示器 */}
-        <div className={`flex items-center justify-center gap-3 mb-8 transition-all duration-700 ${started ? 'opacity-100' : 'opacity-0'}`}>
-          {['选城市', '选目标', '选职业'].map((label, i) => (
-            <div key={i} className="flex items-center">
-              <div className="flex items-center gap-1.5">
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${
-                  step > i + 1 ? 'bg-[#059669] text-white' : step === i + 1 ? 'text-white' : 'bg-white/10 text-white/30'
-                }`} style={step === i + 1 ? BG_GRAD : {}}>
-                  {step > i + 1 ? '✓' : i + 1}
-                </div>
-                <span className={`text-xs whitespace-nowrap ${
-                  step === i + 1 ? 'text-white/80' : step > i + 1 ? 'text-[#059669]' : 'text-white/25'
-                }`}>{label}</span>
-              </div>
-              {i < 2 && (
-                <div className="w-10 h-px mx-2"
-                  style={{ background: step > i + 1 ? '#059669' : 'rgba(255,255,255,0.1)' }} />
-              )}
+      {/* Globe canvas */}
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full"
+        style={{ cursor: dragging.current ? 'grabbing' : 'grab', display: ready ? 'block' : 'none' }}
+      />
+
+      {/* ── UI Overlays ─────────────────────────────────────────────────── */}
+      {ready && (
+        <>
+          {/* Top hint */}
+          <div className="absolute top-4 left-0 right-0 flex justify-center pointer-events-none">
+            <div className="text-white/25 text-xs tracking-widest uppercase">
+              拖拽旋转 · 滚轮缩放 · 点击城市查看详情
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* ═══════════════════════════════════════════
-            Step 1 — 选城市
-        ═══════════════════════════════════════════ */}
-        {step === 1 && (
-          <div className={`transition-all duration-500 ${started ? 'opacity-100' : 'opacity-0'}`}>
-            <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">第一步 · 选择你的城市</p>
-
-            <div className="space-y-4 mb-6">
-              {PROVINCE_GROUPS.map(group => {
-                const cities = group.cityIds.map(id => CITIES.find(c => c.id === id)!)
-                return (
-                  <div key={group.short}>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-bold px-2 py-0.5 rounded text-white/60"
-                        style={{ background: 'rgba(255,255,255,0.08)' }}>{group.short}</span>
-                      <span className="text-xs text-white/30">{group.name}</span>
-                    </div>
-                    <div className={`grid gap-2 ${cities.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                      {cities.map(city => {
-                        const sel = selectedCity.id === city.id
-                        return (
-                          <button key={city.id} onClick={() => setSelectedCity(city)}
-                            className={`flex items-center justify-between p-4 rounded-2xl border transition-all duration-200 text-left ${sel ? SEL_CARD : DEF_CARD}`}>
-                            <div>
-                              <div className="text-white font-semibold">{city.name}</div>
-                              <div className="text-white/40 text-xs">{city.nameEn}</div>
-                            </div>
-                            {sel && <span className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0" style={BG_GRAD}>✓</span>}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                )
-              })}
-              <p className="text-center text-xs text-white/20">更多城市陆续开放</p>
+          {/* Zoom controls (right side) */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
+            <button
+              onClick={() => applyZoom(1.3)}
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-white/60 hover:text-white transition-colors"
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                <path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </button>
+            {/* Zoom track */}
+            <div className="relative w-9 h-20 rounded-xl overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div
+                className="absolute bottom-0 left-0 right-0 transition-all duration-150 rounded-xl"
+                style={{ height: `${Math.max(4, zoomLevel)}%`, background: 'linear-gradient(to top, #4F8EF7, #5B5CF0)', opacity: 0.7 }}
+              />
             </div>
-
-            {/* 城市始终有默认选中，按钮直接可用 */}
-            <button onClick={() => setStep(2)}
-              className="w-full py-4 rounded-2xl text-white font-semibold text-base" style={BG_GRAD}>
-              下一步：选择目标 →
+            <button
+              onClick={() => applyZoom(0.77)}
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-white/60 hover:text-white transition-colors"
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)' }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                <path d="M1 7h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
             </button>
           </div>
-        )}
 
-        {/* ═══════════════════════════════════════════
-            Step 2 — 选目标 + 细分类型
-        ═══════════════════════════════════════════ */}
-        {step === 2 && (
-          <div className="transition-all duration-500">
-            <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">第二步 · 选择目标类型</p>
-
-            {/* 目的卡片（始终可见） */}
-            <div className="flex flex-col gap-3 mb-4">
-              {PURPOSES.map(p => (
-                <button key={p.id} onClick={() => selectPurpose(p.id)}
-                  className={`flex items-center gap-4 p-4 rounded-2xl border transition-all duration-200 text-left ${selectedPurpose === p.id ? SEL_CARD : DEF_CARD}`}>
-                  <span className="text-2xl">{p.icon}</span>
-                  <div className="flex-1">
-                    <div className="text-white font-semibold">{p.name}</div>
-                    <div className="text-white/50 text-sm">{p.desc}</div>
-                  </div>
-                  {selectedPurpose === p.id && (
-                    <span className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0" style={BG_GRAD}>✓</span>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* 房型（选了买房/租房后才出现） */}
-            {(selectedPurpose === 'buy' || selectedPurpose === 'rent') && (
-              <div className="mb-4">
-                <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-3">选择房型</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {HOUSE_TYPES.map(item => (
-                    <button key={item.id} onClick={() => setSelectedProperty(item.id)}
-                      className={`p-3 rounded-xl border transition-all duration-200 text-left ${selectedProperty === item.id ? SEL_CARD : DEF_CARD}`}>
-                      <div className="text-white text-sm font-semibold">{item.name}</div>
-                      <div className="text-white/40 text-xs">{item.desc}</div>
-                    </button>
-                  ))}
-                </div>
+          {/* Legend */}
+          <div className="absolute bottom-6 left-0 right-0 flex justify-center pointer-events-none">
+            <div className="flex items-center gap-5 px-5 py-2.5 rounded-full"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)' }}>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ background: '#FDE047', boxShadow: '0 0 8px #FDE047' }} />
+                <span className="text-white/50 text-xs">已上线城市（点击）</span>
               </div>
-            )}
+              <div className="w-px h-3.5 bg-white/10" />
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#93C5FD]/50" />
+                <span className="text-white/30 text-xs">即将推出</span>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
-            {/* 车型（选了买车后才出现，按品牌分组） */}
-            {selectedPurpose === 'car' && (
-              <div className="mb-4">
-                <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-3">选择车型</p>
-                <div className="space-y-3 max-h-64 overflow-y-auto pr-1"
-                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(91,92,240,0.5) transparent' }}>
-                  {VEHICLE_BRANDS.map(brand => (
-                    <div key={brand.brand}>
-                      <p className="text-xs font-bold text-white/45 mb-2 px-0.5 uppercase tracking-wide">{brand.brand}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {brand.models.map(v => (
-                          <button key={v.id} onClick={() => setSelectedProperty(v.id)}
-                            className={`flex flex-col items-start px-3 py-2 rounded-xl border transition-all duration-200 ${selectedProperty === v.id ? SEL_CARD : DEF_CARD}`}>
-                            <span className="text-white text-sm font-semibold">{v.model}</span>
-                            <span className="text-white/40 text-xs">${v.price.toLocaleString()}</span>
-                          </button>
-                        ))}
+      {/* ── City info panel (bottom sheet) ─────────────────────────────── */}
+      <div
+        className="absolute bottom-0 left-0 right-0 transition-transform duration-400 ease-out"
+        style={{
+          transform: panelOpen ? 'translateY(0)' : 'translateY(110%)',
+          zIndex: 40,
+          transitionDuration: '350ms',
+        }}
+      >
+        {selectedCity && (
+          <div className="mx-3 mb-3 rounded-2xl overflow-hidden shadow-2xl"
+            style={{ background: 'rgba(10,16,36,0.97)', border: '1px solid rgba(79,142,247,0.3)', backdropFilter: 'blur(24px)' }}>
+
+            {/* Drag handle */}
+            <button
+              onClick={closePanel}
+              className="w-full flex justify-center pt-3 pb-1"
+              aria-label="关闭">
+              <div className="w-9 h-1 rounded-full bg-white/20" />
+            </button>
+
+            <div className="px-5 pb-5">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-xl font-bold text-white leading-tight">{selectedCity.name}</h2>
+                  <div className="text-white/40 text-sm">{selectedCity.nameEn}</div>
+                </div>
+                {selectedCity.active && selectedCity.score !== undefined ? (
+                  <div className="text-right">
+                    <div className="text-2xl font-bold font-mono leading-none" style={{ color: '#4F8EF7' }}>
+                      {selectedCity.score}
+                    </div>
+                    <div className="text-white/30 text-xs mt-0.5">综合指数 / 100</div>
+                  </div>
+                ) : (
+                  <span className="text-xs font-semibold px-3 py-1.5 rounded-full text-white"
+                    style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
+                    即将推出
+                  </span>
+                )}
+              </div>
+
+              {selectedCity.active ? (
+                <>
+                  {/* Key stats */}
+                  <div className="grid grid-cols-2 gap-2.5 mb-4">
+                    <div className="p-3 rounded-xl" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                      <div className="text-xs text-white/40 mb-1">买房所需</div>
+                      <div className="text-2xl font-bold font-mono text-[#EF4444] leading-none">
+                        {selectedCity.hpiYears}
+                        <span className="text-sm text-white/30 ml-1 font-normal">年</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                    <div className="p-3 rounded-xl" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                      <div className="text-xs text-white/40 mb-1">租金占收入</div>
+                      <div className="text-2xl font-bold font-mono text-[#EF4444] leading-none">
+                        {selectedCity.rpi}
+                        <span className="text-sm text-white/30 ml-1 font-normal">%</span>
+                      </div>
+                    </div>
+                  </div>
 
-            {/* 导航：返回始终可见；下一步只在选完才出现 */}
-            <div className="flex gap-3 mt-4">
-              <button onClick={() => goStep(1)}
-                className="px-6 py-4 rounded-2xl text-white/50 text-sm border border-white/10">← 返回</button>
-              {canGoStep3 && (
-                <button onClick={() => setStep(3)}
-                  className="flex-1 py-4 rounded-2xl text-white font-semibold text-base" style={BG_GRAD}>
-                  下一步：选择职业 →
-                </button>
+                  {/* Action buttons */}
+                  <div className="flex gap-2">
+                    <a
+                      href={`/city/${selectedCity.id}`}
+                      className="flex-1 py-3 rounded-xl text-white text-sm font-semibold text-center"
+                      style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
+                      查看城市详情 →
+                    </a>
+                    <a
+                      href="/ranking"
+                      className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 hover:text-white text-center transition-colors"
+                      style={{ border: '1px solid rgba(255,255,255,0.12)' }}>
+                      排行榜
+                    </a>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-2">
+                  <p className="text-white/30 text-sm mb-3">
+                    正在收集 {selectedCity.nameEn} 的生活指数数据
+                  </p>
+                  <a
+                    href="/subscribe"
+                    className="inline-block px-6 py-2.5 rounded-xl text-white text-sm font-semibold"
+                    style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
+                    订阅上线通知 →
+                  </a>
+                </div>
               )}
             </div>
           </div>
         )}
-
-        {/* ═══════════════════════════════════════════
-            Step 3 — 选职业
-        ═══════════════════════════════════════════ */}
-        {step === 3 && (
-          <div className="transition-all duration-500">
-            <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-5">第三步 · 选择你的职业</p>
-
-            <div className="space-y-4 mb-4 overflow-y-auto"
-              style={{ maxHeight: '360px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(91,92,240,0.5) transparent' }}>
-              {OCCUPATION_GROUPS.map(group => (
-                <div key={group.industry}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-bold text-white/40 uppercase tracking-wider">{group.industry}</span>
-                    <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
-                  </div>
-                  <div className={`grid gap-1.5 ${group.occupations.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
-                    {group.occupations.map(occ => {
-                      const sel = selectedOccupation === occ.id
-                      return (
-                        <button key={occ.id} onClick={() => setSelectedOccupation(occ.id)}
-                          className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-150 text-left ${sel ? SEL_CARD : DEF_CARD}`}>
-                          <span className="text-white text-sm">{occ.name}</span>
-                          {sel && (
-                            <span className="w-4 h-4 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0 ml-1" style={BG_GRAD}>✓</span>
-                          )}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* 导航：返回始终可见；查看结论只在选完职业后出现 */}
-            <div className="flex gap-3 mt-4">
-              <button onClick={() => goStep(2)}
-                className="px-6 py-4 rounded-2xl text-white/50 text-sm border border-white/10">← 返回</button>
-              {selectedOccupation && (
-                <a href={resultsUrl}
-                  className="flex-1 py-4 rounded-2xl text-white font-semibold text-base text-center" style={BG_GRAD}>
-                  查看结论 →
-                </a>
-              )}
-            </div>
-          </div>
-        )}
-
       </div>
     </main>
   )
