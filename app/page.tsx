@@ -148,13 +148,13 @@ export default function Home() {
       .rotate(rotRef.current)
     projRef.current = projection
 
-    const path     = d3.geoPath().context(ctx)
+    const path     = d3.geoPath(projection, ctx)   // projection must be passed here
     const land     = topojson.feature(worldData.current, worldData.current.objects.land)
     const graticule = d3.geoGraticule()()
 
     // ── draw one frame ─────────────────────────────────────────────────────
     function draw() {
-      ctx.clearRect(0, 0, W, H)
+      ctx.clearRect(0, 0, W, H)   // W,H are CSS pixels (ctx already scaled by dpr)
       pulseT.current += 0.04
 
       const r = projection.scale()
