@@ -395,6 +395,7 @@ export default function ComparePage() {
   const [dropA,    setDropA   ] = useState(false)
   const [dropB,    setDropB   ] = useState(false)
   const [dropO,    setDropO   ] = useState(false)
+  const [copied,   setCopied  ] = useState(false)
 
   useEffect(() => {
     const p = new URLSearchParams(window.location.search)
@@ -851,6 +852,65 @@ export default function ComparePage() {
             <div style={{ color:'rgba(255,255,255,0.80)', fontWeight:700, fontSize:14 }}>{occName} · {pt.label}城市排行 →</div>
           </a>
         </div>
+
+        {/* ── SHARE INSIGHT ── */}
+        {(() => {
+          const hpiDiff = Math.abs(adjA.hpiYears - adjB.hpiYears).toFixed(1)
+          const winCity = aWins ? cityA.name : cityB.name
+          const loseCity = aWins ? cityB.name : cityA.name
+          const winHpi = aWins ? adjA.hpiYears : adjB.hpiYears
+          const loseHpi = aWins ? adjB.hpiYears : adjA.hpiYears
+          const winScore = aWins ? adjA.score : adjB.score
+          const loseScore = aWins ? adjB.score : adjA.score
+          const shareText = [
+            `🏠 ${occName} 在加拿大哪个城市买房更容易？`,
+            ``,
+            `📍 ${winCity}：${winHpi}年收入 (${winScore}分)`,
+            `📍 ${loseCity}：${loseHpi}年收入 (${loseScore}分)`,
+            ``,
+            `${winCity}比${loseCity}少需要 ${hpiDiff}年 就能买房`,
+            `由 CityCity.org 生成 | 职业×城市适配引擎`,
+          ].join('\n')
+          const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
+          const redditTitle = `${occName} ${winCity} vs ${loseCity} — 买房只需 ${winHpi}年收入 vs ${loseHpi}年收入 (CityCity数据)`
+          const redditUrl  = `https://reddit.com/submit?url=${encodeURIComponent('https://citycity.org/compare?cities='+slugA+','+slugB+'&occupation='+occ)}&title=${encodeURIComponent(redditTitle)}`
+          const waUrl      = `https://wa.me/?text=${encodeURIComponent(shareText)}`
+          return (
+            <div style={{ background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:16, padding:'18px 20px' }}>
+              <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:12 }}>分享这个对比洞察</div>
+              <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'14px 16px', marginBottom:14, fontFamily:'monospace', fontSize:12 }}>
+                <div style={{ color:'rgba(255,255,255,0.75)', lineHeight:1.8 }}>
+                  🏠 <span style={{ fontWeight:700 }}>{occName}</span> {winCity} vs {loseCity}<br/>
+                  📍 {winCity}：{winHpi}年收入 · {winScore}分<br/>
+                  📍 {loseCity}：{loseHpi}年收入 · {loseScore}分<br/>
+                  <span style={{ color:'#14B8A6' }}>{winCity}少{hpiDiff}年买到房</span>
+                  <span style={{ color:'rgba(255,255,255,0.35)', display:'block', fontSize:11, marginTop:4 }}>citycity.org</span>
+                </div>
+              </div>
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                <button onClick={() => { navigator.clipboard.writeText(shareText); setCopied(true); setTimeout(()=>setCopied(false),2000) }}
+                  style={{ padding:'8px 14px', borderRadius:8, background:copied?'rgba(20,184,166,0.15)':'rgba(255,255,255,0.06)', border:`1px solid ${copied?'rgba(20,184,166,0.40)':'rgba(255,255,255,0.12)'}`, color:copied?'#14B8A6':'rgba(255,255,255,0.55)', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                  {copied ? '✓ 已复制' : '📋 复制文本'}
+                </button>
+                <a href={twitterUrl} target="_blank" rel="noopener"
+                  style={{ padding:'8px 14px', borderRadius:8, background:'rgba(29,161,242,0.08)', border:'1px solid rgba(29,161,242,0.25)', color:'rgba(29,161,242,0.85)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
+                  𝕏 Twitter
+                </a>
+                <a href={redditUrl} target="_blank" rel="noopener"
+                  style={{ padding:'8px 14px', borderRadius:8, background:'rgba(255,87,0,0.08)', border:'1px solid rgba(255,87,0,0.25)', color:'rgba(255,120,60,0.90)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
+                  Reddit
+                </a>
+                <a href={waUrl} target="_blank" rel="noopener"
+                  style={{ padding:'8px 14px', borderRadius:8, background:'rgba(37,211,102,0.08)', border:'1px solid rgba(37,211,102,0.25)', color:'rgba(37,211,102,0.85)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
+                  WhatsApp
+                </a>
+              </div>
+              <div style={{ color:'rgba(255,255,255,0.22)', fontSize:11, marginTop:10 }}>
+                推荐分享到 Reddit r/PersonalFinanceCanada · r/canada · r/vancouver · r/calgary
+              </div>
+            </div>
+          )
+        })()}
 
         {/* ── FOOTER ── */}
         <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:20 }}>

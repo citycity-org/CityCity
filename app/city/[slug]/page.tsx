@@ -749,7 +749,54 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
           </div>
         </section>
 
-        {/* ── 7. FINAL VERDICT + CTAs ───────────────────────────────────── */}
+        {/* ── 7. 职业适配排行 ───────────────────────────────────────────── */}
+        <section>
+          <SecHeader title={`${city.name}职业适配排行`} sub="同一座城市，不同职业的生存空间差距显著" />
+          <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, overflow: 'hidden' }}>
+            {/* Header row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 56px 72px 64px', gap: 8, padding: '10px 20px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em' }}>职业</span>
+              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>适配分</span>
+              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>买房年数</span>
+              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>就业</span>
+            </div>
+            {Object.entries(matrix)
+              .map(([id, fit]) => {
+                const adjHpi = parseFloat((fit.hpiYears * (PROP_TYPES.find(p => p.id === propType)?.priceMult ?? 1)).toFixed(1))
+                return { id, fit, adjHpi }
+              })
+              .sort((a, b) => b.fit.score - a.fit.score)
+              .map(({ id, fit, adjHpi }, i) => {
+                const isCurrent = id === occ
+                const name = OCC_NAMES[id] ?? id
+                return (
+                  <a key={id} href={`/city/${slug}?occupation=${id}&housing=${propType}`}
+                    onClick={e => { e.preventDefault(); setOcc(id) }}
+                    style={{ display: 'grid', gridTemplateColumns: '1fr 56px 72px 64px', gap: 8, padding: '12px 20px', borderBottom: i < Object.keys(matrix).length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none', background: isCurrent ? 'rgba(79,142,247,0.07)' : i % 2 === 0 ? 'rgba(255,255,255,0.015)' : 'transparent', alignItems: 'center', textDecoration: 'none', cursor: 'pointer', transition: 'background 0.12s' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ color: isCurrent ? 'white' : 'rgba(255,255,255,0.70)', fontSize: 13, fontWeight: isCurrent ? 700 : 500 }}>{name}</span>
+                      {isCurrent && <span style={{ fontSize: 9, fontWeight: 700, color: '#4F8EF7', background: 'rgba(79,142,247,0.15)', padding: '1px 5px', borderRadius: 4 }}>当前</span>}
+                      {i === 0 && <span style={{ fontSize: 9, fontWeight: 700, color: '#14B8A6', background: 'rgba(20,184,166,0.12)', padding: '1px 5px', borderRadius: 4 }}>最佳</span>}
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ color: sc(fit.score), fontSize: 15, fontWeight: 900, fontFamily: 'monospace' }}>{fit.score}</span>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ color: hc(adjHpi), fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>{adjHpi}年</span>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ color: fit.eoi === '强' ? '#14B8A6' : fit.eoi === '中' ? '#F59E0B' : '#E86C2F', fontSize: 12, fontWeight: 700 }}>{fit.eoi}</span>
+                    </div>
+                  </a>
+                )
+              })}
+          </div>
+          <p style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, margin: '8px 4px 0', lineHeight: 1.6 }}>
+            点击任意职业切换查看该职业在{city.name}的详细适配分析。买房年数基于{pt.label}，适配分越高生存空间越大。
+          </p>
+        </section>
+
+        {/* ── 8. FINAL VERDICT + CTAs ───────────────────────────────────── */}
         <section style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${vMain.color}28`, borderRadius: 20, padding: '24px 26px', display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 4, height: 18, borderRadius: 2, background: vMain.color, flexShrink: 0 }} />

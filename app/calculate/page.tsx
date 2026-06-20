@@ -123,6 +123,7 @@ export default function CalculatePage() {
   const [showDrop, setShowDrop] = useState<'city'|'occ'|null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
+  const [copied, setCopied] = useState(false)
   const resultsRef = useRef<HTMLDivElement>(null)
 
   // Read URL params
@@ -374,6 +375,36 @@ export default function CalculatePage() {
         </div>
       </div>
 
+      {/* ── EMPTY STATE PREVIEW ──────────────────────────────────────────────── */}
+      {!submitted && (
+        <div style={{ maxWidth:640, margin:'0 auto', padding:'28px 24px 60px' }}>
+          <div style={{ background:'rgba(255,255,255,0.015)', border:'1px dashed rgba(255,255,255,0.10)', borderRadius:20, padding:'32px 24px' }}>
+            <div style={{ textAlign:'center', marginBottom:24 }}>
+              <div style={{ fontSize:28, marginBottom:8 }}>📊</div>
+              <div style={{ color:'rgba(255,255,255,0.28)', fontSize:13, fontWeight:600 }}>填写上方信息，你的个性化结果将在这里生成</div>
+            </div>
+            {/* Greyed preview cards */}
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:14, opacity:0.30, pointerEvents:'none' }}>
+              {[
+                { label:'城市适配分',   value:'—',          sub:'综合评分' },
+                { label:'住房压力',     value:'— 年收入',   sub:'买房所需' },
+                { label:'月均可支配',   value:'$—,———',     sub:'扣除租金后' },
+                { label:'税后净收入',   value:'$—,———',     sub:'预估月净收入' },
+              ].map(c => (
+                <div key={c.label} style={{ background:'rgba(255,255,255,0.04)', borderRadius:14, padding:'18px 20px' }}>
+                  <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11, marginBottom:8 }}>{c.label}</div>
+                  <div style={{ color:'rgba(255,255,255,0.30)', fontSize:22, fontWeight:900, fontFamily:'monospace', lineHeight:1, marginBottom:4 }}>{c.value}</div>
+                  <div style={{ color:'rgba(255,255,255,0.20)', fontSize:11 }}>{c.sub}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ color:'rgba(255,255,255,0.18)', fontSize:12, textAlign:'center', lineHeight:1.7 }}>
+              还包含：5 城市横向对比 · 城市推荐与谨慎提示 · 月度财务拆解 · 一键分享洞察
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── RESULTS ──────────────────────────────────────────────────────────── */}
       {results && (
         <div ref={resultsRef} style={{ maxWidth:640, margin:'0 auto', padding:'32px 24px 60px' }}>
@@ -436,6 +467,58 @@ export default function CalculatePage() {
             <p style={{ color:'rgba(255,255,255,0.42)', fontSize:11, margin:'10px 0 0' }}>
               税率为估算值（{city.taiNote}），月供基于5.5%利率、25年摊销、首付20%。不含保险、物业税等。
             </p>
+          </div>
+
+          {/* ── 城市推荐 ──────────────────────────────────────────────────────── */}
+          <div style={{ marginBottom:20 }}>
+            <div style={{ color:'#FFFFFF', fontSize:17, fontWeight:800, marginBottom:12 }}>基于你的情况，哪个城市更适合？</div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:10 }}>
+              {/* 推荐 */}
+              <div style={{ background:'rgba(20,184,166,0.06)', border:'1px solid rgba(20,184,166,0.20)', borderRadius:14, padding:'14px 16px' }}>
+                <div style={{ color:'#14B8A6', fontSize:11, fontWeight:800, letterSpacing:'0.07em', marginBottom:10 }}>✓ 推荐城市</div>
+                {results.allCities.slice(0,2).map(c => (
+                  <a key={c.id} href={`/city/${c.id}?occupation=${occId}&housing=${propType}`}
+                    style={{ display:'block', marginBottom:8, textDecoration:'none' }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                      <span style={{ color:'rgba(255,255,255,0.82)', fontSize:13, fontWeight:700 }}>{c.name}</span>
+                      <span style={{ color:'#14B8A6', fontSize:13, fontWeight:800, fontFamily:'monospace' }}>{c.score}分</span>
+                    </div>
+                    <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, marginTop:2 }}>
+                      {intent==='rent'
+                        ? `租金占比 ${c.rpi}% · 月可支配 $${c.monthlyRentDisp.toLocaleString()}`
+                        : `买房 ${c.hpiYears}年收入 · 月供 $${c.monthlyMortgage.toLocaleString()}`}
+                    </div>
+                  </a>
+                ))}
+              </div>
+              {/* 谨慎 */}
+              <div style={{ background:'rgba(239,68,68,0.05)', border:'1px solid rgba(239,68,68,0.18)', borderRadius:14, padding:'14px 16px' }}>
+                <div style={{ color:'#EF4444', fontSize:11, fontWeight:800, letterSpacing:'0.07em', marginBottom:10 }}>⚠ 谨慎考虑</div>
+                {results.allCities.slice(-2).map(c => (
+                  <a key={c.id} href={`/city/${c.id}?occupation=${occId}&housing=${propType}`}
+                    style={{ display:'block', marginBottom:8, textDecoration:'none' }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                      <span style={{ color:'rgba(255,255,255,0.60)', fontSize:13, fontWeight:700 }}>{c.name}</span>
+                      <span style={{ color:'#EF4444', fontSize:13, fontWeight:800, fontFamily:'monospace' }}>{c.score}分</span>
+                    </div>
+                    <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11, marginTop:2 }}>
+                      {intent==='rent'
+                        ? `租金占比 ${c.rpi}% · 月可支配 $${c.monthlyRentDisp.toLocaleString()}`
+                        : `买房 ${c.hpiYears}年收入 · 月供 $${c.monthlyMortgage.toLocaleString()}`}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+            {/* Subscribe CTA */}
+            <a href={`/subscribe?city=${results.allCities[0].id}`}
+              style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'linear-gradient(135deg,rgba(79,142,247,0.10),rgba(91,92,240,0.08))', border:'1px solid rgba(79,142,247,0.25)', borderRadius:14, padding:'14px 18px', textDecoration:'none' }}>
+              <div>
+                <div style={{ color:'#93C5FD', fontSize:13, fontWeight:700, marginBottom:2 }}>订阅 {results.allCities[0].name} × {occName} 季度报告</div>
+                <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11 }}>每季度更新：房价、租金、收入适配指数变化 · 免费</div>
+              </div>
+              <span style={{ color:'#93C5FD', fontSize:16, marginLeft:12 }}>→</span>
+            </a>
           </div>
 
           {/* ── 同样的我，换个城市会怎样？ ────────────────────────────────── */}
@@ -538,7 +621,7 @@ export default function CalculatePage() {
           )}
 
           {/* CTA */}
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:20 }}>
             <a href={`/ranking?occupation=${occId}&housing=${propType}`}
               style={{ display:'block', background:'rgba(20,184,166,0.06)', border:'1px solid rgba(20,184,166,0.18)', borderRadius:14, padding:'16px 18px', textDecoration:'none' }}>
               <div style={{ color:'#14B8A6', fontSize:11, fontWeight:700, letterSpacing:'0.06em', marginBottom:5 }}>全国职业排行</div>
@@ -550,6 +633,62 @@ export default function CalculatePage() {
               <div style={{ color:'rgba(255,255,255,0.60)', fontSize:12, lineHeight:1.5 }}>{cityName} vs {results.allCities[0]?.id !== cityId ? results.allCities[0]?.name : results.allCities[1]?.name} 全维度拆解</div>
             </a>
           </div>
+
+          {/* ── SHARE INSIGHT CARD ───────────────────────────────────────────── */}
+          {(() => {
+            const top = results.allCities[0]
+            const shareLines = [
+              `🏠 ${occName} 在加拿大买房需要多少年？`,
+              ``,
+              ...results.allCities.map(c => `${c.score >= 80 ? '🟢' : c.score >= 60 ? '🟡' : '🔴'} ${c.name}：${intent==='rent' ? `租金占 ${c.rpi}%` : `${c.hpiYears}年收入`} (${c.score}分)`),
+              ``,
+              `最优选择：${top.name} ${top.score}分`,
+              `由 CityCity.org 生成 | 职业×城市适配引擎`,
+            ]
+            const shareText = shareLines.join('\n')
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
+            const redditUrl  = `https://reddit.com/submit?url=${encodeURIComponent('https://citycity.org/calculate')}&title=${encodeURIComponent(`${occName}在加拿大哪个城市最适合？CityCity数据`)}`
+            const waUrl      = `https://wa.me/?text=${encodeURIComponent(shareText)}`
+            return (
+              <div style={{ background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:16, padding:'18px 20px' }}>
+                <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:12 }}>分享这个洞察</div>
+                {/* Preview card */}
+                <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:12, padding:'14px 16px', marginBottom:14, fontFamily:'monospace' }}>
+                  <div style={{ color:'rgba(255,255,255,0.75)', fontSize:12, lineHeight:1.8 }}>
+                    🏠 <span style={{ fontWeight:700 }}>{occName}</span> × 加拿大城市适配<br/>
+                    {results.allCities.map(c => (
+                      <span key={c.id} style={{ display:'block' }}>
+                        {c.score>=80?'🟢':c.score>=60?'🟡':'🔴'} {c.name}：{intent==='rent'?`租金 ${c.rpi}%`:`${c.hpiYears}年收入`} · {c.score}分
+                      </span>
+                    ))}
+                    <span style={{ color:'rgba(255,255,255,0.35)', fontSize:11, display:'block', marginTop:4 }}>citycity.org</span>
+                  </div>
+                </div>
+                {/* Share buttons */}
+                <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                  <button onClick={() => { navigator.clipboard.writeText(shareText); setCopied(true); setTimeout(()=>setCopied(false),2000) }}
+                    style={{ padding:'8px 14px', borderRadius:8, background:copied?'rgba(20,184,166,0.15)':'rgba(255,255,255,0.06)', border:`1px solid ${copied?'rgba(20,184,166,0.40)':'rgba(255,255,255,0.12)'}`, color:copied?'#14B8A6':'rgba(255,255,255,0.55)', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                    {copied ? '✓ 已复制' : '📋 复制文本'}
+                  </button>
+                  <a href={twitterUrl} target="_blank" rel="noopener"
+                    style={{ padding:'8px 14px', borderRadius:8, background:'rgba(29,161,242,0.08)', border:'1px solid rgba(29,161,242,0.25)', color:'rgba(29,161,242,0.85)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
+                    𝕏 Twitter
+                  </a>
+                  <a href={redditUrl} target="_blank" rel="noopener"
+                    style={{ padding:'8px 14px', borderRadius:8, background:'rgba(255,87,0,0.08)', border:'1px solid rgba(255,87,0,0.25)', color:'rgba(255,120,60,0.90)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
+                    Reddit
+                  </a>
+                  <a href={waUrl} target="_blank" rel="noopener"
+                    style={{ padding:'8px 14px', borderRadius:8, background:'rgba(37,211,102,0.08)', border:'1px solid rgba(37,211,102,0.25)', color:'rgba(37,211,102,0.85)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
+                    WhatsApp
+                  </a>
+                </div>
+                <div style={{ color:'rgba(255,255,255,0.22)', fontSize:11, marginTop:10 }}>
+                  推荐分享到 Reddit r/PersonalFinanceCanada · r/vancouver · r/canada
+                </div>
+              </div>
+            )
+          })()}
         </div>
       )}
     </main>
