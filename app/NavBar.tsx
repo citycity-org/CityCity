@@ -17,9 +17,9 @@ export default function NavBar() {
   }
 
   return (
-    <nav style={{ background:'rgba(10,14,28,0.92)', backdropFilter:'blur(16px)', borderBottom:'1px solid rgba(255,255,255,0.07)', height:56, display:'flex', alignItems:'center', padding:'0 24px', justifyContent:'space-between', position:'sticky', top:0, zIndex:50 }}>
+    <nav style={{ background:'rgba(10,14,28,0.92)', backdropFilter:'blur(16px)', borderBottom:'1px solid rgba(255,255,255,0.07)', height:64, display:'flex', alignItems:'center', padding:'0 24px', justifyContent:'space-between', position:'sticky', top:0, zIndex:50 }}>
       <a href="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
-        <img src="/logo-dark.png" alt="CityCity" style={{ height:40, width:'auto', maxWidth:140, objectFit:'contain' }} />
+        <img src="/citycity_logo_light_transparent.png" alt="CityCity" style={{ height:52, width:'auto', maxWidth:200, objectFit:'contain' }} />
       </a>
 
       <div style={{ display:'flex', alignItems:'center', gap:2 }}>
