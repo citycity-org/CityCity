@@ -530,7 +530,7 @@ export default function Home() {
               <h1 className="text-3xl font-bold leading-snug mb-3" style={{ color: '#fff' }}>
                 同一座城市<br />
                 对不同职业可能是<span style={{ color: '#FDE047' }}>机会</span>，<br />
-                也可能是<span style={{ color: '#EF4444' }}>陷阱</span>
+                也可能是<span style={{ color: '#EF4444' }}>挑战</span>
               </h1>
 
               {/* Subtitle */}
