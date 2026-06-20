@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NavBar from "./NavBar";
 
 export const metadata: Metadata = {
   title: "CityCity — 看清城市生活的真相",
@@ -19,52 +20,7 @@ export default function RootLayout({
     <html lang="zh">
       <body className="bg-[#F5F7FB]">
 
-        {/* 导航栏 */}
-        <nav className="bg-white border-b border-[#E5E7EB] h-14 flex items-center px-6 justify-between sticky top-0 z-50">
-
-          {/* 左边：Logo */}
-          <a href="/" className="flex items-center">
-            <img
-              src="/logo3.png"
-              alt="CityCity"
-              className="h-16 w-auto"
-              style={{ maxWidth: '160px', objectFit: 'contain' }}
-            />
-          </a>
-
-          {/* 中间：导航链接 */}
-          <div className="hidden md:flex items-center gap-1">
-            <a href="/ranking"
-              className="px-3 py-2 rounded-lg text-sm font-medium text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] transition-all">
-              排行榜
-            </a>
-            <a href="/compare"
-              className="px-3 py-2 rounded-lg text-sm font-medium text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] transition-all">
-              城市对比
-            </a>
-            <a href="/calculate"
-              className="px-3 py-2 rounded-lg text-sm font-medium text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] transition-all">
-              算成本
-            </a>
-            <a href="/subscribe"
-              className="px-3 py-2 rounded-lg text-sm font-medium text-[#6B7280] hover:text-[#111827] hover:bg-[#F3F4F6] transition-all">
-              订阅
-            </a>
-          </div>
-
-          {/* 右边：语言切换 */}
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1 bg-[#F3F4F6] rounded-lg p-1">
-              <a href="/" className="px-3 py-1 rounded-md text-sm font-medium bg-white text-[#111827] shadow-sm">
-  中文
-</a>
-<a href="/en" className="px-3 py-1 rounded-md text-sm font-medium text-[#9CA3AF] hover:text-[#111827]">
-  EN
-</a>
-            </div>
-          </div>
-
-        </nav>
+        <NavBar />
 
         {/* 页面内容 */}
         {children}
