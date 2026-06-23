@@ -93,7 +93,7 @@ function SubscribeContent() {
           </div>
           <div style={{ margin: 16, borderRadius: 12, padding: 16, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <span style={{ fontSize: 13, fontWeight: 800, background: 'linear-gradient(135deg,#4F8EF7,#5B5CF0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>CityCity 季报</span>
+              <span style={{ fontSize: 13, fontWeight: 800, background: 'linear-gradient(135deg,#4F8EF7,#5B5CF0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Lakive 季报</span>
               <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>2026年Q1</span>
             </div>
             {REPORT_ITEMS.map((item, i) => (
@@ -106,7 +106,7 @@ function SubscribeContent() {
               </div>
             ))}
             <div style={{ color: 'rgba(255,255,255,0.30)', fontSize: 11, textAlign: 'center', marginTop: 14 }}>
-              每季度第一周发送 · citycity.org
+              每季度第一周发送 · lakive.com
             </div>
           </div>
         </div>

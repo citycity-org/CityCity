@@ -869,11 +869,11 @@ export default function ComparePage() {
             `📍 ${loseCity}：${loseHpi}年收入 (${loseScore}分)`,
             ``,
             `${winCity}比${loseCity}少需要 ${hpiDiff}年 就能买房`,
-            `由 CityCity.org 生成 | 职业×城市适配引擎`,
+            `由 lakive.com 生成 | 职业×城市适配引擎`,
           ].join('\n')
           const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
-          const redditTitle = `${occName} ${winCity} vs ${loseCity} — 买房只需 ${winHpi}年收入 vs ${loseHpi}年收入 (CityCity数据)`
-          const redditUrl  = `https://reddit.com/submit?url=${encodeURIComponent('https://citycity.org/compare?cities='+slugA+','+slugB+'&occupation='+occ)}&title=${encodeURIComponent(redditTitle)}`
+          const redditTitle = `${occName} ${winCity} vs ${loseCity} — 买房只需 ${winHpi}年收入 vs ${loseHpi}年收入 (Lakive数据)`
+          const redditUrl  = `https://reddit.com/submit?url=${encodeURIComponent('https://lakive.com/compare?cities='+slugA+','+slugB+'&occupation='+occ)}&title=${encodeURIComponent(redditTitle)}`
           const waUrl      = `https://wa.me/?text=${encodeURIComponent(shareText)}`
           return (
             <div style={{ background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:16, padding:'18px 20px' }}>
@@ -884,7 +884,7 @@ export default function ComparePage() {
                   📍 {winCity}：{winHpi}年收入 · {winScore}分<br/>
                   📍 {loseCity}：{loseHpi}年收入 · {loseScore}分<br/>
                   <span style={{ color:'#14B8A6' }}>{winCity}少{hpiDiff}年买到房</span>
-                  <span style={{ color:'rgba(255,255,255,0.35)', display:'block', fontSize:11, marginTop:4 }}>citycity.org</span>
+                  <span style={{ color:'rgba(255,255,255,0.35)', display:'block', fontSize:11, marginTop:4 }}>lakive.com</span>
                 </div>
               </div>
               <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>

@@ -126,7 +126,7 @@ function ShareContent() {
                 <div>
                   <div className="text-base font-bold"
                     style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    CityCity
+                    Lakive
                   </div>
                   <div className="text-xs text-white/30">看清城市生活的真相</div>
                 </div>
@@ -225,7 +225,7 @@ function ShareContent() {
                 <div className="text-xs text-white/20 leading-relaxed">
                   StatCan · CREA · CMHC<br />2026年Q1
                 </div>
-                <div className="text-xs font-semibold text-white/30">citycity.org</div>
+                <div className="text-xs font-semibold text-white/30">lakive.com</div>
               </div>
             </div>
           </div>

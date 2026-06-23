@@ -391,7 +391,7 @@ function ResultsContent() {
           </div>
           <div className="px-5 py-3 border-t border-[#F3F4F6] text-center">
             <p className="text-xs text-[#D1D5DB]">数据来源：StatCan · CREA · CMHC · Health Canada · Fraser · CIHI · Walk Score</p>
-            <p className="text-xs text-[#D1D5DB] mt-0.5">更新于 2026年Q1 · citycity.org</p>
+            <p className="text-xs text-[#D1D5DB] mt-0.5">更新于 2026年Q1 · lakive.com</p>
           </div>
         </div>
         <div className="flex gap-3 mt-4">

@@ -535,7 +535,7 @@ export default function Home() {
 
               {/* Subtitle */}
               <p className="text-sm leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.60)' }}>
-                CityCity 根据你的职业、税负、住房压力<br />与就业机会，计算加拿大城市真实适配度
+                Lakive 根据你的职业、税负、住房压力<br />与就业机会，计算加拿大城市真实适配度
               </p>
 
               {/* Selectors */}

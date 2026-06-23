@@ -850,7 +850,7 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
         <p style={{ color: 'rgba(255,255,255,0.12)', fontSize: 11, textAlign: 'center' }}>
           数据来源：CMHC · StatCan · CIHI · Environment Canada · Job Bank · CRA<br />
           房价/年收入为{pt.label}参考价格与税前职业年收入之比，数值越低住房负担越轻。<br />
-          CityCity Life System™ v4.2 · 2026年Q1 · citycity.org
+          Lakive Life System™ v4.2 · 2026年Q1 · lakive.com
         </p>
       </div>
     </main>

@@ -316,7 +316,7 @@ export default function RankingPage() {
       <div style={{ background:'linear-gradient(160deg,#0d1117 0%,#151827 60%,#1a2035 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'28px 32px 24px' }}>
         <div style={{ maxWidth:1100, margin:'0 auto' }}>
 
-          <div style={{ color:'rgba(255,255,255,0.50)', fontSize:12, marginBottom:16 }}>CityCity · 城市适配榜</div>
+          <div style={{ color:'rgba(255,255,255,0.50)', fontSize:12, marginBottom:16 }}>Lakive · 城市适配榜</div>
 
           <div style={{ marginBottom:20 }}>
             <h1 style={{ color:'white', fontSize:28, fontWeight:900, margin:'0 0 6px', letterSpacing:'-0.5px' }}>城市适配榜</h1>
@@ -565,7 +565,7 @@ export default function RankingPage() {
             StatCan · CMHC · Job Bank · CRA & 省级税务局 · CIHI · ECCC
           </p>
           <p style={{ color:'rgba(255,255,255,0.40)', fontSize:11, marginTop:6 }}>
-            各项指标经 CityCity 模型标准化处理，不代表官方排名。结果仅供参考，不构成财务或移民建议。2026年Q1。
+            各项指标经 Lakive 模型标准化处理，不代表官方排名。结果仅供参考，不构成财务或移民建议。2026年Q1。
           </p>
         </div>
       </div>

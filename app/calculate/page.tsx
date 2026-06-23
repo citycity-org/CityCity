@@ -643,11 +643,11 @@ export default function CalculatePage() {
               ...results.allCities.map(c => `${c.score >= 80 ? '🟢' : c.score >= 60 ? '🟡' : '🔴'} ${c.name}：${intent==='rent' ? `租金占 ${c.rpi}%` : `${c.hpiYears}年收入`} (${c.score}分)`),
               ``,
               `最优选择：${top.name} ${top.score}分`,
-              `由 CityCity.org 生成 | 职业×城市适配引擎`,
+              `由 lakive.com 生成 | 职业×城市适配引擎`,
             ]
             const shareText = shareLines.join('\n')
             const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`
-            const redditUrl  = `https://reddit.com/submit?url=${encodeURIComponent('https://citycity.org/calculate')}&title=${encodeURIComponent(`${occName}在加拿大哪个城市最适合？CityCity数据`)}`
+            const redditUrl  = `https://reddit.com/submit?url=${encodeURIComponent('https://lakive.com/calculate')}&title=${encodeURIComponent(`${occName}在加拿大哪个城市最适合？Lakive数据`)}`
             const waUrl      = `https://wa.me/?text=${encodeURIComponent(shareText)}`
             return (
               <div style={{ background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:16, padding:'18px 20px' }}>
@@ -661,7 +661,7 @@ export default function CalculatePage() {
                         {c.score>=80?'🟢':c.score>=60?'🟡':'🔴'} {c.name}：{intent==='rent'?`租金 ${c.rpi}%`:`${c.hpiYears}年收入`} · {c.score}分
                       </span>
                     ))}
-                    <span style={{ color:'rgba(255,255,255,0.35)', fontSize:11, display:'block', marginTop:4 }}>citycity.org</span>
+                    <span style={{ color:'rgba(255,255,255,0.35)', fontSize:11, display:'block', marginTop:4 }}>lakive.com</span>
                   </div>
                 </div>
                 {/* Share buttons */}
