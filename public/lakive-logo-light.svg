@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 100" width="360" height="100" role="img" aria-label="Lakive">
+  <title>Lakive</title>
+  <!-- LAKiVE wordmark – light version -->
+  <text y="80" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="96" letter-spacing="6">
+    <tspan fill="#151827" font-weight="300">L</tspan><tspan fill="#14B8A6" font-weight="500">A</tspan><tspan fill="#151827" font-weight="300">K</tspan><tspan fill="#151827" font-weight="500" letter-spacing="0">ı</tspan><tspan fill="#151827" font-weight="300" dx="6">VE</tspan>
+  </text>
+  <!-- Orange dot above ı -->
+  <circle cx="203" cy="20" r="11" fill="#E86C2F"/>
+  <!-- Teal underline -->
+  <rect x="0" y="90" width="330" height="5" rx="2.5" fill="#14B8A6" opacity="0.5"/>
+</svg>

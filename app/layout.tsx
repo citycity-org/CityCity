@@ -3,11 +3,11 @@ import "./globals.css";
 import NavBar from "./NavBar";
 
 export const metadata: Metadata = {
-  title: "CityCity — 看清城市生活的真相",
-  description: "See the real cost of city life. 加拿大城市生活成本对比平台。",
+  title: "Lakive — Know Before You Move",
+  description: "加拿大城市生活成本对比平台。数据驱动的移居决策工具。",
   icons: {
-    icon: "/CityCity_Symbol.png",
-    apple: "/CityCity_Symbol.png",
+    icon: "/lakive-icon.svg",
+    apple: "/lakive-icon.svg",
   },
 };
 
