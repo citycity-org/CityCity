@@ -531,13 +531,13 @@ export default function Home() {
                 From data<br />
                 to <span style={{ color: '#14B8A6' }}>belonging.</span>
               </h1>
-              <p style={{ fontSize:11, color:'rgba(255,255,255,0.28)', letterSpacing:'0.04em', marginBottom:0, marginTop:-16 }}>
+              <p style={{ fontSize:13, color:'rgba(255,255,255,0.55)', letterSpacing:'0.06em', marginBottom:0, marginTop:-14, fontWeight:500 }}>
                 从数据，到归属
               </p>
 
               {/* Subtitle */}
               <p className="text-sm leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.60)' }}>
-                AI 城市数据智能平台——基于职业、税负、住房与就业，<br />帮你找到真正适合自己的加拿大城市
+                城市数据智能平台——基于职业、税负、住房与就业，<br />帮你找到真正适合自己的城市
               </p>
 
               {/* Selectors */}
