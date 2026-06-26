@@ -156,8 +156,8 @@ export default function Home() {
   const [zoomLevel,    setZoomLevel]    = useState(0)
 
   // ── Hero selector state ─────────────────────────────────────────────────────
-  const [heroOccupation, setHeroOccupation] = useState('software_eng')
-  const [heroCity,       setHeroCity]       = useState('vancouver')
+  const [heroOccupation, setHeroOccupation] = useState('')
+  const [heroCity,       setHeroCity]       = useState('')
 
   const openCity = useCallback((city: City) => {
     setSelectedCity(city)
@@ -528,14 +528,16 @@ export default function Home() {
 
               {/* H1 */}
               <h1 className="text-3xl font-bold leading-snug mb-3" style={{ color: '#fff' }}>
-                同一座城市<br />
-                对不同职业可能是<span style={{ color: '#FDE047' }}>机会</span>，<br />
-                也可能是<span style={{ color: '#EF4444' }}>挑战</span>
+                From data<br />
+                to <span style={{ color: '#14B8A6' }}>belonging.</span>
               </h1>
+              <p style={{ fontSize:11, color:'rgba(255,255,255,0.28)', letterSpacing:'0.04em', marginBottom:0, marginTop:-16 }}>
+                从数据，到归属
+              </p>
 
               {/* Subtitle */}
               <p className="text-sm leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.60)' }}>
-                Lakive 根据你的职业、税负、住房压力<br />与就业机会，计算加拿大城市真实适配度
+                AI 城市数据智能平台——基于职业、税负、住房与就业，<br />帮你找到真正适合自己的加拿大城市
               </p>
 
               {/* Selectors */}
@@ -547,6 +549,7 @@ export default function Home() {
                     onChange={e => setHeroOccupation(e.target.value)}
                     style={selectStyle}
                   >
+                    <option value="" style={{ background: '#0d1f44', color: 'rgba(255,255,255,0.4)' }}>选择职业...</option>
                     {OCCUPATIONS.map(o => (
                       <option key={o.id} value={o.id} style={{ background: '#0d1f44', color: 'white' }}>{o.name}</option>
                     ))}
@@ -559,6 +562,7 @@ export default function Home() {
                     onChange={e => setHeroCity(e.target.value)}
                     style={selectStyle}
                   >
+                    <option value="" style={{ background: '#0d1f44', color: 'rgba(255,255,255,0.4)' }}>选择城市...</option>
                     {ACTIVE_CITIES.map(c => (
                       <option key={c.id} value={c.id} style={{ background: '#0d1f44', color: 'white' }}>{c.name}</option>
                     ))}
@@ -569,8 +573,9 @@ export default function Home() {
               {/* CTA */}
               <button
                 onClick={handleHeroGo}
+                disabled={!heroOccupation || !heroCity}
                 className="w-full py-3 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90 active:opacity-75"
-                style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}
+                style={{ background: heroOccupation && heroCity ? 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' : 'rgba(255,255,255,0.10)', cursor: heroOccupation && heroCity ? 'pointer' : 'not-allowed' }}
               >
                 查看城市适配分 →
               </button>

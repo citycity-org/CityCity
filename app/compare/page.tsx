@@ -46,68 +46,173 @@ const CITY_BASE: Record<string, {
 // ── Fit matrix ────────────────────────────────────────────────────────────────
 const FIT_MATRIX: Record<string, Record<string, OccFit>> = {
   vancouver: {
-    electrician:  { score:72, hpiYears:13.0, rpi:42, eoi:'强' },
-    software_eng: { score:84, hpiYears:9.5,  rpi:36, eoi:'强' },
-    nurse:        { score:68, hpiYears:12.8, rpi:43, eoi:'中' },
-    teacher:      { score:62, hpiYears:14.0, rpi:46, eoi:'中' },
-    truck_driver: { score:52, hpiYears:16.5, rpi:54, eoi:'中' },
-    accountant:   { score:65, hpiYears:15.2, rpi:49, eoi:'中' },
-    police:       { score:70, hpiYears:12.5, rpi:41, eoi:'强' },
-    retail:       { score:32, hpiYears:26.0, rpi:68, eoi:'中' },
+    electrician:   { score:72, hpiYears:13.0, rpi:42, eoi:'强' },
+    software_eng:  { score:84, hpiYears:9.5,  rpi:36, eoi:'强' },
+    nurse:         { score:68, hpiYears:12.8, rpi:43, eoi:'中' },
+    doctor:        { score:82, hpiYears:5.5,  rpi:18, eoi:'强' },
+    pharmacist:    { score:74, hpiYears:10.5, rpi:35, eoi:'中' },
+    data_analyst:  { score:72, hpiYears:11.5, rpi:38, eoi:'中' },
+    it_support:    { score:58, hpiYears:17.0, rpi:57, eoi:'中' },
+    engineer:      { score:70, hpiYears:11.4, rpi:38, eoi:'中' },
+    plumber:       { score:65, hpiYears:13.5, rpi:45, eoi:'中' },
+    carpenter:     { score:55, hpiYears:15.5, rpi:52, eoi:'中' },
+    teacher:       { score:62, hpiYears:14.0, rpi:46, eoi:'中' },
+    accountant:    { score:65, hpiYears:15.2, rpi:49, eoi:'中' },
+    lawyer:        { score:78, hpiYears:8.1,  rpi:27, eoi:'中' },
+    police:        { score:70, hpiYears:12.5, rpi:41, eoi:'强' },
+    firefighter:   { score:68, hpiYears:12.4, rpi:41, eoi:'强' },
+    social_worker: { score:42, hpiYears:18.2, rpi:61, eoi:'中' },
+    truck_driver:  { score:52, hpiYears:16.5, rpi:54, eoi:'中' },
+    mechanic:      { score:55, hpiYears:15.5, rpi:52, eoi:'中' },
+    chef:          { score:38, hpiYears:20.0, rpi:68, eoi:'中' },
+    retail:        { score:32, hpiYears:26.0, rpi:68, eoi:'中' },
+    self_employed: { score:48, hpiYears:16.2, rpi:54, eoi:'弱' },
+    freelancer:    { score:38, hpiYears:20.2, rpi:68, eoi:'弱' },
+    unemployed:    { score:22, hpiYears:42.0, rpi:142, eoi:'弱' },
+    retired:       { score:40, hpiYears:25.0, rpi:84, eoi:'弱' },
   },
   toronto: {
-    electrician:  { score:70, hpiYears:12.5, rpi:40, eoi:'强' },
-    software_eng: { score:88, hpiYears:9.2,  rpi:34, eoi:'强' },
-    nurse:        { score:72, hpiYears:12.0, rpi:41, eoi:'强' },
-    teacher:      { score:65, hpiYears:13.2, rpi:44, eoi:'强' },
-    truck_driver: { score:55, hpiYears:15.8, rpi:52, eoi:'中' },
-    accountant:   { score:72, hpiYears:13.8, rpi:46, eoi:'强' },
-    police:       { score:68, hpiYears:11.8, rpi:40, eoi:'强' },
-    retail:       { score:30, hpiYears:24.5, rpi:65, eoi:'中' },
+    electrician:   { score:70, hpiYears:12.5, rpi:40, eoi:'强' },
+    software_eng:  { score:88, hpiYears:9.2,  rpi:34, eoi:'强' },
+    nurse:         { score:72, hpiYears:12.0, rpi:41, eoi:'强' },
+    doctor:        { score:86, hpiYears:4.5,  rpi:15, eoi:'强' },
+    pharmacist:    { score:76, hpiYears:9.4,  rpi:32, eoi:'强' },
+    data_analyst:  { score:75, hpiYears:11.5, rpi:39, eoi:'强' },
+    it_support:    { score:60, hpiYears:15.8, rpi:53, eoi:'强' },
+    engineer:      { score:72, hpiYears:10.7, rpi:36, eoi:'强' },
+    plumber:       { score:65, hpiYears:12.6, rpi:43, eoi:'强' },
+    carpenter:     { score:56, hpiYears:14.5, rpi:49, eoi:'中' },
+    teacher:       { score:65, hpiYears:13.2, rpi:44, eoi:'强' },
+    accountant:    { score:72, hpiYears:13.8, rpi:46, eoi:'强' },
+    lawyer:        { score:82, hpiYears:7.6,  rpi:25, eoi:'强' },
+    police:        { score:68, hpiYears:11.8, rpi:40, eoi:'强' },
+    firefighter:   { score:68, hpiYears:11.5, rpi:39, eoi:'强' },
+    social_worker: { score:44, hpiYears:16.9, rpi:57, eoi:'强' },
+    truck_driver:  { score:55, hpiYears:15.8, rpi:52, eoi:'中' },
+    mechanic:      { score:56, hpiYears:14.4, rpi:49, eoi:'中' },
+    chef:          { score:36, hpiYears:18.8, rpi:63, eoi:'中' },
+    retail:        { score:30, hpiYears:24.5, rpi:65, eoi:'中' },
+    self_employed: { score:50, hpiYears:15.1, rpi:51, eoi:'弱' },
+    freelancer:    { score:40, hpiYears:18.8, rpi:63, eoi:'弱' },
+    unemployed:    { score:24, hpiYears:39.2, rpi:132, eoi:'弱' },
+    retired:       { score:42, hpiYears:23.3, rpi:79, eoi:'弱' },
   },
   calgary: {
-    electrician:  { score:91, hpiYears:3.9,  rpi:24, eoi:'强' },
-    software_eng: { score:78, hpiYears:5.2,  rpi:28, eoi:'中' },
-    nurse:        { score:86, hpiYears:4.5,  rpi:25, eoi:'强' },
-    teacher:      { score:80, hpiYears:5.8,  rpi:28, eoi:'中' },
-    truck_driver: { score:82, hpiYears:5.5,  rpi:26, eoi:'强' },
-    accountant:   { score:78, hpiYears:6.2,  rpi:30, eoi:'中' },
-    police:       { score:84, hpiYears:4.8,  rpi:25, eoi:'强' },
-    retail:       { score:52, hpiYears:13.2, rpi:42, eoi:'中' },
+    electrician:   { score:91, hpiYears:3.9,  rpi:24, eoi:'强' },
+    software_eng:  { score:78, hpiYears:5.2,  rpi:28, eoi:'中' },
+    nurse:         { score:86, hpiYears:4.5,  rpi:25, eoi:'强' },
+    doctor:        { score:92, hpiYears:2.5,  rpi:11, eoi:'强' },
+    pharmacist:    { score:84, hpiYears:5.2,  rpi:22, eoi:'中' },
+    data_analyst:  { score:76, hpiYears:6.5,  rpi:27, eoi:'中' },
+    it_support:    { score:68, hpiYears:8.9,  rpi:38, eoi:'中' },
+    engineer:      { score:82, hpiYears:6.0,  rpi:25, eoi:'强' },
+    plumber:       { score:80, hpiYears:7.1,  rpi:30, eoi:'强' },
+    carpenter:     { score:72, hpiYears:8.1,  rpi:34, eoi:'中' },
+    teacher:       { score:80, hpiYears:5.8,  rpi:28, eoi:'中' },
+    accountant:    { score:78, hpiYears:6.2,  rpi:30, eoi:'中' },
+    lawyer:        { score:86, hpiYears:4.2,  rpi:18, eoi:'中' },
+    police:        { score:84, hpiYears:4.8,  rpi:25, eoi:'强' },
+    firefighter:   { score:82, hpiYears:4.6,  rpi:24, eoi:'强' },
+    social_worker: { score:64, hpiYears:9.5,  rpi:40, eoi:'中' },
+    truck_driver:  { score:82, hpiYears:5.5,  rpi:26, eoi:'强' },
+    mechanic:      { score:74, hpiYears:8.1,  rpi:34, eoi:'强' },
+    chef:          { score:55, hpiYears:10.6, rpi:45, eoi:'中' },
+    retail:        { score:52, hpiYears:13.2, rpi:42, eoi:'中' },
+    self_employed: { score:72, hpiYears:8.5,  rpi:36, eoi:'弱' },
+    freelancer:    { score:62, hpiYears:10.6, rpi:45, eoi:'弱' },
+    unemployed:    { score:35, hpiYears:22.0, rpi:94, eoi:'弱' },
+    retired:       { score:58, hpiYears:13.1, rpi:56, eoi:'弱' },
   },
   montreal: {
-    electrician:  { score:68, hpiYears:5.5,  rpi:30, eoi:'中' },
-    software_eng: { score:70, hpiYears:5.2,  rpi:28, eoi:'中' },
-    nurse:        { score:65, hpiYears:6.0,  rpi:32, eoi:'中' },
-    teacher:      { score:68, hpiYears:5.8,  rpi:30, eoi:'中' },
-    truck_driver: { score:60, hpiYears:7.2,  rpi:36, eoi:'中' },
-    accountant:   { score:62, hpiYears:6.8,  rpi:34, eoi:'中' },
-    police:       { score:65, hpiYears:6.5,  rpi:32, eoi:'中' },
-    retail:       { score:45, hpiYears:13.5, rpi:44, eoi:'弱' },
+    electrician:   { score:68, hpiYears:5.5,  rpi:30, eoi:'中' },
+    software_eng:  { score:70, hpiYears:5.2,  rpi:28, eoi:'中' },
+    nurse:         { score:65, hpiYears:6.0,  rpi:32, eoi:'中' },
+    doctor:        { score:78, hpiYears:2.6,  rpi:10, eoi:'中' },
+    pharmacist:    { score:68, hpiYears:5.5,  rpi:22, eoi:'中' },
+    data_analyst:  { score:64, hpiYears:6.8,  rpi:26, eoi:'中' },
+    it_support:    { score:55, hpiYears:9.4,  rpi:36, eoi:'弱' },
+    engineer:      { score:66, hpiYears:6.3,  rpi:25, eoi:'中' },
+    plumber:       { score:62, hpiYears:7.5,  rpi:29, eoi:'中' },
+    carpenter:     { score:55, hpiYears:8.5,  rpi:33, eoi:'中' },
+    teacher:       { score:68, hpiYears:5.8,  rpi:30, eoi:'中' },
+    accountant:    { score:62, hpiYears:6.8,  rpi:34, eoi:'中' },
+    lawyer:        { score:72, hpiYears:4.5,  rpi:17, eoi:'中' },
+    police:        { score:65, hpiYears:6.5,  rpi:32, eoi:'中' },
+    firefighter:   { score:64, hpiYears:6.3,  rpi:31, eoi:'中' },
+    social_worker: { score:48, hpiYears:10.0, rpi:38, eoi:'中' },
+    truck_driver:  { score:60, hpiYears:7.2,  rpi:36, eoi:'中' },
+    mechanic:      { score:56, hpiYears:8.5,  rpi:33, eoi:'中' },
+    chef:          { score:44, hpiYears:11.2, rpi:43, eoi:'弱' },
+    retail:        { score:45, hpiYears:13.5, rpi:44, eoi:'弱' },
+    self_employed: { score:65, hpiYears:8.9,  rpi:34, eoi:'弱' },
+    freelancer:    { score:60, hpiYears:11.2, rpi:43, eoi:'弱' },
+    unemployed:    { score:34, hpiYears:23.2, rpi:89, eoi:'弱' },
+    retired:       { score:55, hpiYears:13.8, rpi:53, eoi:'弱' },
   },
   ottawa: {
-    electrician:  { score:74, hpiYears:6.8,  rpi:28, eoi:'中' },
-    software_eng: { score:80, hpiYears:6.2,  rpi:26, eoi:'强' },
-    nurse:        { score:82, hpiYears:6.5,  rpi:27, eoi:'强' },
-    teacher:      { score:80, hpiYears:7.0,  rpi:28, eoi:'强' },
-    truck_driver: { score:65, hpiYears:8.5,  rpi:34, eoi:'中' },
-    accountant:   { score:74, hpiYears:7.8,  rpi:30, eoi:'中' },
-    police:       { score:80, hpiYears:6.8,  rpi:28, eoi:'强' },
-    retail:       { score:44, hpiYears:16.0, rpi:50, eoi:'弱' },
+    electrician:   { score:74, hpiYears:6.8,  rpi:28, eoi:'中' },
+    software_eng:  { score:80, hpiYears:6.2,  rpi:26, eoi:'强' },
+    nurse:         { score:82, hpiYears:6.5,  rpi:27, eoi:'强' },
+    doctor:        { score:88, hpiYears:3.0,  rpi:11, eoi:'强' },
+    pharmacist:    { score:78, hpiYears:6.2,  rpi:24, eoi:'中' },
+    data_analyst:  { score:74, hpiYears:7.6,  rpi:30, eoi:'中' },
+    it_support:    { score:64, hpiYears:10.5, rpi:41, eoi:'中' },
+    engineer:      { score:76, hpiYears:7.1,  rpi:28, eoi:'中' },
+    plumber:       { score:70, hpiYears:8.3,  rpi:33, eoi:'中' },
+    carpenter:     { score:62, hpiYears:9.6,  rpi:38, eoi:'中' },
+    teacher:       { score:80, hpiYears:7.0,  rpi:28, eoi:'强' },
+    accountant:    { score:74, hpiYears:7.8,  rpi:30, eoi:'中' },
+    lawyer:        { score:84, hpiYears:5.0,  rpi:19, eoi:'强' },
+    police:        { score:80, hpiYears:6.8,  rpi:28, eoi:'强' },
+    firefighter:   { score:78, hpiYears:6.5,  rpi:27, eoi:'强' },
+    social_worker: { score:56, hpiYears:11.2, rpi:43, eoi:'中' },
+    truck_driver:  { score:65, hpiYears:8.5,  rpi:34, eoi:'中' },
+    mechanic:      { score:62, hpiYears:9.6,  rpi:38, eoi:'中' },
+    chef:          { score:46, hpiYears:12.5, rpi:48, eoi:'弱' },
+    retail:        { score:44, hpiYears:16.0, rpi:50, eoi:'弱' },
+    self_employed: { score:65, hpiYears:10.0, rpi:39, eoi:'弱' },
+    freelancer:    { score:58, hpiYears:12.5, rpi:48, eoi:'弱' },
+    unemployed:    { score:32, hpiYears:26.0, rpi:101, eoi:'弱' },
+    retired:       { score:52, hpiYears:15.5, rpi:60, eoi:'弱' },
   },
 }
 
 const ALL_CITY_IDS = ['vancouver', 'toronto', 'calgary', 'montreal', 'ottawa']
 
 const OCCUPATIONS = [
-  { id:'electrician',  name:'电工'       },
-  { id:'software_eng', name:'软件工程师' },
-  { id:'nurse',        name:'注册护士'   },
-  { id:'teacher',      name:'中学教师'   },
-  { id:'truck_driver', name:'卡车司机'   },
-  { id:'accountant',   name:'会计师'     },
-  { id:'police',       name:'警察'       },
-  { id:'retail',       name:'零售店员'   },
+  // 医疗
+  { id:'nurse',         name:'注册护士'   },
+  { id:'doctor',        name:'家庭医生'   },
+  { id:'pharmacist',    name:'药剂师'     },
+  // 科技
+  { id:'software_eng',  name:'软件工程师' },
+  { id:'data_analyst',  name:'数据分析师' },
+  { id:'it_support',    name:'IT技术支持' },
+  // 工程建筑
+  { id:'electrician',   name:'电工'       },
+  { id:'engineer',      name:'土木工程师' },
+  { id:'plumber',       name:'水管工'     },
+  { id:'carpenter',     name:'木工'       },
+  // 教育
+  { id:'teacher',       name:'中学教师'   },
+  // 法律金融
+  { id:'accountant',    name:'会计师'     },
+  { id:'lawyer',        name:'律师'       },
+  // 公共服务
+  { id:'police',        name:'警察'       },
+  { id:'firefighter',   name:'消防员'     },
+  { id:'social_worker', name:'社会工作者' },
+  // 运输物流
+  { id:'truck_driver',  name:'卡车司机'   },
+  { id:'mechanic',      name:'汽车技师'   },
+  // 服务业
+  { id:'chef',          name:'厨师'       },
+  { id:'retail',        name:'零售店员'   },
+  // 其他身份
+  { id:'self_employed', name:'自雇 / 个体经营' },
+  { id:'freelancer',    name:'自由职业者'      },
+  { id:'unemployed',    name:'暂未就业'        },
+  { id:'retired',       name:'退休 / 财富自由' },
 ]
 const OCC_NAME: Record<string,string> = Object.fromEntries(OCCUPATIONS.map(o=>[o.id,o.name]))
 
@@ -388,9 +493,9 @@ function ScoreBubble({ slug, city, adjScore, rank, totalCities, isWinner, propTy
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function ComparePage() {
-  const [slugA,    setSlugA   ] = useState('vancouver')
-  const [slugB,    setSlugB   ] = useState('calgary')
-  const [occ,      setOcc     ] = useState('electrician')
+  const [slugA,    setSlugA   ] = useState('')
+  const [slugB,    setSlugB   ] = useState('')
+  const [occ,      setOcc     ] = useState('')
   const [propType, setPropType] = useState('2br')
   const [dropA,    setDropA   ] = useState(false)
   const [dropB,    setDropB   ] = useState(false)
@@ -403,17 +508,19 @@ export default function ComparePage() {
     if (cities[0] && CITY_BASE[cities[0]]) setSlugA(cities[0])
     if (cities[1] && CITY_BASE[cities[1]]) setSlugB(cities[1])
     const occP = p.get('occupation')
-    if (occP && FIT_MATRIX.vancouver[occP]) setOcc(occP)
+    if (occP && OCCUPATIONS.find(x=>x.id===occP)) setOcc(occP)
     const housP = p.get('housing')
     if (housP && PROP_TYPES.find(p=>p.id===housP)) setPropType(housP)
   }, [])
 
-  const pt      = PROP_TYPES.find(p => p.id === propType)!
-  const cityA   = CITY_BASE[slugA]
-  const cityB   = CITY_BASE[slugB]
+  const pt      = PROP_TYPES.find(p => p.id === propType) ?? PROP_TYPES[1]
+  const occName = OCC_NAME[occ] ?? ''
+  const ready   = !!slugA && !!slugB && !!occ
+
+  const cityA   = CITY_BASE[slugA] ?? CITY_BASE['vancouver']
+  const cityB   = CITY_BASE[slugB] ?? CITY_BASE['calgary']
   const fitA    = FIT_MATRIX[slugA]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'中' as EoiVal }
   const fitB    = FIT_MATRIX[slugB]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'中' as EoiVal }
-  const occName = OCC_NAME[occ] ?? occ
 
   // Adjusted fit values
   const adjA = {
@@ -434,7 +541,7 @@ export default function ComparePage() {
   const adjRentB  = Math.round(cityB.medianRent * pt.rentMult)
 
   // Rank both cities across all 5
-  const rankList    = ALL_CITY_IDS.filter(id => FIT_MATRIX[id]?.[occ]).map(id => ({ id, score: getAdjScore(FIT_MATRIX[id][occ], pt.priceMult, pt.rentMult) })).sort((a,b) => b.score - a.score)
+  const rankList    = occ ? ALL_CITY_IDS.filter(id => FIT_MATRIX[id]?.[occ]).map(id => ({ id, score: getAdjScore(FIT_MATRIX[id][occ], pt.priceMult, pt.rentMult) })).sort((a,b) => b.score - a.score) : []
   const rankA       = rankList.findIndex(c => c.id === slugA) + 1
   const rankB       = rankList.findIndex(c => c.id === slugB) + 1
   const totalCities = rankList.length
@@ -448,10 +555,10 @@ export default function ComparePage() {
   const loseAdj  = aWins ? adjB : adjA
   const scoreDiff = Math.abs(adjA.score - adjB.score)
 
-  const verdict    = getVerdictLayers(winSlug, loseSlug, occ, winAdj, loseAdj)
-  const suitable   = getSuitableFor(winSlug, loseSlug, occ, winAdj, loseAdj)
-  const whyWins    = getWhyWins(winSlug, loseSlug, occ, winAdj, loseAdj)
-  const whyStill   = getWhyStill(loseSlug, winSlug, occ, loseAdj, winAdj)
+  const verdict    = ready ? getVerdictLayers(winSlug, loseSlug, occ, winAdj, loseAdj) : { primary:'', secondary:'', choiceQ:'' }
+  const suitable   = ready ? getSuitableFor(winSlug, loseSlug, occ, winAdj, loseAdj)   : { winReasons:[] as string[], loseReasons:[] as string[] }
+  const whyWins    = ready ? getWhyWins(winSlug, loseSlug, occ, winAdj, loseAdj)        : []
+  const whyStill   = ready ? getWhyStill(loseSlug, winSlug, occ, loseAdj, winAdj)       : []
 
   const dimRows = DIMS.map(d => {
     const vA   = getDimValue(slugA, occ, d.key, pt.priceMult, pt.rentMult)
@@ -467,6 +574,9 @@ export default function ComparePage() {
     <main style={{ minHeight:'100vh', background:'#0d1117' }}>
       <style>{`
         .drop-menu { position:absolute; top:calc(100% + 8px); left:0; right:0; background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; overflow:hidden; z-index:50; }
+        .drop-menu-inner { max-height:300px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.18) transparent; }
+        .drop-menu-inner::-webkit-scrollbar { width:4px; }
+        .drop-menu-inner::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.18); border-radius:2px; }
         .drop-item:hover { background:rgba(255,255,255,0.06); }
         .dim-row:hover { background:rgba(255,255,255,0.04) !important; }
         @media (max-width:700px) { .col2 { grid-template-columns:1fr !important; } }
@@ -487,23 +597,31 @@ export default function ComparePage() {
             {/* City A */}
             <div style={{ position:'relative', flex:'1 1 160px' }}>
               <button onClick={() => { setDropA(!dropA); setDropB(false); setDropO(false) }}
-                style={{ width:'100%', padding:'12px 16px', borderRadius:14, background:'rgba(79,142,247,0.10)', border:'1.5px solid rgba(79,142,247,0.30)', cursor:'pointer', textAlign:'left' }}>
-                <div style={{ color:'rgba(255,255,255,0.32)', fontSize:11 }}>{cityA.province}</div>
-                <div style={{ color:'white', fontSize:17, fontWeight:800 }}>{cityA.name}</div>
-                <div style={{ color: rkc(rankA), fontSize:11, fontWeight:700, marginTop:2 }}>全国榜 #{rankA}/{totalCities} · {pt.label}</div>
+                style={{ width:'100%', padding:'12px 16px', borderRadius:14, background:'rgba(79,142,247,0.10)', border:`1.5px solid ${slugA ? 'rgba(79,142,247,0.30)' : 'rgba(79,142,247,0.50)'}`, cursor:'pointer', textAlign:'left' }}>
+                {slugA ? <>
+                  <div style={{ color:'rgba(255,255,255,0.32)', fontSize:11 }}>{cityA.province}</div>
+                  <div style={{ color:'white', fontSize:17, fontWeight:800 }}>{cityA.name}</div>
+                  <div style={{ color: rkc(rankA), fontSize:11, fontWeight:700, marginTop:2 }}>{ready ? `全国榜 #${rankA}/${totalCities} · ${pt.label}` : pt.label}</div>
+                </> : <>
+                  <div style={{ color:'rgba(79,142,247,0.50)', fontSize:11 }}>城市 A</div>
+                  <div style={{ color:'rgba(255,255,255,0.35)', fontSize:17, fontWeight:800 }}>选择城市 ▾</div>
+                  <div style={{ color:'rgba(255,255,255,0.20)', fontSize:11, marginTop:2 }}>点击选择</div>
+                </>}
               </button>
               {dropA && (
                 <div className="drop-menu">
-                  {Object.entries(CITY_BASE).filter(([k])=>k!==slugB).map(([k,c]) => {
-                    const s = getAdjScore(FIT_MATRIX[k]?.[occ] ?? {score:50,hpiYears:10,rpi:40,eoi:'中'}, pt.priceMult, pt.rentMult)
-                    return (
-                      <button key={k} className="drop-item" onClick={() => { setSlugA(k); closeDrops() }}
-                        style={{ width:'100%', padding:'11px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', background:k===slugA?'rgba(79,142,247,0.08)':'transparent', border:'none' }}>
-                        <span style={{ color:'rgba(255,255,255,0.8)', fontSize:14, fontWeight:k===slugA?700:400 }}>{c.name}</span>
-                        <span style={{ color:sc(s), fontSize:13, fontWeight:700, fontFamily:'monospace' }}>{s}</span>
-                      </button>
-                    )
-                  })}
+                  <div className="drop-menu-inner">
+                    {Object.entries(CITY_BASE).filter(([k])=>k!==slugB).map(([k,c]) => {
+                      const s = getAdjScore(FIT_MATRIX[k]?.[occ] ?? {score:50,hpiYears:10,rpi:40,eoi:'中'}, pt.priceMult, pt.rentMult)
+                      return (
+                        <button key={k} className="drop-item" onClick={() => { setSlugA(k); closeDrops() }}
+                          style={{ width:'100%', padding:'11px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', background:k===slugA?'rgba(79,142,247,0.08)':'transparent', border:'none' }}>
+                          <span style={{ color:'rgba(255,255,255,0.8)', fontSize:14, fontWeight:k===slugA?700:400 }}>{c.name}</span>
+                          <span style={{ color:sc(s), fontSize:13, fontWeight:700, fontFamily:'monospace' }}>{s}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
               )}
             </div>
@@ -513,23 +631,31 @@ export default function ComparePage() {
             {/* City B */}
             <div style={{ position:'relative', flex:'1 1 160px' }}>
               <button onClick={() => { setDropB(!dropB); setDropA(false); setDropO(false) }}
-                style={{ width:'100%', padding:'12px 16px', borderRadius:14, background:'rgba(20,184,166,0.08)', border:'1.5px solid rgba(20,184,166,0.22)', cursor:'pointer', textAlign:'left' }}>
-                <div style={{ color:'rgba(255,255,255,0.32)', fontSize:11 }}>{cityB.province}</div>
-                <div style={{ color:'white', fontSize:17, fontWeight:800 }}>{cityB.name}</div>
-                <div style={{ color: rkc(rankB), fontSize:11, fontWeight:700, marginTop:2 }}>全国榜 #{rankB}/{totalCities} · {pt.label}</div>
+                style={{ width:'100%', padding:'12px 16px', borderRadius:14, background:'rgba(20,184,166,0.08)', border:`1.5px solid ${slugB ? 'rgba(20,184,166,0.22)' : 'rgba(20,184,166,0.50)'}`, cursor:'pointer', textAlign:'left' }}>
+                {slugB ? <>
+                  <div style={{ color:'rgba(255,255,255,0.32)', fontSize:11 }}>{cityB.province}</div>
+                  <div style={{ color:'white', fontSize:17, fontWeight:800 }}>{cityB.name}</div>
+                  <div style={{ color: rkc(rankB), fontSize:11, fontWeight:700, marginTop:2 }}>{ready ? `全国榜 #${rankB}/${totalCities} · ${pt.label}` : pt.label}</div>
+                </> : <>
+                  <div style={{ color:'rgba(20,184,166,0.50)', fontSize:11 }}>城市 B</div>
+                  <div style={{ color:'rgba(255,255,255,0.35)', fontSize:17, fontWeight:800 }}>选择城市 ▾</div>
+                  <div style={{ color:'rgba(255,255,255,0.20)', fontSize:11, marginTop:2 }}>点击选择</div>
+                </>}
               </button>
               {dropB && (
                 <div className="drop-menu">
-                  {Object.entries(CITY_BASE).filter(([k])=>k!==slugA).map(([k,c]) => {
-                    const s = getAdjScore(FIT_MATRIX[k]?.[occ] ?? {score:50,hpiYears:10,rpi:40,eoi:'中'}, pt.priceMult, pt.rentMult)
-                    return (
-                      <button key={k} className="drop-item" onClick={() => { setSlugB(k); closeDrops() }}
-                        style={{ width:'100%', padding:'11px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', background:k===slugB?'rgba(20,184,166,0.08)':'transparent', border:'none' }}>
-                        <span style={{ color:'rgba(255,255,255,0.8)', fontSize:14, fontWeight:k===slugB?700:400 }}>{c.name}</span>
-                        <span style={{ color:sc(s), fontSize:13, fontWeight:700, fontFamily:'monospace' }}>{s}</span>
-                      </button>
-                    )
-                  })}
+                  <div className="drop-menu-inner">
+                    {Object.entries(CITY_BASE).filter(([k])=>k!==slugA).map(([k,c]) => {
+                      const s = getAdjScore(FIT_MATRIX[k]?.[occ] ?? {score:50,hpiYears:10,rpi:40,eoi:'中'}, pt.priceMult, pt.rentMult)
+                      return (
+                        <button key={k} className="drop-item" onClick={() => { setSlugB(k); closeDrops() }}
+                          style={{ width:'100%', padding:'11px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', background:k===slugB?'rgba(20,184,166,0.08)':'transparent', border:'none' }}>
+                          <span style={{ color:'rgba(255,255,255,0.8)', fontSize:14, fontWeight:k===slugB?700:400 }}>{c.name}</span>
+                          <span style={{ color:sc(s), fontSize:13, fontWeight:700, fontFamily:'monospace' }}>{s}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
               )}
             </div>
@@ -539,19 +665,21 @@ export default function ComparePage() {
             {/* Occupation */}
             <div style={{ position:'relative', flexShrink:0 }}>
               <button onClick={() => { setDropO(!dropO); setDropA(false); setDropB(false) }}
-                style={{ padding:'12px 16px', borderRadius:14, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.12)', cursor:'pointer', display:'flex', alignItems:'center', gap:8, whiteSpace:'nowrap' }}>
+                style={{ padding:'12px 16px', borderRadius:14, background:'rgba(255,255,255,0.05)', border:`1px solid ${occ ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.28)'}`, cursor:'pointer', display:'flex', alignItems:'center', gap:8, whiteSpace:'nowrap' }}>
                 <span style={{ color:'rgba(255,255,255,0.35)', fontSize:11 }}>职业</span>
-                <span style={{ color:'white', fontSize:15, fontWeight:700 }}>{occName}</span>
+                <span style={{ color: occ ? 'white' : 'rgba(255,255,255,0.30)', fontSize:15, fontWeight:700 }}>{occ ? occName : '选择职业'}</span>
                 <span style={{ color:'rgba(255,255,255,0.50)', fontSize:11 }}>▾</span>
               </button>
               {dropO && (
-                <div className="drop-menu" style={{ right:'auto', minWidth:160 }}>
-                  {OCCUPATIONS.map(o => (
-                    <button key={o.id} className="drop-item" onClick={() => { setOcc(o.id); closeDrops() }}
-                      style={{ width:'100%', padding:'10px 16px', cursor:'pointer', background:o.id===occ?'rgba(255,255,255,0.06)':'transparent', border:'none', textAlign:'left' }}>
-                      <span style={{ color:'rgba(255,255,255,0.8)', fontSize:13, fontWeight:o.id===occ?700:400 }}>{o.name}</span>
-                    </button>
-                  ))}
+                <div className="drop-menu" style={{ right:'auto', minWidth:180 }}>
+                  <div className="drop-menu-inner">
+                    {OCCUPATIONS.map(o => (
+                      <button key={o.id} className="drop-item" onClick={() => { setOcc(o.id); closeDrops() }}
+                        style={{ width:'100%', padding:'10px 16px', cursor:'pointer', background:o.id===occ?'rgba(255,255,255,0.06)':'transparent', border:'none', textAlign:'left' }}>
+                        <span style={{ color:'rgba(255,255,255,0.8)', fontSize:13, fontWeight:o.id===occ?700:400 }}>{o.name}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -591,8 +719,24 @@ export default function ComparePage() {
             </div>
           </div>
 
+          {/* ── NOT READY: prompt ── */}
+          {!ready && (
+            <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:20, padding:'48px 32px', textAlign:'center' }}>
+              <div style={{ fontSize:32, marginBottom:16 }}>🏙️</div>
+              <h2 style={{ color:'white', fontSize:20, fontWeight:800, margin:'0 0 10px' }}>选择两座城市和你的职业</h2>
+              <p style={{ color:'rgba(255,255,255,0.42)', fontSize:14, margin:'0 0 24px', lineHeight:1.6 }}>
+                完成上方选择后，系统将自动生成<br/>两城市的全维度对比报告
+              </p>
+              <div style={{ display:'flex', justifyContent:'center', gap:16, flexWrap:'wrap' }}>
+                {!slugA && <div style={{ padding:'8px 16px', borderRadius:10, border:'1px dashed rgba(79,142,247,0.40)', color:'rgba(79,142,247,0.70)', fontSize:13 }}>① 选择城市 A</div>}
+                {!slugB && <div style={{ padding:'8px 16px', borderRadius:10, border:'1px dashed rgba(20,184,166,0.40)', color:'rgba(20,184,166,0.70)', fontSize:13 }}>② 选择城市 B</div>}
+                {!occ   && <div style={{ padding:'8px 16px', borderRadius:10, border:'1px dashed rgba(255,255,255,0.20)', color:'rgba(255,255,255,0.40)', fontSize:13 }}>③ 选择职业</div>}
+              </div>
+            </div>
+          )}
+
           {/* ── VERDICT ── */}
-          <div style={{ background:'rgba(20,184,166,0.06)', border:'1px solid rgba(20,184,166,0.20)', borderRadius:20, padding:'28px 32px' }}>
+          {ready && <div style={{ background:'rgba(20,184,166,0.06)', border:'1px solid rgba(20,184,166,0.20)', borderRadius:20, padding:'28px 32px' }}>
             <div style={{ color:'rgba(255,255,255,0.55)', fontSize:11, fontWeight:700, letterSpacing:'0.08em', marginBottom:12 }}>
               VERDICT · {occName} · {pt.label}
             </div>
@@ -641,12 +785,12 @@ export default function ComparePage() {
                 <ScoreBubble slug={slugB} city={cityB} adjScore={adjB.score} rank={rankB} totalCities={totalCities} isWinner={!aWins && scoreDiff > 0} propTypeLabel={pt.label} />
               </div>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
 
       {/* ── BODY ──────────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth:1100, margin:'0 auto', padding:'36px 32px', display:'flex', flexDirection:'column', gap:28 }}>
+      {ready && <div style={{ maxWidth:1100, margin:'0 auto', padding:'36px 32px', display:'flex', flexDirection:'column', gap:28 }}>
 
         {/* ── WHY WINS / STILL MATTERS ── */}
         <div className="col2" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
@@ -887,30 +1031,80 @@ export default function ComparePage() {
                   <span style={{ color:'rgba(255,255,255,0.35)', display:'block', fontSize:11, marginTop:4 }}>lakive.com</span>
                 </div>
               </div>
-              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
+
+                {/* Copy */}
                 <button onClick={() => { navigator.clipboard.writeText(shareText); setCopied(true); setTimeout(()=>setCopied(false),2000) }}
-                  style={{ padding:'8px 14px', borderRadius:8, background:copied?'rgba(20,184,166,0.15)':'rgba(255,255,255,0.06)', border:`1px solid ${copied?'rgba(20,184,166,0.40)':'rgba(255,255,255,0.12)'}`, color:copied?'#14B8A6':'rgba(255,255,255,0.55)', fontSize:12, fontWeight:700, cursor:'pointer' }}>
-                  {copied ? '✓ 已复制' : '📋 复制文本'}
+                  title="复制文本"
+                  style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:copied?'rgba(20,184,166,0.18)':'rgba(255,255,255,0.07)', border:`1px solid ${copied?'rgba(20,184,166,0.45)':'rgba(255,255,255,0.12)'}`, cursor:'pointer', transition:'all 0.15s' }}>
+                  {copied
+                    ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#14B8A6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    : <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="rgba(255,255,255,0.55)" strokeWidth="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="rgba(255,255,255,0.55)" strokeWidth="1.8"/></svg>
+                  }
                 </button>
-                <a href={twitterUrl} target="_blank" rel="noopener"
-                  style={{ padding:'8px 14px', borderRadius:8, background:'rgba(29,161,242,0.08)', border:'1px solid rgba(29,161,242,0.25)', color:'rgba(29,161,242,0.85)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                  𝕏 Twitter
+
+                {/* X / Twitter */}
+                <a href={twitterUrl} target="_blank" rel="noopener" title="分享到 X / Twitter"
+                  style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.12)', textDecoration:'none' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.727-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </a>
-                <a href={redditUrl} target="_blank" rel="noopener"
-                  style={{ padding:'8px 14px', borderRadius:8, background:'rgba(255,87,0,0.08)', border:'1px solid rgba(255,87,0,0.25)', color:'rgba(255,120,60,0.90)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                  Reddit
+
+                {/* Facebook */}
+                <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://lakive.com/compare?cities='+slugA+','+slugB)}&quote=${encodeURIComponent(shareText)}`}
+                  target="_blank" rel="noopener" title="分享到 Facebook"
+                  style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(24,119,242,0.12)', border:'1px solid rgba(24,119,242,0.30)', textDecoration:'none' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.885v2.271h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
                 </a>
-                <a href={waUrl} target="_blank" rel="noopener"
-                  style={{ padding:'8px 14px', borderRadius:8, background:'rgba(37,211,102,0.08)', border:'1px solid rgba(37,211,102,0.25)', color:'rgba(37,211,102,0.85)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                  WhatsApp
+
+                {/* Instagram */}
+                <button onClick={() => { navigator.clipboard.writeText(shareText); window.open('https://www.instagram.com/', '_blank') }}
+                  title="复制内容并打开 Instagram"
+                  style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(225,48,108,0.10)', border:'1px solid rgba(225,48,108,0.28)', cursor:'pointer' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="url(#ig2)" strokeWidth="2"/><circle cx="12" cy="12" r="5" stroke="url(#ig2)" strokeWidth="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="url(#ig2)"/><defs><linearGradient id="ig2" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse"><stop stopColor="#f09433"/><stop offset="0.25" stopColor="#e6683c"/><stop offset="0.5" stopColor="#dc2743"/><stop offset="0.75" stopColor="#cc2366"/><stop offset="1" stopColor="#bc1888"/></linearGradient></defs></svg>
+                </button>
+
+                {/* 小红书 */}
+                <button onClick={() => { navigator.clipboard.writeText(shareText); window.open('https://www.xiaohongshu.com/', '_blank') }}
+                  title="复制内容并打开小红书"
+                  style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,45,45,0.10)', border:'1px solid rgba(255,45,45,0.28)', cursor:'pointer' }}>
+                  <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="10" fill="#FF2442"/>
+                    <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="14" fontWeight="900" fontFamily="sans-serif">书</text>
+                  </svg>
+                </button>
+
+                {/* WhatsApp */}
+                <a href={waUrl} target="_blank" rel="noopener" title="分享到 WhatsApp"
+                  style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(37,211,102,0.10)', border:'1px solid rgba(37,211,102,0.28)', textDecoration:'none' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </a>
+
+                {/* Reddit */}
+                <a href={redditUrl} target="_blank" rel="noopener" title="分享到 Reddit"
+                  style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,87,0,0.10)', border:'1px solid rgba(255,87,0,0.28)', textDecoration:'none' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF4500"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
                 </a>
               </div>
               <div style={{ color:'rgba(255,255,255,0.22)', fontSize:11, marginTop:10 }}>
-                推荐分享到 Reddit r/PersonalFinanceCanada · r/canada · r/vancouver · r/calgary
+                Instagram / 小红书：点击后自动复制内容，粘贴到发帖框即可
               </div>
             </div>
           )
         })()}
+
+        {/* ── Subscribe CTA ── */}
+        {ready && (
+          <a href={`/subscribe?city=${winSlug}&occ=${occ}&pt=${propType}&from=compare`}
+            style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'linear-gradient(135deg,rgba(79,142,247,0.10),rgba(91,92,240,0.08))', border:'1px solid rgba(79,142,247,0.25)', borderRadius:14, padding:'16px 20px', textDecoration:'none', marginBottom:20 }}>
+            <div>
+              <div style={{ color:'#93C5FD', fontSize:14, fontWeight:700, marginBottom:3 }}>
+                📬 订阅 {winner.name}{occName ? ` × ${occName}` : ''} 报告
+              </div>
+              <div style={{ color:'rgba(255,255,255,0.40)', fontSize:12 }}>月度简报 + 季度情报 · 免费 · 随时退订</div>
+            </div>
+            <span style={{ color:'#93C5FD', fontSize:16, marginLeft:12, flexShrink:0 }}>→</span>
+          </a>
+        )}
 
         {/* ── FOOTER ── */}
         <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:20 }}>
@@ -922,7 +1116,7 @@ export default function ComparePage() {
             住房指标（房价/年收入、租金压力）已根据 {pt.label} 房型假设调整。适配分根据住房压力阈值动态计算，不代表官方排名。城市对比仅供参考，不构成财务或移民建议。2026年Q1。
           </p>
         </div>
-      </div>
+      </div>}
 
       {(dropA||dropB||dropO) && <div style={{ position:'fixed', inset:0, zIndex:40 }} onClick={closeDrops} />}
     </main>

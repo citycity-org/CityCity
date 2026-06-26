@@ -19,8 +19,11 @@ export default function NavBar() {
 
   return (
     <nav style={{ background:'rgba(10,14,28,0.92)', backdropFilter:'blur(16px)', borderBottom:'1px solid rgba(255,255,255,0.07)', height:64, display:'flex', alignItems:'center', padding:'0 24px', justifyContent:'space-between', position:'sticky', top:0, zIndex:50 }}>
-      <a href="/" style={{ display:'flex', alignItems:'center', textDecoration:'none' }}>
+      <a href="/" style={{ display:'flex', flexDirection:'column', alignItems:'flex-start', textDecoration:'none', gap:2 }}>
         <LakiveLogo size={24} theme="dark" />
+        <span style={{ fontSize:9, fontWeight:500, color:'rgba(255,255,255,0.28)', letterSpacing:'0.04em', lineHeight:1, whiteSpace:'nowrap' }}>
+          From Data to Belonging · 从数据，到归属
+        </span>
       </a>
 
       <div style={{ display:'flex', alignItems:'center', gap:2 }}>

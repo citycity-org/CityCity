@@ -60,8 +60,14 @@ const OCC_GROUPS = [
     { id:'mechanic',     name:'汽车技师',   income:68000  },
   ]},
   { label:'服务业',   occs:[
-    { id:'chef',         name:'厨师',       income:52000  },
-    { id:'retail',       name:'零售店员',   income:38000  },
+    { id:'chef',          name:'厨师',           income:52000  },
+    { id:'retail',        name:'零售店员',       income:38000  },
+  ]},
+  { label:'其他身份', occs:[
+    { id:'self_employed', name:'自雇 / 个体经营', income:65000  },
+    { id:'freelancer',    name:'自由职业者',      income:52000  },
+    { id:'unemployed',    name:'暂未就业',        income:0      },
+    { id:'retired',       name:'退休 / 财富自由', income:42000  },
   ]},
 ]
 const ALL_OCCS = OCC_GROUPS.flatMap(g => g.occs)
@@ -115,18 +121,19 @@ function getBuyVerdict(cityName:string, hpiYears:number, monthlyMortgage:number,
 
 // ── Main ───────────────────────────────────────────────────────────────────────
 export default function CalculatePage() {
-  const [cityId,   setCityId  ] = useState('vancouver')
-  const [occId,    setOccId   ] = useState('electrician')
-  const [income,   setIncome  ] = useState<number>(82000)
-  const [propType, setPropType] = useState('2br')
-  const [intent,   setIntent  ] = useState<'rent'|'buy'>('rent')
-  const [showDrop, setShowDrop] = useState<'city'|'occ'|null>(null)
-  const [submitted, setSubmitted] = useState(false)
-  const [showDetail, setShowDetail] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [cityId,    setCityId   ] = useState('vancouver')
+  const [occId,     setOccId    ] = useState('')
+  const [income,    setIncome   ] = useState<number>(0)
+  const [propType,  setPropType ] = useState('2br')
+  const [intent,    setIntent   ] = useState<'rent'|'buy'>('rent')
+  const [showOccDrop, setShowOccDrop] = useState(false)
+  const [submitted,   setSubmitted  ] = useState(false)
+  const [showDetail,  setShowDetail ] = useState(false)
+  const [copied,      setCopied     ] = useState(false)
+  const [step,        setStep       ] = useState(1)   // 1=职业/收入 2=住房意向 3=城市 4=结果
   const resultsRef = useRef<HTMLDivElement>(null)
 
-  // Read URL params
+  // Read URL params — jump to results if all params present
   useEffect(() => {
     const p = new URLSearchParams(window.location.search)
     const c = p.get('city'), o = p.get('occupation'), h = p.get('housing')
@@ -137,26 +144,33 @@ export default function CalculatePage() {
       if (def) setIncome(def)
     }
     if (h && PROP_TYPES.find(x => x.id === h)) setPropType(h)
+    if (c && o && h) { setSubmitted(true); setStep(4) }
   }, [])
 
-  // Auto-fill income when occ changes (only if user hasn't submitted yet)
   const handleOccChange = (id: string) => {
     setOccId(id)
     const def = ALL_OCCS.find(o => o.id === id)?.income
     if (def) setIncome(def)
-    setShowDrop(null)
-    setSubmitted(false)
+    setShowOccDrop(false)
   }
 
-  const handleSubmit = () => {
+  const goNext = () => {
+    if (step < 3) { setStep(s => s + 1); return }
+    // step 3 → 4: submit
     setSubmitted(true)
     setShowDetail(false)
+    setStep(4)
     setTimeout(() => resultsRef.current?.scrollIntoView({ behavior:'smooth', block:'start' }), 100)
   }
 
+  const goBack = () => {
+    if (step === 4) { setStep(3); setSubmitted(false); return }
+    setStep(s => Math.max(1, s - 1))
+  }
+
   const city = CITIES[cityId]
-  const occ  = ALL_OCCS.find(o => o.id === occId)!
-  const pt   = PROP_TYPES.find(p => p.id === propType)!
+  const occ  = ALL_OCCS.find(o => o.id === occId)
+  const pt   = PROP_TYPES.find(p => p.id === propType) ?? PROP_TYPES[1]
 
   // ── Computed results ──────────────────────────────────────────────────────────
   const results = useMemo(() => {
@@ -216,192 +230,249 @@ export default function CalculatePage() {
 
   const cityName = city.name
   const occName  = occ?.name ?? ''
+  const isUnemployed = occId === 'unemployed'
+  const step1Ready = !!occId && (isUnemployed ? true : income >= 10000)
+
+  const STEP_LABELS = ['职业收入', '住房意向', '目标城市', '结果']
 
   return (
     <main style={{ minHeight:'100vh', background:'#0d1117' }}>
       <style>{`
-        .drop-menu { position:absolute; top:calc(100% + 6px); left:0; right:0; background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; overflow:hidden; z-index:80; max-height:320px; overflow-y:auto; }
+        .drop-menu { position:absolute; top:calc(100% + 6px); left:0; right:0; background:#1a2035; border:1px solid rgba(255,255,255,0.12); border-radius:14px; overflow:hidden; z-index:80; }
+        .drop-menu-inner { max-height:320px; overflow-y:auto; }
+        .drop-menu-inner::-webkit-scrollbar { width:4px; }
+        .drop-menu-inner::-webkit-scrollbar-track { background:transparent; }
+        .drop-menu-inner::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.18); border-radius:2px; }
         .drop-item:hover { background:rgba(255,255,255,0.07); }
         input[type=number]::-webkit-outer-spin-button,
         input[type=number]::-webkit-inner-spin-button { -webkit-appearance:none; }
         input[type=number] { -moz-appearance:textfield; }
+        .city-card:hover { border-color:rgba(79,142,247,0.40) !important; background:rgba(79,142,247,0.06) !important; }
       `}</style>
 
       {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <div style={{ background:'linear-gradient(160deg,#0d1117 0%,#131b2e 60%,#162035 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'48px 24px 52px' }}>
+      <div style={{ background:'linear-gradient(160deg,#0d1117 0%,#131b2e 60%,#162035 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'36px 24px 40px' }}>
         <div style={{ maxWidth:640, margin:'0 auto', textAlign:'center' }}>
-          <div style={{ color:'rgba(255,255,255,0.32)', fontSize:12, fontWeight:700, letterSpacing:'0.10em', marginBottom:16 }}>
+          <div style={{ color:'rgba(255,255,255,0.32)', fontSize:12, fontWeight:700, letterSpacing:'0.10em', marginBottom:12 }}>
             CALCULATE MY CITY FIT
           </div>
-          <h1 style={{ color:'#FFFFFF', fontSize:32, fontWeight:900, lineHeight:1.2, margin:'0 0 12px' }}>
+          <h1 style={{ color:'#FFFFFF', fontSize:28, fontWeight:900, lineHeight:1.2, margin:'0 0 10px' }}>
             你负担得起这座城市吗？
           </h1>
-          <p style={{ color:'rgba(255,255,255,0.42)', fontSize:15, margin:0, lineHeight:1.6 }}>
-            输入你的职业和收入，系统告诉你在这座城市的住房压力、月均可支配，以及买房需要多少年。
+          <p style={{ color:'rgba(255,255,255,0.42)', fontSize:14, margin:'0 0 28px', lineHeight:1.6 }}>
+            3步输入，即刻生成你的城市适配报告
           </p>
+
+          {/* ── Step progress bar ── */}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:0, maxWidth:380, margin:'0 auto' }}>
+            {STEP_LABELS.map((label, i) => {
+              const n = i + 1
+              const active  = n === step
+              const done    = n < step
+              return (
+                <div key={n} style={{ display:'flex', alignItems:'center', flex: i < STEP_LABELS.length - 1 ? 1 : 'none' }}>
+                  <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
+                    <div style={{
+                      width:28, height:28, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center',
+                      background: done?'#14B8A6': active?'#4F8EF7':'rgba(255,255,255,0.08)',
+                      border: `2px solid ${done?'#14B8A6':active?'#4F8EF7':'rgba(255,255,255,0.15)'}`,
+                      color: done||active?'white':'rgba(255,255,255,0.35)',
+                      fontSize:11, fontWeight:700,
+                    }}>
+                      {done ? '✓' : n}
+                    </div>
+                    <div style={{ color: active?'white':done?'#14B8A6':'rgba(255,255,255,0.28)', fontSize:9, fontWeight:700, whiteSpace:'nowrap' }}>
+                      {label}
+                    </div>
+                  </div>
+                  {i < STEP_LABELS.length - 1 && (
+                    <div style={{ flex:1, height:2, background: done?'#14B8A6':'rgba(255,255,255,0.10)', margin:'0 6px', marginBottom:16 }} />
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
 
-      {/* ── FORM ─────────────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth:640, margin:'0 auto', padding:'36px 24px 0' }}>
-        <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:20, padding:'28px 28px 24px' }}>
+      {/* ── WIZARD STEPS ──────────────────────────────────────────────────────── */}
+      {step < 4 && (
+        <div style={{ maxWidth:640, margin:'0 auto', padding:'28px 24px 60px' }}>
 
-          {/* City */}
-          <div style={{ marginBottom:18 }}>
-            <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:8 }}>目标城市</div>
-            <div style={{ position:'relative' }}>
-              <button onClick={() => setShowDrop(showDrop==='city'?null:'city')}
-                style={{ width:'100%', padding:'13px 16px', borderRadius:12, background:'rgba(255,255,255,0.05)', border:`1px solid ${showDrop==='city'?'rgba(79,142,247,0.5)':'rgba(255,255,255,0.10)'}`, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                <div style={{ textAlign:'left' }}>
-                  <div style={{ color:'rgba(255,255,255,0.32)', fontSize:11 }}>{city.province}</div>
-                  <div style={{ color:'white', fontSize:16, fontWeight:700 }}>{cityName}</div>
-                </div>
-                <span style={{ color:'rgba(255,255,255,0.28)', fontSize:12 }}>▾</span>
-              </button>
-              {showDrop === 'city' && (
-                <div className="drop-menu">
-                  {CITY_IDS.map(id => {
-                    const c = CITIES[id]
-                    return (
-                      <button key={id} className="drop-item" onClick={() => { setCityId(id); setShowDrop(null); setSubmitted(false) }}
-                        style={{ width:'100%', padding:'12px 16px', display:'flex', justifyContent:'space-between', cursor:'pointer', background:id===cityId?'rgba(79,142,247,0.08)':'transparent', border:'none', textAlign:'left' }}>
-                        <div>
-                          <div style={{ color:'rgba(255,255,255,0.38)', fontSize:10 }}>{c.province}</div>
-                          <div style={{ color:'rgba(255,255,255,0.85)', fontSize:14, fontWeight:id===cityId?700:400 }}>{c.name}</div>
-                        </div>
-                        <div style={{ color:'rgba(255,255,255,0.28)', fontSize:11, textAlign:'right', marginTop:4 }}>
-                          {c.taiNote}
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
+          {/* ── STEP 1: Occupation + Income ── */}
+          {step === 1 && (
+            <div>
+              <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:20 }}>第 1 步：告诉我们你的职业和收入</div>
 
-          {/* Occupation */}
-          <div style={{ marginBottom:18 }}>
-            <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:8 }}>你的职业</div>
-            <div style={{ position:'relative' }}>
-              <button onClick={() => setShowDrop(showDrop==='occ'?null:'occ')}
-                style={{ width:'100%', padding:'13px 16px', borderRadius:12, background:'rgba(255,255,255,0.05)', border:`1px solid ${showDrop==='occ'?'rgba(79,142,247,0.5)':'rgba(255,255,255,0.10)'}`, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                <span style={{ color:'white', fontSize:16, fontWeight:700 }}>{occName}</span>
-                <span style={{ color:'rgba(255,255,255,0.28)', fontSize:12 }}>▾</span>
-              </button>
-              {showDrop === 'occ' && (
-                <div className="drop-menu">
-                  {OCC_GROUPS.map(g => (
-                    <div key={g.label}>
-                      <div style={{ padding:'10px 16px 5px', color:'rgba(255,255,255,0.28)', fontSize:10, fontWeight:700, letterSpacing:'0.07em' }}>{g.label}</div>
-                      {g.occs.map(o => (
-                        <button key={o.id} className="drop-item" onClick={() => handleOccChange(o.id)}
-                          style={{ width:'100%', padding:'9px 16px', display:'flex', justifyContent:'space-between', cursor:'pointer', background:o.id===occId?'rgba(79,142,247,0.08)':'transparent', border:'none', textAlign:'left' }}>
-                          <span style={{ color:'rgba(255,255,255,0.85)', fontSize:13, fontWeight:o.id===occId?700:400 }}>{o.name}</span>
-                          <span style={{ color:'rgba(255,255,255,0.28)', fontSize:12, fontFamily:'monospace' }}>${(o.income/1000).toFixed(0)}K</span>
-                        </button>
-                      ))}
+              {/* Occupation */}
+              <div style={{ marginBottom:18 }}>
+                <div style={{ color:'rgba(255,255,255,0.55)', fontSize:12, fontWeight:700, marginBottom:8 }}>你的职业</div>
+                <div style={{ position:'relative' }}>
+                  <button onClick={() => setShowOccDrop(!showOccDrop)}
+                    style={{ width:'100%', padding:'14px 16px', borderRadius:12, background:'rgba(255,255,255,0.05)', border:`1px solid ${showOccDrop?'rgba(79,142,247,0.5)':'rgba(255,255,255,0.10)'}`, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                    <span style={{ color: occId ? 'white' : 'rgba(255,255,255,0.30)', fontSize:16, fontWeight:700 }}>
+                      {occId ? occName : '选择你的职业'}
+                    </span>
+                    <span style={{ color:'rgba(255,255,255,0.28)', fontSize:12 }}>{showOccDrop ? '▴' : '▾'}</span>
+                  </button>
+                  {showOccDrop && (
+                    <div className="drop-menu">
+                      <div className="drop-menu-inner">
+                        {OCC_GROUPS.map(g => (
+                          <div key={g.label}>
+                            <div style={{ padding:'10px 16px 5px', color:'rgba(255,255,255,0.28)', fontSize:10, fontWeight:700, letterSpacing:'0.07em' }}>{g.label}</div>
+                            {g.occs.map(o => (
+                              <button key={o.id} className="drop-item" onClick={() => handleOccChange(o.id)}
+                                style={{ width:'100%', padding:'9px 16px', display:'flex', justifyContent:'space-between', cursor:'pointer', background:o.id===occId?'rgba(79,142,247,0.08)':'transparent', border:'none', textAlign:'left' }}>
+                                <span style={{ color:'rgba(255,255,255,0.85)', fontSize:13, fontWeight:o.id===occId?700:400 }}>{o.name}</span>
+                                <span style={{ color:'rgba(255,255,255,0.35)', fontSize:12, fontFamily:'monospace' }}>{o.income > 0 ? `$${(o.income/1000).toFixed(0)}K` : '—'}</span>
+                              </button>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
                     </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Income */}
+              <div style={{ marginBottom:28 }}>
+                <div style={{ color:'rgba(255,255,255,0.55)', fontSize:12, fontWeight:700, marginBottom:8 }}>
+                  年收入（税前）<span style={{ color:'rgba(255,255,255,0.35)', fontSize:11, marginLeft:8, fontWeight:400 }}>可按实际情况修改</span>
+                </div>
+                <div style={{ position:'relative' }}>
+                  <span style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'rgba(255,255,255,0.35)', fontSize:16, fontWeight:600 }}>$</span>
+                  <input
+                    type="number"
+                    value={income === 0 ? '' : income}
+                    placeholder="例如 80000"
+                    onChange={e => setIncome(Number(e.target.value))}
+                    min={isUnemployed ? 0 : 10000} max={500000} step={1000}
+                    style={{ width:'100%', padding:'14px 16px 14px 28px', borderRadius:12, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.10)', color:'white', fontSize:18, fontWeight:700, fontFamily:'monospace', outline:'none', boxSizing:'border-box' }}
+                  />
+                  <span style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', color:'rgba(255,255,255,0.38)', fontSize:11 }}>CAD / 年</span>
+                </div>
+              </div>
+
+              <button onClick={goNext} disabled={!step1Ready}
+                style={{ width:'100%', padding:'16px', borderRadius:12, background: step1Ready ? 'linear-gradient(135deg,#4F8EF7,#5B5CF0)' : 'rgba(255,255,255,0.07)', border:'none', cursor: step1Ready ? 'pointer' : 'not-allowed', color: step1Ready ? 'white' : 'rgba(255,255,255,0.25)', fontSize:16, fontWeight:800, transition:'all 0.2s' }}>
+                {!occId ? '请先选择职业' : (!isUnemployed && income < 10000) ? '请填写年收入' : '下一步 → 住房意向'}
+              </button>
+            </div>
+          )}
+
+          {/* ── STEP 2: Intent + PropType ── */}
+          {step === 2 && (
+            <div>
+              <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:20 }}>第 2 步：你打算租房还是买房？</div>
+
+              {/* Rent vs Buy */}
+              <div style={{ marginBottom:22 }}>
+                <div style={{ color:'rgba(255,255,255,0.55)', fontSize:12, fontWeight:700, marginBottom:10 }}>我的目标</div>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+                  {([
+                    { id:'rent', label:'租房', icon:'🏠', sub:'评估租金压力与月现金流' },
+                    { id:'buy',  label:'买房', icon:'🔑', sub:'评估购房可行性与月供压力' },
+                  ] as const).map(o => (
+                    <button key={o.id} onClick={() => setIntent(o.id)}
+                      style={{ padding:'18px 14px', borderRadius:14, cursor:'pointer', border:`2px solid ${intent===o.id?'#4F8EF7':'rgba(255,255,255,0.08)'}`, background:intent===o.id?'rgba(79,142,247,0.12)':'rgba(255,255,255,0.03)', transition:'all 0.15s', textAlign:'center' }}>
+                      <div style={{ fontSize:24, marginBottom:6 }}>{o.icon}</div>
+                      <div style={{ color:intent===o.id?'white':'rgba(255,255,255,0.50)', fontSize:16, fontWeight:800, marginBottom:4 }}>{o.label}</div>
+                      <div style={{ color:'rgba(255,255,255,0.35)', fontSize:12 }}>{o.sub}</div>
+                    </button>
                   ))}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
 
-          {/* Income */}
-          <div style={{ marginBottom:18 }}>
-            <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:8 }}>
-              年收入（税前）
-              <span style={{ color:'rgba(255,255,255,0.42)', fontSize:11, marginLeft:8, fontWeight:400 }}>可按实际情况修改</span>
-            </div>
-            <div style={{ position:'relative' }}>
-              <span style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'rgba(255,255,255,0.35)', fontSize:16, fontWeight:600 }}>$</span>
-              <input
-                type="number"
-                value={income}
-                onChange={e => { setIncome(Number(e.target.value)); setSubmitted(false) }}
-                min={20000} max={500000} step={1000}
-                style={{ width:'100%', padding:'13px 16px 13px 28px', borderRadius:12, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.10)', color:'white', fontSize:16, fontWeight:700, fontFamily:'monospace', outline:'none', boxSizing:'border-box' }}
-              />
-              <span style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', color:'rgba(255,255,255,0.42)', fontSize:11 }}>CAD / 年</span>
-            </div>
-          </div>
-
-          {/* Housing type */}
-          <div style={{ marginBottom:26 }}>
-            <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:8 }}>住房需求</div>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:6, marginBottom:6 }}>
-              {PROP_TYPES.slice(0,3).map(p => (
-                <button key={p.id} onClick={() => { setPropType(p.id); setSubmitted(false) }}
-                  style={{ padding:'10px 0', borderRadius:10, cursor:'pointer', border:`1px solid ${propType===p.id?'rgba(79,142,247,0.55)':'rgba(255,255,255,0.08)'}`, background:propType===p.id?'rgba(79,142,247,0.12)':'rgba(255,255,255,0.03)', transition:'all 0.15s' }}>
-                  <div style={{ color:propType===p.id?'white':'rgba(255,255,255,0.45)', fontSize:13, fontWeight:700 }}>{p.label}</div>
-                  <div style={{ color:'rgba(255,255,255,0.42)', fontSize:11, marginTop:2 }}>{p.desc}</div>
-                </button>
-              ))}
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:6 }}>
-              {PROP_TYPES.slice(3).map(p => (
-                <button key={p.id} onClick={() => { setPropType(p.id); setSubmitted(false) }}
-                  style={{ padding:'10px 0', borderRadius:10, cursor:'pointer', border:`1px solid ${propType===p.id?'rgba(79,142,247,0.55)':'rgba(255,255,255,0.08)'}`, background:propType===p.id?'rgba(79,142,247,0.12)':'rgba(255,255,255,0.03)', transition:'all 0.15s' }}>
-                  <div style={{ color:propType===p.id?'white':'rgba(255,255,255,0.45)', fontSize:13, fontWeight:700 }}>{p.label}</div>
-                  <div style={{ color:'rgba(255,255,255,0.42)', fontSize:11, marginTop:2 }}>{p.desc}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Rent vs Buy */}
-          <div style={{ marginBottom:26 }}>
-            <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:8 }}>我的目标</div>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-              {([
-                { id:'rent', label:'租房', sub:'评估租金压力与月现金流' },
-                { id:'buy',  label:'买房', sub:'评估购房可行性与月供压力' },
-              ] as const).map(o => (
-                <button key={o.id} onClick={() => { setIntent(o.id); setSubmitted(false) }}
-                  style={{ padding:'12px 0', borderRadius:10, cursor:'pointer', border:`1px solid ${intent===o.id?'rgba(79,142,247,0.55)':'rgba(255,255,255,0.08)'}`, background:intent===o.id?'rgba(79,142,247,0.12)':'rgba(255,255,255,0.03)', transition:'all 0.15s' }}>
-                  <div style={{ color:intent===o.id?'white':'rgba(255,255,255,0.45)', fontSize:14, fontWeight:700 }}>{o.label}</div>
-                  <div style={{ color:'rgba(255,255,255,0.42)', fontSize:11, marginTop:3 }}>{o.sub}</div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Submit */}
-          <button onClick={handleSubmit}
-            style={{ width:'100%', padding:'16px', borderRadius:12, background:'linear-gradient(135deg,#4F8EF7,#5B5CF0)', border:'none', cursor:'pointer', color:'white', fontSize:16, fontWeight:800, letterSpacing:'0.02em' }}>
-            计算我的城市适配度
-          </button>
-        </div>
-      </div>
-
-      {/* ── EMPTY STATE PREVIEW ──────────────────────────────────────────────── */}
-      {!submitted && (
-        <div style={{ maxWidth:640, margin:'0 auto', padding:'28px 24px 60px' }}>
-          <div style={{ background:'rgba(255,255,255,0.015)', border:'1px dashed rgba(255,255,255,0.10)', borderRadius:20, padding:'32px 24px' }}>
-            <div style={{ textAlign:'center', marginBottom:24 }}>
-              <div style={{ fontSize:28, marginBottom:8 }}>📊</div>
-              <div style={{ color:'rgba(255,255,255,0.28)', fontSize:13, fontWeight:600 }}>填写上方信息，你的个性化结果将在这里生成</div>
-            </div>
-            {/* Greyed preview cards */}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:14, opacity:0.30, pointerEvents:'none' }}>
-              {[
-                { label:'城市适配分',   value:'—',          sub:'综合评分' },
-                { label:'住房压力',     value:'— 年收入',   sub:'买房所需' },
-                { label:'月均可支配',   value:'$—,———',     sub:'扣除租金后' },
-                { label:'税后净收入',   value:'$—,———',     sub:'预估月净收入' },
-              ].map(c => (
-                <div key={c.label} style={{ background:'rgba(255,255,255,0.04)', borderRadius:14, padding:'18px 20px' }}>
-                  <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11, marginBottom:8 }}>{c.label}</div>
-                  <div style={{ color:'rgba(255,255,255,0.30)', fontSize:22, fontWeight:900, fontFamily:'monospace', lineHeight:1, marginBottom:4 }}>{c.value}</div>
-                  <div style={{ color:'rgba(255,255,255,0.20)', fontSize:11 }}>{c.sub}</div>
+              {/* Property type */}
+              <div style={{ marginBottom:28 }}>
+                <div style={{ color:'rgba(255,255,255,0.55)', fontSize:12, fontWeight:700, marginBottom:10 }}>住房类型</div>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:8 }}>
+                  {PROP_TYPES.slice(0,3).map(p => (
+                    <button key={p.id} onClick={() => setPropType(p.id)}
+                      style={{ padding:'12px 6px', borderRadius:12, cursor:'pointer', border:`2px solid ${propType===p.id?'#4F8EF7':'rgba(255,255,255,0.08)'}`, background:propType===p.id?'rgba(79,142,247,0.12)':'rgba(255,255,255,0.03)', transition:'all 0.15s', textAlign:'center' }}>
+                      <div style={{ color:propType===p.id?'white':'rgba(255,255,255,0.50)', fontSize:13, fontWeight:700 }}>{p.label}</div>
+                      <div style={{ color:'rgba(255,255,255,0.35)', fontSize:10, marginTop:2 }}>{p.desc}</div>
+                    </button>
+                  ))}
                 </div>
-              ))}
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                  {PROP_TYPES.slice(3).map(p => (
+                    <button key={p.id} onClick={() => setPropType(p.id)}
+                      style={{ padding:'12px 6px', borderRadius:12, cursor:'pointer', border:`2px solid ${propType===p.id?'#4F8EF7':'rgba(255,255,255,0.08)'}`, background:propType===p.id?'rgba(79,142,247,0.12)':'rgba(255,255,255,0.03)', transition:'all 0.15s', textAlign:'center' }}>
+                      <div style={{ color:propType===p.id?'white':'rgba(255,255,255,0.50)', fontSize:13, fontWeight:700 }}>{p.label}</div>
+                      <div style={{ color:'rgba(255,255,255,0.35)', fontSize:10, marginTop:2 }}>{p.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display:'flex', gap:10 }}>
+                <button onClick={goBack}
+                  style={{ padding:'16px 20px', borderRadius:12, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.10)', cursor:'pointer', color:'rgba(255,255,255,0.55)', fontSize:14, fontWeight:700 }}>
+                  ← 返回
+                </button>
+                <button onClick={goNext}
+                  style={{ flex:1, padding:'16px', borderRadius:12, background:'linear-gradient(135deg,#4F8EF7,#5B5CF0)', border:'none', cursor:'pointer', color:'white', fontSize:16, fontWeight:800 }}>
+                  下一步 → 选择城市
+                </button>
+              </div>
             </div>
-            <div style={{ color:'rgba(255,255,255,0.18)', fontSize:12, textAlign:'center', lineHeight:1.7 }}>
-              还包含：5 城市横向对比 · 城市推荐与谨慎提示 · 月度财务拆解 · 一键分享洞察
+          )}
+
+          {/* ── STEP 3: City selection ── */}
+          {step === 3 && (
+            <div>
+              <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:20 }}>第 3 步：你想落脚在哪座城市？</div>
+              <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:28 }}>
+                {CITY_IDS.map(id => {
+                  const c = CITIES[id]
+                  const sel = id === cityId
+                  return (
+                    <button key={id} className="city-card" onClick={() => setCityId(id)}
+                      style={{ width:'100%', padding:'16px 20px', borderRadius:14, cursor:'pointer', border:`2px solid ${sel?'#4F8EF7':'rgba(255,255,255,0.08)'}`, background:sel?'rgba(79,142,247,0.10)':'rgba(255,255,255,0.025)', transition:'all 0.15s', display:'flex', alignItems:'center', justifyContent:'space-between', textAlign:'left' }}>
+                      <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+                        <div style={{ width:36, height:36, borderRadius:10, background:sel?'rgba(79,142,247,0.20)':'rgba(255,255,255,0.06)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:800, color:sel?'#60A5FA':'rgba(255,255,255,0.40)', fontFamily:'monospace' }}>
+                          {c.short}
+                        </div>
+                        <div>
+                          <div style={{ color:sel?'white':'rgba(255,255,255,0.75)', fontSize:16, fontWeight:800 }}>{c.name}</div>
+                          <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11, marginTop:1 }}>{c.province} · {c.taiNote}</div>
+                        </div>
+                      </div>
+                      <div style={{ textAlign:'right' }}>
+                        <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11, marginBottom:2 }}>基准房价</div>
+                        <div style={{ color:sel?'#60A5FA':'rgba(255,255,255,0.50)', fontSize:14, fontWeight:700, fontFamily:'monospace' }}>
+                          ${(c.basePrice/1000000).toFixed(2)}M
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+              <div style={{ display:'flex', gap:10 }}>
+                <button onClick={goBack}
+                  style={{ padding:'16px 20px', borderRadius:12, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.10)', cursor:'pointer', color:'rgba(255,255,255,0.55)', fontSize:14, fontWeight:700 }}>
+                  ← 返回
+                </button>
+                <button onClick={goNext}
+                  style={{ flex:1, padding:'16px', borderRadius:12, background:'linear-gradient(135deg,#14B8A6,#0EA5E9)', border:'none', cursor:'pointer', color:'white', fontSize:16, fontWeight:800 }}>
+                  计算我的城市适配度 →
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Back to wizard (step 4) ─────────────────────────────────────────── */}
+      {step === 4 && (
+        <div style={{ maxWidth:640, margin:'0 auto', padding:'16px 24px 0' }}>
+          <button onClick={goBack}
+            style={{ padding:'10px 16px', borderRadius:10, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', cursor:'pointer', color:'rgba(255,255,255,0.50)', fontSize:13, fontWeight:700, display:'flex', alignItems:'center', gap:6 }}>
+            ← 修改条件
+          </button>
         </div>
       )}
 
@@ -511,11 +582,13 @@ export default function CalculatePage() {
               </div>
             </div>
             {/* Subscribe CTA */}
-            <a href={`/subscribe?city=${results.allCities[0].id}`}
+            <a href={`/subscribe?city=${results.allCities[0].id}${occId ? `&occ=${occId}` : ''}&pt=${propType}&from=calculate`}
               style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'linear-gradient(135deg,rgba(79,142,247,0.10),rgba(91,92,240,0.08))', border:'1px solid rgba(79,142,247,0.25)', borderRadius:14, padding:'14px 18px', textDecoration:'none' }}>
               <div>
-                <div style={{ color:'#93C5FD', fontSize:13, fontWeight:700, marginBottom:2 }}>订阅 {results.allCities[0].name} × {occName} 季度报告</div>
-                <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11 }}>每季度更新：房价、租金、收入适配指数变化 · 免费</div>
+                <div style={{ color:'#93C5FD', fontSize:13, fontWeight:700, marginBottom:2 }}>
+                  📬 订阅 {results.allCities[0].name}{occName ? ` × ${occName}` : ''} 报告
+                </div>
+                <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11 }}>月报 + 季报 · 免费 · 随时退订</div>
               </div>
               <span style={{ color:'#93C5FD', fontSize:16, marginLeft:12 }}>→</span>
             </a>
@@ -665,26 +738,62 @@ export default function CalculatePage() {
                   </div>
                 </div>
                 {/* Share buttons */}
-                <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                <div style={{ display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
+
+                  {/* Copy */}
                   <button onClick={() => { navigator.clipboard.writeText(shareText); setCopied(true); setTimeout(()=>setCopied(false),2000) }}
-                    style={{ padding:'8px 14px', borderRadius:8, background:copied?'rgba(20,184,166,0.15)':'rgba(255,255,255,0.06)', border:`1px solid ${copied?'rgba(20,184,166,0.40)':'rgba(255,255,255,0.12)'}`, color:copied?'#14B8A6':'rgba(255,255,255,0.55)', fontSize:12, fontWeight:700, cursor:'pointer' }}>
-                    {copied ? '✓ 已复制' : '📋 复制文本'}
+                    title="复制文本"
+                    style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:copied?'rgba(20,184,166,0.18)':'rgba(255,255,255,0.07)', border:`1px solid ${copied?'rgba(20,184,166,0.45)':'rgba(255,255,255,0.12)'}`, cursor:'pointer', transition:'all 0.15s' }}>
+                    {copied
+                      ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#14B8A6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      : <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="rgba(255,255,255,0.55)" strokeWidth="1.8"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="rgba(255,255,255,0.55)" strokeWidth="1.8"/></svg>
+                    }
                   </button>
-                  <a href={twitterUrl} target="_blank" rel="noopener"
-                    style={{ padding:'8px 14px', borderRadius:8, background:'rgba(29,161,242,0.08)', border:'1px solid rgba(29,161,242,0.25)', color:'rgba(29,161,242,0.85)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                    𝕏 Twitter
+
+                  {/* X / Twitter */}
+                  <a href={twitterUrl} target="_blank" rel="noopener" title="分享到 X / Twitter"
+                    style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.12)', textDecoration:'none' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.727-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                   </a>
-                  <a href={redditUrl} target="_blank" rel="noopener"
-                    style={{ padding:'8px 14px', borderRadius:8, background:'rgba(255,87,0,0.08)', border:'1px solid rgba(255,87,0,0.25)', color:'rgba(255,120,60,0.90)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                    Reddit
+
+                  {/* Facebook */}
+                  <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://lakive.com/calculate')}&quote=${encodeURIComponent(shareText)}`}
+                    target="_blank" rel="noopener" title="分享到 Facebook"
+                    style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(24,119,242,0.12)', border:'1px solid rgba(24,119,242,0.30)', textDecoration:'none' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.885v2.271h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
                   </a>
-                  <a href={waUrl} target="_blank" rel="noopener"
-                    style={{ padding:'8px 14px', borderRadius:8, background:'rgba(37,211,102,0.08)', border:'1px solid rgba(37,211,102,0.25)', color:'rgba(37,211,102,0.85)', fontSize:12, fontWeight:700, textDecoration:'none' }}>
-                    WhatsApp
+
+                  {/* Instagram */}
+                  <button onClick={() => { navigator.clipboard.writeText(shareText); window.open('https://www.instagram.com/', '_blank') }}
+                    title="复制内容并打开 Instagram"
+                    style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(225,48,108,0.10)', border:'1px solid rgba(225,48,108,0.28)', cursor:'pointer' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="url(#ig)" strokeWidth="2"/><circle cx="12" cy="12" r="5" stroke="url(#ig)" strokeWidth="2"/><circle cx="17.5" cy="6.5" r="1.2" fill="url(#ig)"/><defs><linearGradient id="ig" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse"><stop stopColor="#f09433"/><stop offset="0.25" stopColor="#e6683c"/><stop offset="0.5" stopColor="#dc2743"/><stop offset="0.75" stopColor="#cc2366"/><stop offset="1" stopColor="#bc1888"/></linearGradient></defs></svg>
+                  </button>
+
+                  {/* 小红书 */}
+                  <button onClick={() => { navigator.clipboard.writeText(shareText); window.open('https://www.xiaohongshu.com/', '_blank') }}
+                    title="复制内容并打开小红书"
+                    style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,45,45,0.10)', border:'1px solid rgba(255,45,45,0.28)', cursor:'pointer' }}>
+                    <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+                      <rect width="40" height="40" rx="10" fill="#FF2442"/>
+                      <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="14" fontWeight="900" fontFamily="sans-serif">书</text>
+                    </svg>
+                  </button>
+
+                  {/* WhatsApp */}
+                  <a href={waUrl} target="_blank" rel="noopener" title="分享到 WhatsApp"
+                    style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(37,211,102,0.10)', border:'1px solid rgba(37,211,102,0.28)', textDecoration:'none' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  </a>
+
+                  {/* Reddit */}
+                  <a href={redditUrl} target="_blank" rel="noopener" title="分享到 Reddit"
+                    style={{ width:44, height:44, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,87,0,0.10)', border:'1px solid rgba(255,87,0,0.28)', textDecoration:'none' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF4500"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
                   </a>
                 </div>
                 <div style={{ color:'rgba(255,255,255,0.22)', fontSize:11, marginTop:10 }}>
-                  推荐分享到 Reddit r/PersonalFinanceCanada · r/vancouver · r/canada
+                  Instagram / 小红书：点击后自动复制内容，粘贴到发帖框即可
                 </div>
               </div>
             )

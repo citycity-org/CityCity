@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
+  // Coming soon page — remove the early return below when going live:
+  if (process.env.NODE_ENV === 'development') return NextResponse.next()
   return new NextResponse(
     `<!DOCTYPE html>
 <html lang="en">
