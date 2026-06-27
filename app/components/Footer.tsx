@@ -32,32 +32,45 @@ const NAV = [
 
 export default function Footer() {
   return (
-    <footer style={{ background: '#070d1f', borderTop: '1px solid rgba(255,255,255,0.07)', padding: '48px 24px 32px' }}>
-      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+    <footer style={{ background: '#070d1f', borderTop: '1px solid rgba(255,255,255,0.07)', padding: '64px 32px 40px' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+
         {/* Top row */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 48, marginBottom: 48 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 48, marginBottom: 56 }}>
+
           {/* Brand */}
-          <div style={{ minWidth: 200, flex: '1 1 200px' }}>
-            <a href="/" style={{ display: 'inline-block', marginBottom: 12, textDecoration: 'none' }}>
-              <LakiveLogo size={22} theme="dark" />
+          <div>
+            <a href="/" style={{ display: 'inline-block', marginBottom: 20, textDecoration: 'none' }}>
+              <LakiveLogo size={26} theme="dark" />
             </a>
-            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, lineHeight: 1.8, maxWidth: 240 }}>
+            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, lineHeight: 1.8, maxWidth: 280 }}>
               Helping people find a place where they can build a meaningful future — not just where they earn more, but where they belong.
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12, marginTop: 12, fontStyle: 'italic' }}>
+              从数据，到归属。
             </p>
           </div>
 
           {/* Nav columns */}
           {NAV.map(col => (
-            <div key={col.title} style={{ minWidth: 140, flex: '1 1 140px' }}>
-              <div style={{ color: 'rgba(255,255,255,0.25)', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>
+            <div key={col.title}>
+              <div style={{
+                color: 'rgba(255,255,255,0.7)',
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: '0.02em',
+                marginBottom: 20,
+                paddingBottom: 12,
+                borderBottom: '1px solid rgba(255,255,255,0.08)',
+              }}>
                 {col.title}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {col.links.map(link => (
                   <a key={link.href} href={link.href}
-                    style={{ color: 'rgba(255,255,255,0.50)', fontSize: 13, textDecoration: 'none', transition: 'color 0.15s' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)')}
-                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.50)')}>
+                    style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, textDecoration: 'none', transition: 'color 0.15s' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'white')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}>
                     {link.label}
                   </a>
                 ))}
@@ -67,14 +80,23 @@ export default function Footer() {
         </div>
 
         {/* Bottom row */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 24, display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: 12 }}>
+        <div style={{
+          borderTop: '1px solid rgba(255,255,255,0.07)',
+          paddingTop: 28,
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 12,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>
             © 2026 Lakive. All Rights Reserved.
           </span>
-          <span style={{ color: 'rgba(255,255,255,0.18)', fontSize: 11 }}>
+          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12 }}>
             Data: StatCan · CMHC · CREA · CRA · Job Bank · CIHI
           </span>
         </div>
+
       </div>
     </footer>
   )
