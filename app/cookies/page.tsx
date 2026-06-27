@@ -12,22 +12,24 @@ export default function CookiesPage() {
         <div style={{ marginBottom: 48 }}>
           <div style={{ color: '#14B8A6', fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>Legal</div>
           <h1 style={{ color: 'white', fontSize: 36, fontWeight: 800, marginBottom: 12 }}>Cookie Policy</h1>
-          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>Effective date: June 26, 2026 · Last updated: June 26, 2026</p>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>Effective date: June 26, 2026 · Last updated: June 27, 2026</p>
         </div>
 
         <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 15, lineHeight: 1.9, display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-          <Section title="1. What Are Cookies">
-            Cookies are small text files stored on your device when you visit a website. They help websites remember your preferences and function correctly.
+          <Section title="1. Our Approach to Cookies">
+            Lakive uses cookies sparingly and only where necessary to provide a secure and functional experience. Cookies are small text files stored on your device when you visit a website. They help websites remember basic session state and function correctly.
           </Section>
 
           <Section title="2. Cookies We Use">
-            Lakive uses only <strong style={{ color: 'white' }}>essential technical cookies</strong> required for the website to function:
+            Lakive uses only <strong style={{ color: 'white' }}>essential session cookies</strong> required for the website to function:
             <br /><br />
             <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: '16px 20px', marginTop: 8 }}>
-              <div style={{ color: 'white', fontWeight: 700, marginBottom: 4 }}>Session cookies (Next.js)</div>
-              <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>Used to maintain basic website functionality. Expire when you close your browser. No personal data is stored.</div>
+              <div style={{ color: 'white', fontWeight: 700, marginBottom: 4 }}>Essential session cookies</div>
+              <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>Used to maintain basic website functionality and security. Expire when you close your browser. No personal data is stored.</div>
             </div>
+            <br />
+            These cookies cannot be disabled through the Platform because they are necessary for core functionality.
           </Section>
 
           <Section title="3. What We Do NOT Use">
@@ -40,14 +42,18 @@ export default function CookiesPage() {
               <li>Cross-site tracking technologies</li>
             </ul>
             <br />
-            Your browsing behavior on Lakive is not tracked or shared with advertising networks.
+            <strong style={{ color: 'white' }}>Your browsing behavior on Lakive is not tracked or shared with advertising networks.</strong>
           </Section>
 
-          <Section title="4. Future Changes">
-            If we introduce analytics or other cookie-based tools in the future, we will update this policy and provide appropriate notice to users. Where required by law, we will obtain your consent before setting non-essential cookies.
+          <Section title="4. Do Not Track">
+            Lakive respects browser privacy features where technically feasible and does not intentionally override "Do Not Track" preferences. Because we do not use behavioral tracking tools, enabling Do Not Track in your browser has no material effect on your experience on our Platform.
           </Section>
 
-          <Section title="5. How to Control Cookies">
+          <Section title="5. Future Changes">
+            If we introduce analytics or other cookie-based tools in the future, we will update this Cookie Policy accordingly. Where required by law, we will obtain your consent before setting non-essential cookies.
+          </Section>
+
+          <Section title="6. How to Control Cookies">
             You can control and delete cookies through your browser settings. Disabling essential cookies may affect the functionality of the Platform. Most browsers allow you to:
             <ul style={{ marginTop: 12, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 8 }}>
               <li>View cookies stored on your device</li>
@@ -56,8 +62,8 @@ export default function CookiesPage() {
             </ul>
           </Section>
 
-          <Section title="6. Contact">
-            Questions about our cookie practices? Email us at <a href="mailto:hello@lakive.com" style={{ color: '#4F8EF7' }}>hello@lakive.com</a>.
+          <Section title="7. Contact">
+            Questions about cookies? Contact us at <a href="mailto:hello@lakive.com" style={{ color: '#4F8EF7' }}>hello@lakive.com</a>.
           </Section>
 
         </div>
