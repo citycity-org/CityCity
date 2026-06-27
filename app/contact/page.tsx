@@ -45,9 +45,7 @@ export default function ContactPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 48 }}>
           {CONTACTS.map(c => (
             <a key={c.type} href={`mailto:${c.email}?subject=${encodeURIComponent(c.type + ' — Lakive')}`}
-              style={{ display: 'flex', alignItems: 'flex-start', gap: 20, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '20px 24px', textDecoration: 'none', transition: 'border-color 0.15s' }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(79,142,247,0.4)')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}>
+              style={{ display: 'flex', alignItems: 'flex-start', gap: 20, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '20px 24px', textDecoration: 'none' }}>
               <span style={{ fontSize: 24 }}>{c.icon}</span>
               <div>
                 <div style={{ color: 'white', fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{c.type}</div>
