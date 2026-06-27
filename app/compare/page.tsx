@@ -1,5 +1,6 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type OccFit = { score: number; hpiYears: number; rpi: number; eoi: '强'|'中'|'弱' }
@@ -492,26 +493,20 @@ function ScoreBubble({ slug, city, adjScore, rank, totalCities, isWinner, propTy
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
-export default function ComparePage() {
-  const [slugA,    setSlugA   ] = useState('')
-  const [slugB,    setSlugB   ] = useState('')
-  const [occ,      setOcc     ] = useState('')
-  const [propType, setPropType] = useState('2br')
+function ComparePageInner() {
+  const searchParams = useSearchParams()
+  const cities = searchParams.get('cities')?.split(',') ?? []
+  const occParam = searchParams.get('occupation') ?? ''
+  const housingParam = searchParams.get('housing') ?? '2br'
+
+  const [slugA,    setSlugA   ] = useState(() => cities[0] && CITY_BASE[cities[0]] ? cities[0] : '')
+  const [slugB,    setSlugB   ] = useState(() => cities[1] && CITY_BASE[cities[1]] ? cities[1] : '')
+  const [occ,      setOcc     ] = useState(() => occParam && OCCUPATIONS.find(x=>x.id===occParam) ? occParam : '')
+  const [propType, setPropType] = useState(() => PROP_TYPES.find(p=>p.id===housingParam) ? housingParam : '2br')
   const [dropA,    setDropA   ] = useState(false)
   const [dropB,    setDropB   ] = useState(false)
   const [dropO,    setDropO   ] = useState(false)
   const [copied,   setCopied  ] = useState(false)
-
-  useEffect(() => {
-    const p = new URLSearchParams(window.location.search)
-    const cities = p.get('cities')?.split(',') ?? []
-    if (cities[0] && CITY_BASE[cities[0]]) setSlugA(cities[0])
-    if (cities[1] && CITY_BASE[cities[1]]) setSlugB(cities[1])
-    const occP = p.get('occupation')
-    if (occP && OCCUPATIONS.find(x=>x.id===occP)) setOcc(occP)
-    const housP = p.get('housing')
-    if (housP && PROP_TYPES.find(p=>p.id===housP)) setPropType(housP)
-  }, [])
 
   const pt      = PROP_TYPES.find(p => p.id === propType) ?? PROP_TYPES[1]
   const occName = OCC_NAME[occ] ?? ''
@@ -1120,5 +1115,13 @@ export default function ComparePage() {
 
       {(dropA||dropB||dropO) && <div style={{ position:'fixed', inset:0, zIndex:40 }} onClick={closeDrops} />}
     </main>
+  )
+}
+
+export default function ComparePage() {
+  return (
+    <Suspense fallback={null}>
+      <ComparePageInner />
+    </Suspense>
   )
 }

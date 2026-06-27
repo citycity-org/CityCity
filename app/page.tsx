@@ -13,17 +13,17 @@ interface City {
   lat: number
   lng: number
   active: boolean
-  score?: number
+  score?: number; tai?: number; eoi?: number; eqi?: number
   hpiYears?: number
   rpi?: number
 }
 
 const CITIES: City[] = [
-  { id: 'vancouver', name: '温哥华', nameEn: 'Vancouver',   lat: 49.25,  lng: -123.12, active: true,  score: 70, hpiYears: 10.2, rpi: 43.6 },
-  { id: 'toronto',   name: '多伦多', nameEn: 'Toronto',     lat: 43.65,  lng: -79.38,  active: true,  score: 70, hpiYears: 9.6,  rpi: 41.2 },
-  { id: 'calgary',   name: '卡尔加里', nameEn: 'Calgary',   lat: 51.05,  lng: -114.07, active: true,  score: 72, hpiYears: 3.9,  rpi: 24.1 },
-  { id: 'montreal',  name: '蒙特利尔', nameEn: 'Montréal',  lat: 45.50,  lng: -73.57,  active: true,  score: 75, hpiYears: 5.5,  rpi: 30.2 },
-  { id: 'ottawa',    name: '渥太华', nameEn: 'Ottawa',      lat: 45.42,  lng: -75.69,  active: true,  score: 73, hpiYears: 6.8,  rpi: 28.4 },
+  { id: 'vancouver', name: '温哥华', nameEn: 'Vancouver',   lat: 49.25,  lng: -123.12, active: true,  score: 70, tai: 72, eoi: 80, eqi: 90, hpiYears: 10.2, rpi: 43.6 },
+  { id: 'toronto',   name: '多伦多', nameEn: 'Toronto',     lat: 43.65,  lng: -79.38,  active: true,  score: 70, tai: 68, eoi: 92, eqi: 75, hpiYears: 9.6,  rpi: 41.2 },
+  { id: 'calgary',   name: '卡尔加里', nameEn: 'Calgary',   lat: 51.05,  lng: -114.07, active: true,  score: 72, tai: 90, eoi: 65, eqi: 82, hpiYears: 3.9,  rpi: 24.1 },
+  { id: 'montreal',  name: '蒙特利尔', nameEn: 'Montréal',  lat: 45.50,  lng: -73.57,  active: true,  score: 75, tai: 42, eoi: 72, eqi: 78, hpiYears: 5.5,  rpi: 30.2 },
+  { id: 'ottawa',    name: '渥太华', nameEn: 'Ottawa',      lat: 45.42,  lng: -75.69,  active: true,  score: 73, tai: 68, eoi: 75, eqi: 80, hpiYears: 6.8,  rpi: 28.4 },
   { id: 'newyork',   name: '纽约',     nameEn: 'New York',       lat: 40.71, lng: -74.01,  active: false },
   { id: 'london',    name: '伦敦',     nameEn: 'London',         lat: 51.51, lng: -0.13,   active: false },
   { id: 'tokyo',     name: '东京',     nameEn: 'Tokyo',          lat: 35.68, lng: 139.69,  active: false },
@@ -301,32 +301,6 @@ export default function Home() {
             ctx.restore()
           }
 
-          // Data bubble: show buy years on top of city dot
-          if (r > baseR * 1.0 && city.hpiYears !== undefined) {
-            const bw = 58, bh = 22, bx = x - bw / 2, by = y - 48
-            ctx.save()
-            ctx.beginPath()
-            const br = 6
-            ctx.moveTo(bx + br, by)
-            ctx.lineTo(bx + bw - br, by)
-            ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + br)
-            ctx.lineTo(bx + bw, by + bh - br)
-            ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - br, by + bh)
-            ctx.lineTo(bx + br, by + bh)
-            ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - br)
-            ctx.lineTo(bx, by + br)
-            ctx.quadraticCurveTo(bx, by, bx + br, by)
-            ctx.closePath()
-            ctx.fillStyle = 'rgba(10,16,36,0.88)'
-            ctx.strokeStyle = 'rgba(79,142,247,0.5)'
-            ctx.lineWidth = 1
-            ctx.fill(); ctx.stroke()
-            ctx.font = `bold 10px -apple-system,system-ui,sans-serif`
-            ctx.textAlign = 'center'
-            ctx.fillStyle = '#EF4444'
-            ctx.fillText(`🏠 ${city.hpiYears}年收入`, bx + bw / 2, by + 14)
-            ctx.restore()
-          }
         } else {
           const opacity = Math.max(0.25, 0.6 - dist * 0.5)
           ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI * 2)
@@ -664,19 +638,19 @@ export default function Home() {
                 </div>
                 {selectedCity.active ? (
                   <>
-                    <div className="grid grid-cols-2 gap-2.5 mb-4">
-                      <div className="p-3 rounded-xl" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
-                        <div className="text-xs text-white/60 mb-1">买房所需</div>
-                        <div className="text-2xl font-bold font-mono text-[#EF4444] leading-none">
-                          {selectedCity.hpiYears}<span className="text-sm text-white/30 ml-1 font-normal">年</span>
+                    <div className="grid grid-cols-3 gap-2 mb-4">
+                      {[
+                        { label: '环境质量', value: selectedCity.eqi, color: '#10B981' },
+                        { label: '税负友好', value: selectedCity.tai, color: '#4F8EF7' },
+                        { label: '就业机会', value: selectedCity.eoi, color: '#F59E0B' },
+                      ].map(({ label, value, color }) => (
+                        <div key={label} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}>
+                          <div className="text-xs mb-1" style={{ color: 'rgba(255,255,255,0.45)' }}>{label}</div>
+                          <div className="text-xl font-bold font-mono leading-none" style={{ color }}>
+                            {value}<span className="text-xs font-normal ml-0.5" style={{ color: 'rgba(255,255,255,0.25)' }}>/100</span>
+                          </div>
                         </div>
-                      </div>
-                      <div className="p-3 rounded-xl" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
-                        <div className="text-xs text-white/60 mb-1">租金占收入</div>
-                        <div className="text-2xl font-bold font-mono text-[#EF4444] leading-none">
-                          {selectedCity.rpi}<span className="text-sm text-white/30 ml-1 font-normal">%</span>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                     <div className="flex gap-2">
                       <a href={`/city/${selectedCity.id}`}

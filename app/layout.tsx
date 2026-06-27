@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NavBar from "./NavBar";
+import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
   title: "Lakive — Know Before You Move",
-  description: "加拿大城市生活成本对比平台。数据驱动的移居决策工具。",
+  description: "City intelligence platform for immigrants. Compare tax, housing, jobs and quality of life across Canadian cities — data-driven decisions for your move.",
   icons: {
     icon: "/lakive-icon.svg",
     apple: "/lakive-icon.svg",
@@ -24,6 +25,8 @@ export default function RootLayout({
 
         {/* 页面内容 */}
         {children}
+
+        <Footer />
 
       </body>
     </html>

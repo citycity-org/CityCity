@@ -65,20 +65,20 @@ function getOccReality(cityName: string, occName: string, fit: OccFit) {
   return { bestFor, hardFor, hiddenRisk }
 }
 
-// ── Scenario-adjusted score (propType shifts pressure thresholds) ─────────────
-function getAdjScore(base: OccFit, priceMult: number, rentMult: number): number {
-  const adjH = base.hpiYears * priceMult
-  const adjR = base.rpi * rentMult
-  let delta = 0
-  if (adjH > 10 && base.hpiYears <= 10) delta -= 5
-  if (adjH > 14 && base.hpiYears <= 14) delta -= 5
-  if (adjR > 38 && base.rpi <= 38)      delta -= 4
-  if (adjR > 45 && base.rpi <= 45)      delta -= 4
-  if (adjH < 6  && base.hpiYears >= 6)  delta += 5
-  if (adjH < 10 && base.hpiYears >= 10) delta += 5
-  if (adjR < 30 && base.rpi >= 30)      delta += 4
-  if (adjR < 38 && base.rpi >= 38)      delta += 4
-  return Math.max(10, Math.min(99, base.score + delta))
+// ── v4.0 composite score (TAI included, replaces hardcoded scores) ────────────
+function computeScore(hpiYears: number, rpi: number, tai: number, eoi: number, hai: number, eqi: number, tci: number, psi: number): number {
+  const hpiScore = hpiYears<6?92:hpiYears<8?82:hpiYears<10?70:hpiYears<12?58:hpiYears<16?45:30
+  const rpiScore = rpi<25?90:rpi<30?82:rpi<35?72:rpi<40?60:rpi<45?48:35
+  const housingScore = hpiScore * 0.55 + rpiScore * 0.45
+  const cityScore    = eoi*0.22 + tai*0.20 + hai*0.20 + eqi*0.14 + tci*0.12 + psi*0.12
+  return Math.max(10, Math.min(99, Math.round(housingScore * 0.52 + cityScore * 0.48)))
+}
+
+// ── Scenario-adjusted score (propType shifts hpi/rpi then recomputes) ────────
+function getAdjScore(base: OccFit, priceMult: number, rentMult: number, tai: number, eoi: number, hai: number, eqi: number, tci: number, psi: number): number {
+  const adjH = parseFloat((base.hpiYears * priceMult).toFixed(1))
+  const adjR = Math.round(base.rpi * rentMult)
+  return computeScore(adjH, adjR, tai, eoi, hai, eqi, tci, psi)
 }
 
 // ── Matrix tooltip ────────────────────────────────────────────────────────────
@@ -297,7 +297,7 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
   // Matrix tiers — computed with propType multipliers so tiers shift when housing need changes
   const tieredOccs = OCCUPATIONS.map(o => {
     const base     = matrix[o.id] ?? matrix.electrician
-    const adjScore = getAdjScore(base, pt.priceMult, pt.rentMult)
+    const adjScore = getAdjScore(base, pt.priceMult, pt.rentMult, city.tai, city.eoi, city.hai, city.eqi, city.tci, city.psi)
     const adjHpi   = parseFloat((base.hpiYears * pt.priceMult).toFixed(1))
     const adjRpiO  = Math.round(base.rpi * pt.rentMult)
     return { ...o, fit: base, adjScore, adjHpi, adjRpiO }
@@ -310,14 +310,17 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
   const ALL_CITY_IDS = ['vancouver', 'toronto', 'calgary', 'montreal', 'ottawa']
   const rankList     = ALL_CITY_IDS
     .filter(id => FIT_MATRIX[id]?.[occ])
-    .map(id => ({ id, score: getAdjScore(FIT_MATRIX[id][occ], pt.priceMult, pt.rentMult) }))
+    .map(id => {
+      const c = CITY_BASE[id]
+      return { id, score: getAdjScore(FIT_MATRIX[id][occ], pt.priceMult, pt.rentMult, c.tai, c.eoi, c.hai, c.eqi, c.tci, c.psi) }
+    })
     .sort((a, b) => b.score - a.score)
   const occRank     = rankList.findIndex(c => c.id === slug) + 1
   const totalCities = rankList.length
   const rankColor   = occRank === 1 ? '#14B8A6' : occRank === 2 ? '#60A5FA' : occRank === 3 ? '#F59E0B' : 'rgba(255,255,255,0.4)'
 
   // Adjusted score (for the hero big number)
-  const adjScore   = getAdjScore(fit, pt.priceMult, pt.rentMult)
+  const adjScore   = getAdjScore(fit, pt.priceMult, pt.rentMult, city.tai, city.eoi, city.hai, city.eqi, city.tci, city.psi)
   const vMain      = getVerdict(adjScore, hpiYears, adjRpi)
 
   // Final verdict — propType-specific
