@@ -50,7 +50,11 @@ export default function DisclaimerPage() {
           </Section>
 
           <Section title="Contact">
-            Questions? Email us at <a href="mailto:hello@lakive.com" style={{ color: '#4F8EF7' }}>hello@lakive.com</a>.
+            Questions?
+            <br /><br />
+            Lakive<br />
+            Email: <a href="mailto:hello@lakive.com" style={{ color: '#4F8EF7' }}>hello@lakive.com</a><br />
+            Website: <a href="https://www.lakive.com" style={{ color: '#4F8EF7' }}>www.lakive.com</a>
           </Section>
 
         </div>

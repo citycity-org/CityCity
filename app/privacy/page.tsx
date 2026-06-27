@@ -109,7 +109,11 @@ export default function PrivacyPage() {
           </Section>
 
           <Section title="15. Contact">
-            Questions about this policy? Contact us at <a href="mailto:hello@lakive.com" style={{ color: '#4F8EF7' }}>hello@lakive.com</a>.
+            Questions about this policy?
+            <br /><br />
+            Lakive<br />
+            Email: <a href="mailto:hello@lakive.com" style={{ color: '#4F8EF7' }}>hello@lakive.com</a><br />
+            Website: <a href="https://www.lakive.com" style={{ color: '#4F8EF7' }}>www.lakive.com</a>
           </Section>
 
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 32, marginTop: 8 }}>

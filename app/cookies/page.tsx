@@ -63,7 +63,11 @@ export default function CookiesPage() {
           </Section>
 
           <Section title="7. Contact">
-            Questions about cookies? Contact us at <a href="mailto:hello@lakive.com" style={{ color: '#4F8EF7' }}>hello@lakive.com</a>.
+            Questions about cookies?
+            <br /><br />
+            Lakive<br />
+            Email: <a href="mailto:hello@lakive.com" style={{ color: '#4F8EF7' }}>hello@lakive.com</a><br />
+            Website: <a href="https://www.lakive.com" style={{ color: '#4F8EF7' }}>www.lakive.com</a>
           </Section>
 
         </div>
