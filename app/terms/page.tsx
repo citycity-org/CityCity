@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export const metadata = {
   title: 'Terms of Service — Lakive',
   description: 'Terms and conditions for using Lakive.',
@@ -89,7 +91,7 @@ export default function TermsPage() {
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
       <h2 style={{ color: 'white', fontSize: 17, fontWeight: 700, marginBottom: 12 }}>{title}</h2>

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 export const metadata = {
   title: 'Disclaimer — Lakive',
   description: 'Important disclaimers about Lakive data and city rankings.',
@@ -53,7 +55,7 @@ export default function DisclaimerPage() {
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div>
       <h2 style={{ color: 'white', fontSize: 17, fontWeight: 700, marginBottom: 12 }}>{title}</h2>
