@@ -260,6 +260,15 @@ function getInsight(cityId:string, occ:string):string {
   return m?.[occ] ?? m?.default ?? ''
 }
 
+// ── Unemployed-specific insights ──────────────────────────────────────────────
+const UNEMPLOYED_INSIGHTS: Record<string, string> = {
+  toronto:   '就业机会指数全国最高（EOI 92），职位最密集；找到工作的概率最高，但住房成本高——建议先确保就业再规划居住。',
+  ottawa:    '联邦政府岗位集中、就业稳定性较高（EOI 75）；生活成本低于温哥华和多伦多，是转型期的较优过渡选择。',
+  vancouver: '就业机会指数较高（EOI 80），科技和服务业活跃；住房成本高，求职期间需充分储备生活费用。',
+  montreal:  '生活成本全国最低，适合求职期间控制开支；双语背景可扩大求职范围，QC省就业机会适中（EOI 72）。',
+  calgary:   'AB省无省级PST，税后收入优势明显；就业机会以能源、建筑、蓝领岗位为主（EOI 65），适合相关背景求职者。',
+}
+
 // ── Auto-generate ranking title ───────────────────────────────────────────────
 function getRankingTitle(regionId:string, occName:string, sortId:string):string {
   const region = REGIONS.find(r=>r.id===regionId)?.label ?? '加拿大'
@@ -396,11 +405,13 @@ export default function RankingPage() {
   const dim       = SORT_DIMS.find(d=>d.id===sortDim)!
   const title     = getRankingTitle(region, occName, sortDim)
 
+  const isUnemployed = occ === 'unemployed'
+
   // Three modes:
   // mode 'index'   — no occ selected: rank by city composite index only
-  // mode 'prompt'  — occ selected but no propType: show prompt
-  // mode 'full'    — occ + propType both selected: full personalized ranking
-  const mode = !occ ? 'index' : !propType ? 'prompt' : 'full'
+  // mode 'prompt'  — occ selected but no propType: show prop selector
+  // mode 'full'    — occ + propType selected (unemployed always skips prompt)
+  const mode = !occ ? 'index' : (!propType && !isUnemployed) ? 'prompt' : 'full'
   const prop = PROP_TYPES.find(pt=>pt.id===propType) ?? PROP_TYPES[1]
 
   const allCities = regionObj.cities
@@ -416,11 +427,21 @@ export default function RankingPage() {
       const baseHpi  = liveHpi[id] ?? fitBase.hpiYears
       const hpiYears = parseFloat((baseHpi * prop.priceMult).toFixed(1))
       const rpi      = Math.round(fitBase.rpi * prop.rentMult)
-      const score    = computeScore(hpiYears, rpi, city.tai, city.eoi, city.hai, city.eqi, city.tci, city.psi)
-      return { id, city, fit:{ ...fitBase, hpiYears, rpi, score }, insight:getInsight(id, occ) }
+      const score = isUnemployed
+        ? cityIndexScore(city.tai, city.eoi, city.hai, city.eqi, city.tci, city.psi)
+        : computeScore(hpiYears, rpi, city.tai, city.eoi, city.hai, city.eqi, city.tci, city.psi)
+      const insight = isUnemployed ? (UNEMPLOYED_INSIGHTS[id] ?? '') : getInsight(id, occ)
+      return { id, city, fit:{ ...fitBase, hpiYears, rpi, score }, insight }
     })
     .sort((a,b) => {
       if (mode === 'index') return b.fit.score - a.fit.score
+      // Unemployed: sort by eoi → rpi → cityIndex (ignore hpiYears)
+      if (isUnemployed) {
+        const eoiA = getSortValue(a.id, occ, 'eoi')
+        const eoiB = getSortValue(b.id, occ, 'eoi')
+        if (eoiA !== eoiB) return eoiB - eoiA
+        return b.fit.score - a.fit.score
+      }
       const vA = getSortValue(a.id, occ, sortDim)
       const vB = getSortValue(b.id, occ, sortDim)
       return dim.lowerBetter ? vA-vB : vB-vA
@@ -470,7 +491,7 @@ export default function RankingPage() {
               label="职业"
               value={occ}
               options={[{ id:'', name:'选择职业' }, ...OCCUPATIONS.map(o=>({ id:o.id, name:o.name }))]}
-              onChange={v=>{ setOcc(v); setExpanded(null) }}
+              onChange={v=>{ setOcc(v); setExpanded(null); if (v === 'unemployed') setSortDim('eoi') }}
             />
             <FilterDropdown
               label="排序"
@@ -508,17 +529,23 @@ export default function RankingPage() {
         <div style={{ marginBottom: mode==='prompt' ? 12 : 20, display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:16, flexWrap:'wrap' }}>
           <div>
             <h2 style={{ color:'#FFFFFF', fontSize:26, fontWeight:800, margin:'0 0 4px' }}>
-              {mode==='index' ? `${regionObj.label}城市综合指数排行` : title}
+              {mode==='index' ? `${regionObj.label}城市综合指数排行`
+                : isUnemployed ? `${regionObj.label}：对暂未就业人群最友好的城市`
+                : title}
             </h2>
             <p style={{ color:'rgba(255,255,255,0.45)', fontSize:15, fontWeight:500, margin:'0 0 6px' }}>
               {mode==='index'
                 ? `共 ${allCities.length} 座城市 · 按城市综合指数排序（TAI · EOI · HAI · EQI · TCI · PSI）`
+                : isUnemployed
+                ? `共 ${allCities.length} 座城市 · 排序依据：就业机会 → 生活成本 → 城市适配`
                 : `共 ${allCities.length} 座城市 · 基于${occName}职业 · ${PROP_TYPES.find(p=>p.id===propType)?.label ?? ''}`
               }
             </p>
             <p style={{ color:'rgba(255,255,255,0.50)', fontSize:12, margin:0 }}>
               {mode==='index'
                 ? '选择职业和房型，查看针对你情况的个性化排行。'
+                : isUnemployed
+                ? '买房年数与租金压力需要有收入才能计算。找到工作后，选择职业查看完整结果。'
                 : '该榜单基于职业与城市公共数据，不含家庭收入、首付、孩子、通勤和生活偏好。'
               }
             </p>
@@ -544,6 +571,37 @@ export default function RankingPage() {
                   {pt.label}
                 </button>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Unemployed mode banner ── */}
+        {isUnemployed && (
+          <div style={{ marginBottom:20, padding:'18px 22px', background:'rgba(20,184,166,0.06)', border:'1px solid rgba(20,184,166,0.18)', borderRadius:14 }}>
+            <div style={{ display:'flex', gap:12, alignItems:'flex-start' }}>
+              <span style={{ fontSize:20 }}>💼</span>
+              <div>
+                <p style={{ color:'#14B8A6', fontSize:14, fontWeight:700, margin:'0 0 6px' }}>未就业模式</p>
+                <p style={{ color:'rgba(255,255,255,0.50)', fontSize:13, margin:'0 0 4px', lineHeight:1.65 }}>
+                  排序依据：优先比较<strong style={{ color:'rgba(255,255,255,0.70)' }}>就业机会（EOI）</strong>，若相同则按综合评分排序。
+                </p>
+                <p style={{ color:'rgba(255,255,255,0.35)', fontSize:12, margin:'0 0 10px' }}>
+                  当前综合评分侧重就业机会、生活成本及城市发展环境。住房指标将在填写收入后参与计算。
+                </p>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:8 }}>
+                  {allCities.map(({ id, city, fit }, i) => {
+                    const eoiColor = city.eoi >= 80 ? '#14B8A6' : city.eoi >= 70 ? '#F59E0B' : '#E86C2F'
+                    const dot = city.eoi >= 80 ? '🟢' : city.eoi >= 70 ? '🟡' : '🔴'
+                    return (
+                      <div key={id} style={{ textAlign:'center', padding:'8px 6px', background:'rgba(255,255,255,0.04)', borderRadius:10, border:'1px solid rgba(255,255,255,0.07)' }}>
+                        <div style={{ fontSize:11, marginBottom:2 }}>{dot}</div>
+                        <div style={{ color:'white', fontSize:12, fontWeight:700 }}>{city.name}</div>
+                        <div style={{ color:eoiColor, fontSize:11, fontWeight:700, fontFamily:'monospace' }}>EOI {city.eoi}</div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -582,20 +640,28 @@ export default function RankingPage() {
                       )}
                     </div>
                     <div className="metrics-row" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12 }}>
-                      {(mode==='full' ? [
+                      {(mode==='full' ? (isUnemployed ? [
+                        { label:'就业机会',   val:String(city.eoi),    color:dc(city.eoi),                 mono:true  },
+                        { label:'税后指数',   val:String(city.tai),    color:dc(city.tai),                 mono:true  },
+                        { label:'买房年数',   val:'N/A',               color:'rgba(255,255,255,0.25)',      mono:false, tip:'填写收入后可计算' },
+                        { label:'租金压力',   val:'N/A',               color:'rgba(255,255,255,0.25)',      mono:false, tip:'填写收入后可计算' },
+                      ] : [
                         { label:'买房年收入', val:`${fit.hpiYears}年`, color:hc(fit.hpiYears), mono:true  },
                         { label:'租金压力',   val:`${fit.rpi}%`,       color:rc(fit.rpi),      mono:true  },
                         { label:'税后指数',   val:String(city.tai),    color:dc(city.tai),     mono:true  },
                         { label:'就业机会',   val:fit.eoi,             color:fit.eoi==='强'?'#14B8A6':fit.eoi==='中'?'#F59E0B':'#E86C2F', mono:false },
-                      ] : [
+                      ]) : [
                         { label:'税后指数', val:String(city.tai), color:dc(city.tai), mono:true },
                         { label:'就业指数', val:String(city.eoi), color:dc(city.eoi), mono:true },
                         { label:'医疗指数', val:String(city.hai), color:dc(city.hai), mono:true },
                         { label:'环境指数', val:String(city.eqi), color:dc(city.eqi), mono:true },
-                      ]).map(m=>(
-                        <div key={m.label}>
+                      ]).map((m: { label:string; val:string; color:string; mono:boolean; tip?:string })=>(
+                        <div key={m.label} title={m.tip ?? ''}>
                           <div style={{ color:'rgba(255,255,255,0.42)', fontSize:11, marginBottom:2 }}>{m.label}</div>
-                          <div style={{ color:m.color, fontSize:15, fontWeight:800, fontFamily:m.mono?'monospace':'inherit' }}>{m.val}</div>
+                          <div style={{ color:m.color, fontSize:15, fontWeight:800, fontFamily:m.mono?'monospace':'inherit', cursor:m.tip?'help':undefined }}>
+                            {m.val}
+                            {m.tip && <span style={{ fontSize:9, marginLeft:3, color:'rgba(255,255,255,0.18)' }}>?</span>}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -642,9 +708,9 @@ export default function RankingPage() {
 
                     <div className="dim-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:6, marginBottom:20 }}>
                       {[
-                        { label:'综合适配分',   val:String(fit.score),                       color:sc(fit.score),    mono:true  },
-                        { label:'买房/年收入',   val:`${fit.hpiYears}年收入`,                color:hc(fit.hpiYears), mono:true  },
-                        { label:'租金压力',      val:`${fit.rpi}%`,                          color:rc(fit.rpi),      mono:true  },
+                        { label:'综合适配分',   val:String(fit.score),    color:sc(fit.score),    mono:true  },
+                        { label:'买房/年收入',   val: isUnemployed ? 'N/A' : `${fit.hpiYears}年收入`, color: isUnemployed ? 'rgba(255,255,255,0.25)' : hc(fit.hpiYears), mono:true  },
+                        { label:'租金压力',      val: isUnemployed ? 'N/A' : `${fit.rpi}%`,  color: isUnemployed ? 'rgba(255,255,255,0.25)' : rc(fit.rpi), mono:true  },
                         { label:'就业机会',      val:`${city.eoi} (${fit.eoi})`,             color:city.eoi>=75?'#14B8A6':city.eoi>=55?'#F59E0B':'#E86C2F', mono:true },
                         { label:'税后指数',        val:String(city.tai),                       color:dc(city.tai),     mono:false },
                         { label:'医疗可及',      val:String(city.hai),                       color:dc(city.hai),     mono:false },
@@ -721,9 +787,15 @@ export default function RankingPage() {
             style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'linear-gradient(135deg,rgba(79,142,247,0.10),rgba(91,92,240,0.08))', border:'1px solid rgba(79,142,247,0.25)', borderRadius:14, padding:'16px 20px', textDecoration:'none', marginBottom:20 }}>
             <div>
               <div style={{ color:'#93C5FD', fontSize:14, fontWeight:700, marginBottom:3 }}>
-                📬 订阅 {allCities[0].city.name} × {occName} 报告
+                {isUnemployed
+                  ? `当前综合评分最高：${allCities[0].city.name}（${allCities[0].fit.score}分）`
+                  : `📬 订阅 ${allCities[0].city.name} × ${occName} 报告`}
               </div>
-              <div style={{ color:'rgba(255,255,255,0.40)', fontSize:12 }}>月度简报 + 季度情报 · 免费 · 随时退订</div>
+              <div style={{ color:'rgba(255,255,255,0.40)', fontSize:12 }}>
+                {isUnemployed
+                  ? '不同收入、职业及住房需求可能产生不同结果'
+                  : '月度简报 + 季度情报 · 免费 · 随时退订'}
+              </div>
             </div>
             <span style={{ color:'#93C5FD', fontSize:16, marginLeft:12, flexShrink:0 }}>→</span>
           </a>
