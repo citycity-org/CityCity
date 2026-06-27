@@ -1,5 +1,5 @@
 'use client'
-import LakiveLogo from './LakiveLogo'
+import { LakiveLogo } from './LakiveLogo'
 
 const NAV = [
   {
