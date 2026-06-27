@@ -15,7 +15,6 @@ const NAV = [
     title: '关于',
     links: [
       { label: 'About Lakive', href: '/about' },
-      { label: 'Report Methodology', href: '/methodology' },
       { label: 'Contact', href: '/contact' },
     ],
   },
