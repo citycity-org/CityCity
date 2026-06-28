@@ -487,7 +487,7 @@ export default function CalculatePage() {
               Lakive 的城市适配分、住房压力和城市推荐都基于你的实际收入计算。<br/>
               请填写年收入——可以是储蓄预算、伴侣收入或预期收入。
             </p>
-            <button onClick={goBack}
+            <button onClick={() => { setStep(1); setSubmitted(false) }}
               style={{ padding:'14px 32px', borderRadius:12, background:'linear-gradient(135deg,#4F8EF7,#5B5CF0)', border:'none', cursor:'pointer', color:'white', fontSize:15, fontWeight:700 }}>
               ← 返回填写收入
             </button>
