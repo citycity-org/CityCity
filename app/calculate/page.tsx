@@ -174,7 +174,7 @@ export default function CalculatePage() {
 
   // ── Computed results ──────────────────────────────────────────────────────────
   const results = useMemo(() => {
-    if (!submitted) return null
+    if (!submitted || income === 0) return null
     const adjPrice       = city.basePrice  * pt.priceMult
     const adjRent        = city.medianRent * pt.rentMult
     const hpiYears       = parseFloat((adjPrice / income).toFixed(1))
@@ -477,46 +477,53 @@ export default function CalculatePage() {
         </div>
       )}
 
+      {/* ── NO-INCOME PROMPT ─────────────────────────────────────────────────── */}
+      {submitted && noIncome && (
+        <div ref={resultsRef} style={{ maxWidth:640, margin:'0 auto', padding:'32px 24px 60px' }}>
+          <div style={{ textAlign:'center', padding:'48px 24px 40px' }}>
+            <div style={{ fontSize:40, marginBottom:20 }}>💼</div>
+            <div style={{ color:'white', fontSize:20, fontWeight:800, marginBottom:14 }}>收入未填写，无法生成分析</div>
+            <p style={{ color:'rgba(255,255,255,0.48)', fontSize:14, lineHeight:1.85, maxWidth:400, margin:'0 auto 32px' }}>
+              Lakive 的城市适配分、住房压力和城市推荐都基于你的实际收入计算。<br/>
+              请填写年收入——可以是储蓄预算、伴侣收入或预期收入。
+            </p>
+            <button onClick={goBack}
+              style={{ padding:'14px 32px', borderRadius:12, background:'linear-gradient(135deg,#4F8EF7,#5B5CF0)', border:'none', cursor:'pointer', color:'white', fontSize:15, fontWeight:700 }}>
+              ← 返回填写收入
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── RESULTS ──────────────────────────────────────────────────────────── */}
       {results && (
         <div ref={resultsRef} style={{ maxWidth:640, margin:'0 auto', padding:'32px 24px 60px' }}>
 
           {/* Verdict banner */}
-          {noIncome ? (
-            <div style={{ background:'rgba(249,115,22,0.07)', border:'1px solid rgba(249,115,22,0.22)', borderRadius:16, padding:'22px 24px', marginBottom:20 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-                <span style={{ color:'rgba(255,255,255,0.55)', fontSize:11 }}>{occName} · {cityName} · {pt.label}</span>
+          <div style={{ background:`${results.verdict.color}0D`, border:`1px solid ${results.verdict.color}30`, borderRadius:16, padding:'22px 24px', marginBottom:20 }}>
+            <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+              <div style={{ padding:'4px 10px', borderRadius:20, background:results.verdict.color+'22', border:`1px solid ${results.verdict.color}40` }}>
+                <span style={{ color:results.verdict.color, fontSize:12, fontWeight:800 }}>{results.verdict.tag}</span>
               </div>
-              <p style={{ color:'rgba(255,255,255,0.75)', fontSize:15, lineHeight:1.65, margin:0, fontWeight:500 }}>
-                当前未填写收入，无法计算租金压力和买房年数。你可以填写月收入后查看住房可负担性。
-              </p>
+              <span style={{ color:'rgba(255,255,255,0.55)', fontSize:11 }}>{occName} · {cityName} · {pt.label}</span>
             </div>
-          ) : (
-            <div style={{ background:`${results.verdict.color}0D`, border:`1px solid ${results.verdict.color}30`, borderRadius:16, padding:'22px 24px', marginBottom:20 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-                <div style={{ padding:'4px 10px', borderRadius:20, background:results.verdict.color+'22', border:`1px solid ${results.verdict.color}40` }}>
-                  <span style={{ color:results.verdict.color, fontSize:12, fontWeight:800 }}>{results.verdict.tag}</span>
-                </div>
-                <span style={{ color:'rgba(255,255,255,0.55)', fontSize:11 }}>{occName} · {cityName} · {pt.label}</span>
-              </div>
-              <p style={{ color:'rgba(255,255,255,0.82)', fontSize:15, lineHeight:1.65, margin:0, fontWeight:500 }}>
-                {results.verdict.text}
-              </p>
-            </div>
-          )}
+            <p style={{ color:'rgba(255,255,255,0.82)', fontSize:15, lineHeight:1.65, margin:0, fontWeight:500 }}>
+              {results.verdict.text}
+            </p>
+          </div>
 
           {/* 4 Core cards — split by intent */}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:20 }}>
             {(intent === 'rent' ? [
-              { label:'城市适配分',   value:String(results.score),                      color:sc(results.score),          sub:results.score>=80?'强适配':results.score>=65?'良好':results.score>=50?'有压力':'高压力' },
-              { label:'租金占月收入', value: noIncome ? 'N/A' : `${results.rpi}%`,      color: noIncome ? 'rgba(255,255,255,0.28)' : rc(results.rpi),  sub: noIncome ? '需要填写收入' : rl(results.rpi) },
-              { label:'月均可支配',   value: noIncome ? 'N/A' : `$${results.monthlyRentDisp.toLocaleString()}`, color: noIncome ? 'rgba(255,255,255,0.28)' : results.monthlyRentDisp>1200?'#14B8A6':results.monthlyRentDisp>600?'#F59E0B':'#EF4444', sub: noIncome ? '需要填写收入' : `税后 $${results.monthlyNet.toLocaleString()} − 租金` },
-              { label:'买房需要',     value: noIncome ? 'N/A' : `${results.hpiYears}年收入`, color: noIncome ? 'rgba(255,255,255,0.28)' : hc(results.hpiYears), sub: noIncome ? '需要填写收入' : hl(results.hpiYears)+' · 仅供参考' },
+              { label:'城市适配分',   value:String(results.score),                         color:sc(results.score),          sub:results.score>=80?'强适配':results.score>=65?'良好':results.score>=50?'有压力':'高压力' },
+              { label:'租金占月收入', value:`${results.rpi}%`,                              color:rc(results.rpi),            sub:rl(results.rpi) },
+              { label:'月均可支配',   value:`$${results.monthlyRentDisp.toLocaleString()}`, color:results.monthlyRentDisp>1200?'#14B8A6':results.monthlyRentDisp>600?'#F59E0B':'#EF4444', sub:`税后 $${results.monthlyNet.toLocaleString()} − 租金` },
+              { label:'买房需要',     value:`${results.hpiYears}年收入`,                   color:hc(results.hpiYears),       sub:hl(results.hpiYears)+' · 仅供参考' },
             ] : [
-              { label:'城市适配分',   value:String(results.score),                      color:sc(results.score),          sub:results.score>=80?'强适配':results.score>=65?'良好':results.score>=50?'有压力':'高压力' },
-              { label:'买房需要',     value: noIncome ? 'N/A' : `${results.hpiYears}年收入`, color: noIncome ? 'rgba(255,255,255,0.28)' : hc(results.hpiYears), sub: noIncome ? '需要填写收入' : hl(results.hpiYears) },
+              { label:'城市适配分',   value:String(results.score),                         color:sc(results.score),          sub:results.score>=80?'强适配':results.score>=65?'良好':results.score>=50?'有压力':'高压力' },
+              { label:'买房需要',     value:`${results.hpiYears}年收入`,                   color:hc(results.hpiYears),       sub:hl(results.hpiYears) },
               { label:'月供估算',     value:`$${results.monthlyMortgage.toLocaleString()}`, color:results.monthlyBuyDisp>0?'#F59E0B':'#EF4444', sub:`5.5% · 25年 · 首付20%` },
-              { label:'首付积累周期', value: noIncome ? 'N/A' : `${results.downYears}年`, color: noIncome ? 'rgba(255,255,255,0.28)' : results.downYears<6?'#14B8A6':results.downYears<10?'#F59E0B':'#E86C2F', sub: noIncome ? '需要填写收入' : '按30%储蓄率估算' },
+              { label:'首付积累周期', value:`${results.downYears}年`,                      color:results.downYears<6?'#14B8A6':results.downYears<10?'#F59E0B':'#E86C2F', sub:'按30%储蓄率估算' },
             ]).map(card => (
               <div key={card.label} style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:14, padding:'18px 20px' }}>
                 <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11, marginBottom:8 }}>{card.label}</div>
@@ -531,9 +538,7 @@ export default function CalculatePage() {
             <div style={{ color:'rgba(255,255,255,0.50)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:12 }}>
               月度财务概览 · {pt.label} · {intent === 'rent' ? '租房情景' : '买房情景'}
             </div>
-            {noIncome ? (
-              <div style={{ color:'rgba(255,255,255,0.38)', fontSize:13, padding:'4px 0 6px' }}>收入未填写，暂无法计算</div>
-            ) : (intent === 'rent' ? [
+            {(intent === 'rent' ? [
               { label:'月薪（税前）',                                       value:`$${results.monthlyGross.toLocaleString()}`,          color:'rgba(255,255,255,0.65)' },
               { label:`预估税后（${Math.round(city.effectiveTax*100)}%）`, value:`$${results.monthlyNet.toLocaleString()}`,            color:'rgba(255,255,255,0.65)' },
               { label:`${pt.label}中位月租 · ${cityName}`,                 value:`−$${Math.round(results.adjRent).toLocaleString()}`,  color:'#E86C2F' },
@@ -549,9 +554,9 @@ export default function CalculatePage() {
                 <span style={{ color:row.color, fontSize:13, fontWeight:(row as any).bold?800:600, fontFamily:'monospace' }}>{row.value}</span>
               </div>
             ))}
-            {!noIncome && <p style={{ color:'rgba(255,255,255,0.42)', fontSize:11, margin:'10px 0 0' }}>
+            <p style={{ color:'rgba(255,255,255,0.42)', fontSize:11, margin:'10px 0 0' }}>
               税率为估算值（{city.taiNote}），月供基于5.5%利率、25年摊销、首付20%。不含保险、物业税等。
-            </p>}
+            </p>
           </div>
 
           {/* ── 城市推荐 ──────────────────────────────────────────────────────── */}
@@ -569,7 +574,7 @@ export default function CalculatePage() {
                       <span style={{ color:'#14B8A6', fontSize:13, fontWeight:800, fontFamily:'monospace' }}>{c.score}分</span>
                     </div>
                     <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, marginTop:2 }}>
-                      {noIncome ? '填写收入后可查看详情' : intent==='rent'
+                      {intent==='rent'
                         ? `租金占比 ${c.rpi}% · 月可支配 $${c.monthlyRentDisp.toLocaleString()}`
                         : `买房 ${c.hpiYears}年收入 · 月供 $${c.monthlyMortgage.toLocaleString()}`}
                     </div>
@@ -587,7 +592,7 @@ export default function CalculatePage() {
                       <span style={{ color:'#EF4444', fontSize:13, fontWeight:800, fontFamily:'monospace' }}>{c.score}分</span>
                     </div>
                     <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11, marginTop:2 }}>
-                      {noIncome ? '填写收入后可查看详情' : intent==='rent'
+                      {intent==='rent'
                         ? `租金占比 ${c.rpi}% · 月可支配 $${c.monthlyRentDisp.toLocaleString()}`
                         : `买房 ${c.hpiYears}年收入 · 月供 $${c.monthlyMortgage.toLocaleString()}`}
                     </div>
@@ -600,9 +605,11 @@ export default function CalculatePage() {
               style={{ display:'flex', alignItems:'center', justifyContent:'space-between', background:'linear-gradient(135deg,rgba(79,142,247,0.10),rgba(91,92,240,0.08))', border:'1px solid rgba(79,142,247,0.25)', borderRadius:14, padding:'14px 18px', textDecoration:'none' }}>
               <div>
                 <div style={{ color:'#93C5FD', fontSize:13, fontWeight:700, marginBottom:2 }}>
-                  📬 订阅 {results.allCities[0].name}{occName ? ` × ${occName}` : ''} 报告
+                  📬 订阅 {results.allCities[0].name}{isUnemployed ? ' 就业机会月报' : occName ? ` × ${occName} 报告` : ' 城市月报'}
                 </div>
-                <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11 }}>月报 + 季报 · 免费 · 随时退订</div>
+                <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11 }}>
+                  {isUnemployed ? 'EOI 就业指数动态 + 生活成本预警 · 免费 · 随时退订' : '月报 + 季报 · 免费 · 随时退订'}
+                </div>
               </div>
               <span style={{ color:'#93C5FD', fontSize:16, marginLeft:12 }}>→</span>
             </a>
@@ -628,16 +635,12 @@ export default function CalculatePage() {
               const isBestSc  = c.score === results.bestScore
               const col3Best  = intent==='rent' ? c.rpi===results.bestRpi : c.hpiYears===results.bestHpi
               const col4Best  = intent==='rent' ? c.monthlyRentDisp===results.bestRentD : c.monthlyBuyDisp===results.bestBuyD
-              const col3Value = noIncome
-                ? { val:'N/A', color:'rgba(255,255,255,0.28)', badge:'' }
-                : intent==='rent'
-                  ? { val:`${c.rpi}%`,      color:rc(c.rpi),      badge:'最低' }
-                  : { val:`${c.hpiYears}年`, color:hc(c.hpiYears), badge:'最短' }
-              const col4Value = noIncome
-                ? { val:'N/A', color:'rgba(255,255,255,0.28)', badge:'' }
-                : intent==='rent'
-                  ? { val:`$${c.monthlyRentDisp.toLocaleString()}`, color:c.monthlyRentDisp>1200?'#14B8A6':c.monthlyRentDisp>600?'#F59E0B':'#EF4444', badge:'最高' }
-                  : { val:`$${c.monthlyMortgage.toLocaleString()}`, color:c.monthlyBuyDisp>0?'#F59E0B':'#EF4444', badge:'最低' }
+              const col3Value = intent==='rent'
+                ? { val:`${c.rpi}%`,      color:rc(c.rpi),      badge:'最低' }
+                : { val:`${c.hpiYears}年`, color:hc(c.hpiYears), badge:'最短' }
+              const col4Value = intent==='rent'
+                ? { val:`$${c.monthlyRentDisp.toLocaleString()}`, color:c.monthlyRentDisp>1200?'#14B8A6':c.monthlyRentDisp>600?'#F59E0B':'#EF4444', badge:'最高' }
+                : { val:`$${c.monthlyMortgage.toLocaleString()}`, color:c.monthlyBuyDisp>0?'#F59E0B':'#EF4444', badge:'最低' }
               return (
                 <a key={c.id}
                   href={`/city/${c.id}?occupation=${occId}&housing=${propType}`}
