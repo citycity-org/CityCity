@@ -3,23 +3,23 @@ import { LakiveLogo } from './LakiveLogo'
 
 const NAV = [
   {
-    title: '产品',
+    title: 'Product',
     links: [
-      { label: '算成本', href: '/calculate' },
-      { label: '城市对比', href: '/compare' },
-      { label: '城市排行榜', href: '/ranking' },
-      { label: '订阅报告', href: '/subscribe' },
+      { label: 'Calculate Cost', href: '/calculate' },
+      { label: 'Compare Cities', href: '/compare' },
+      { label: 'City Rankings', href: '/ranking' },
+      { label: 'Subscribe', href: '/subscribe' },
     ],
   },
   {
-    title: '关于',
+    title: 'Company',
     links: [
       { label: 'About Lakive', href: '/about' },
       { label: 'Contact', href: '/contact' },
     ],
   },
   {
-    title: '法律',
+    title: 'Legal',
     links: [
       { label: 'Privacy Policy', href: '/privacy' },
       { label: 'Terms of Service', href: '/terms' },
@@ -46,7 +46,7 @@ export default function Footer() {
               Helping people find a place where they can build a meaningful future — not just where they earn more, but where they belong.
             </p>
             <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12, marginTop: 12, fontStyle: 'italic' }}>
-              从数据，到归属。
+              From data to belonging.
             </p>
           </div>
 

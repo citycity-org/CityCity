@@ -6,10 +6,10 @@ export default function NavBar() {
   const path = usePathname()
 
   const links = [
-    { href: '/ranking',   label: '排行榜' },
-    { href: '/compare',   label: '城市对比' },
-    { href: '/calculate', label: '算成本' },
-    { href: '/subscribe', label: '订阅' },
+    { href: '/ranking',   label: 'Rankings' },
+    { href: '/compare',   label: 'Compare' },
+    { href: '/calculate', label: 'Calculate' },
+    { href: '/subscribe', label: 'Subscribe' },
   ]
 
   const isActive = (href: string) => {
@@ -22,7 +22,7 @@ export default function NavBar() {
       <a href="/" style={{ display:'flex', flexDirection:'column', alignItems:'flex-start', textDecoration:'none', gap:2 }}>
         <LakiveLogo size={24} theme="dark" />
         <span style={{ fontSize:9, fontWeight:500, color:'rgba(255,255,255,0.28)', letterSpacing:'0.04em', lineHeight:1, whiteSpace:'nowrap' }}>
-          From Data to Belonging · 从数据，到归属
+          From Data to Belonging
         </span>
       </a>
 
@@ -40,10 +40,7 @@ export default function NavBar() {
         ))}
       </div>
 
-      <div style={{ display:'flex', gap:4, background:'rgba(255,255,255,0.07)', borderRadius:8, padding:3 }}>
-        <a href="/" style={{ padding:'4px 12px', borderRadius:6, fontSize:13, fontWeight:600, background:'rgba(79,142,247,0.25)', color:'#93C5FD', textDecoration:'none' }}>中文</a>
-        <a href="/en" style={{ padding:'4px 12px', borderRadius:6, fontSize:13, fontWeight:500, color:'rgba(255,255,255,0.38)', textDecoration:'none' }}>EN</a>
-      </div>
+      <a href="/contact" style={{ padding:'7px 16px', borderRadius:8, fontSize:13, fontWeight:600, background:'rgba(79,142,247,0.15)', color:'#93C5FD', border:'1px solid rgba(79,142,247,0.25)', textDecoration:'none' }}>Contact</a>
     </nav>
   )
 }

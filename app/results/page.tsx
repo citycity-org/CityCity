@@ -4,29 +4,29 @@ import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const OCCUPATION_NAMES: Record<string, string> = {
-  nurse: '注册护士', software_eng: '软件工程师', teacher: '中学教师',
-  electrician: '电工', truck_driver: '卡车司机', accountant: '会计师',
-  police: '警察', chef: '厨师', retail: '零售店员', engineer: '土木工程师',
-  doctor: '家庭医生', pharmacist: '药剂师', dentist: '牙医', lawyer: '律师',
-  financial_advisor: '财务顾问', real_estate: '房产经纪', mechanic: '汽车技师',
-  carpenter: '木工', plumber: '水管工', welder: '焊工', it_support: 'IT技术支持',
-  data_analyst: '数据分析师', marketing: '市场营销专员', hr: '人力资源专员',
-  social_worker: '社会工作者', firefighter: '消防员', pilot: '商业飞行员',
-  chef_executive: '行政总厨', security: '保安', cleaner: '清洁工',
+  nurse: 'Registered Nurse', software_eng: 'Software Engineer', teacher: 'Secondary Teacher',
+  electrician: 'Electrician', truck_driver: 'Truck Driver', accountant: 'Accountant',
+  police: 'Police Officer', chef: 'Chef', retail: 'Retail Associate', engineer: 'Civil Engineer',
+  doctor: 'Family Physician', pharmacist: 'Pharmacist', dentist: 'Dentist', lawyer: 'Lawyer',
+  financial_advisor: 'Financial Advisor', real_estate: 'Real Estate Agent', mechanic: 'Auto Mechanic',
+  carpenter: 'Carpenter', plumber: 'Plumber', welder: 'Welder', it_support: 'IT Support',
+  data_analyst: 'Data Analyst', marketing: 'Marketing Specialist', hr: 'HR Specialist',
+  social_worker: 'Social Worker', firefighter: 'Firefighter', pilot: 'Commercial Pilot',
+  chef_executive: 'Executive Chef', security: 'Security Guard', cleaner: 'Cleaner',
 }
 
 const CITY_NAMES: Record<string, string> = {
-  vancouver: '温哥华', toronto: '多伦多', calgary: '卡尔加里',
-  montreal: '蒙特利尔', ottawa: '渥太华',
+  vancouver: 'Vancouver', toronto: 'Toronto', calgary: 'Calgary',
+  montreal: 'Montréal', ottawa: 'Ottawa',
 }
 
 const PURPOSE_NAMES: Record<string, string> = {
-  buy: '买房', rent: '租房', car: '买车',
+  buy: 'Buy', rent: 'Rent', car: 'Car',
 }
 
 const PROPERTY_NAMES: Record<string, string> = {
-  '1br_condo': '1居室公寓', '2br_condo': '2居室公寓', '3br_condo': '3居室公寓',
-  townhouse: '联排别墅', house: '独立屋',
+  '1br_condo': '1-Bedroom Condo', '2br_condo': '2-Bedroom Condo', '3br_condo': '3-Bedroom Condo',
+  townhouse: 'Townhouse', house: 'Detached House',
 }
 
 const VEHICLE_NAMES: Record<string, string> = {
@@ -50,13 +50,13 @@ const CITY_RPI: Record<string, number> = {
 }
 
 const DIMS = [
-  { id: 'hpi', icon: '🏠', name: '买房指数 HPI', score: 6, max: 30, label: '压垮性', level: 1 },
-  { id: 'rpi', icon: '🔑', name: '租房指数 RPI', score: 3, max: 15, label: '难以为继', level: 1 },
-  { id: 'cpi', icon: '🚗', name: '买车指数 CPI', score: 4, max: 8, label: '沉重', level: 3 },
-  { id: 'eqi', icon: '🌿', name: '环境指数 EQI', score: 8, max: 10, label: '优秀', level: 5 },
-  { id: 'edi', icon: '📚', name: '教育指数 EDI', score: 8, max: 10, label: '优秀', level: 5 },
-  { id: 'hci', icon: '🏥', name: '医疗指数 HCI', score: 6, max: 10, label: '良好', level: 4 },
-  { id: 'tci', icon: '🚇', name: '交通指数 TCI', score: 7, max: 10, label: '良好', level: 4 },
+  { id: 'hpi', icon: '🏠', name: 'Housing Index HPI',     score: 6, max: 30, label: 'Critical',    level: 1 },
+  { id: 'rpi', icon: '🔑', name: 'Rent Index RPI',        score: 3, max: 15, label: 'Unsustainable',level: 1 },
+  { id: 'cpi', icon: '🚗', name: 'Car Index CPI',         score: 4, max: 8,  label: 'Heavy',        level: 3 },
+  { id: 'eqi', icon: '🌿', name: 'Environment Index EQI', score: 8, max: 10, label: 'Excellent',    level: 5 },
+  { id: 'edi', icon: '📚', name: 'Education Index EDI',   score: 8, max: 10, label: 'Excellent',    level: 5 },
+  { id: 'hci', icon: '🏥', name: 'Healthcare Index HCI',  score: 6, max: 10, label: 'Good',         level: 4 },
+  { id: 'tci', icon: '🚇', name: 'Transit Index TCI',     score: 7, max: 10, label: 'Good',         level: 4 },
 ]
 
 const LEVEL_COLORS: Record<number, { bg: string; text: string; bar: string }> = {
@@ -156,9 +156,9 @@ function ResultsContent() {
   const property = searchParams.get('property') || '2br_condo'
   const occupation = searchParams.get('occupation') || 'nurse'
 
-  const cityName = CITY_NAMES[city] || '温哥华'
-  const purposeName = PURPOSE_NAMES[purpose] || '买房'
-  const occupationName = OCCUPATION_NAMES[occupation] || '注册护士'
+  const cityName = CITY_NAMES[city] || 'Vancouver'
+  const purposeName = PURPOSE_NAMES[purpose] || 'Buy'
+  const occupationName = OCCUPATION_NAMES[occupation] || 'Registered Nurse'
   const propertyLabel = purpose === 'car'
     ? (VEHICLE_NAMES[property] || property)
     : (PROPERTY_NAMES[property] || property)
@@ -192,7 +192,6 @@ function ResultsContent() {
           setDb2019(data.years_2019)
           setDb1995(data.years_1995)
         } else if (error?.code === '42703') {
-          // purpose 列尚未迁移：buy 回退查询，rent 用城市 RPI 估算
           if (purpose === 'buy') {
             const { data: fallback } = await supabase
               .from('housing_years')
@@ -259,7 +258,7 @@ function ResultsContent() {
   const maxVal = dbCurrent || 10
   const val1995 = db1995 || 0
   const val2019 = db2019 || 0
-  const unit = purpose === 'car' ? '月薪' : '年'
+  const unit = purpose === 'car' ? ' mo salary' : 'yr'
 
   return (
     <main className="min-h-screen bg-[#F5F7FB]">
@@ -283,25 +282,25 @@ function ResultsContent() {
                 style={{ fontFamily: 'monospace', letterSpacing: '-3px' }}>
                 {years}
                 <span className="text-3xl text-white/55 ml-1">
-                  {purpose === 'car' ? '月薪' : `年 ${months}月`}
+                  {purpose === 'car' ? ' mo' : `yr ${months}mo`}
                 </span>
               </div>
               <div className="text-white/50 text-sm mb-2">
-                {purpose === 'car' ? `才能买一辆 ${propertyLabel}` : `才能买一套 ${propertyLabel}`}
+                {purpose === 'car' ? `to buy a ${propertyLabel}` : `to buy a ${propertyLabel}`}
               </div>
               <div className="text-[#F59E0B] text-sm font-semibold">
-                {purpose === 'car' ? '基于 Edmunds 20/4/10 规则' : '= 你职业生涯的四分之一'}
+                {purpose === 'car' ? 'Based on Edmunds 20/4/10 rule' : '= one quarter of your career'}
               </div>
             </div>
             <div className="flex-shrink-0 text-center">
               <ScoreRing score={totalScore} total={100} />
-              <div className="text-white/25 text-xs mt-1 tracking-wider">综合指数</div>
+              <div className="text-white/25 text-xs mt-1 tracking-wider">Overall Index</div>
             </div>
           </div>
           <div className="rounded-xl p-4"
             style={{ background: 'rgba(255,255,255,0.04)', border: '0.5px solid rgba(255,255,255,0.07)' }}>
             <div className="text-xs text-white/25 uppercase tracking-widest mb-3">
-              同一职业 · 三个时代 · {purpose === 'car' ? propertyLabel : propertyLabel}
+              Same Occupation · Three Eras · {propertyLabel}
             </div>
             <div className="space-y-3">
               {[
@@ -321,7 +320,7 @@ function ResultsContent() {
                   <span className="text-xs font-bold font-mono w-16 text-right flex-shrink-0"
                     style={{ color: row.color }}>
                     {purpose === 'buy'
-                      ? `${Math.floor(row.val)}年${Math.round((row.val % 1) * 12)}月`
+                      ? `${Math.floor(row.val)}yr ${Math.round((row.val % 1) * 12)}mo`
                       : `${row.val}${unit}`}
                   </span>
                 </div>
@@ -334,12 +333,12 @@ function ResultsContent() {
       <div className="max-w-2xl mx-auto px-6 py-6">
         <div className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#F3F4F6]">
-            <div className="text-sm font-semibold text-[#111827]">七维生活指数</div>
+            <div className="text-sm font-semibold text-[#111827]">7-Dimension Life Index</div>
             <div className="text-sm font-bold px-3 py-1 rounded-full"
               style={{ background: '#FEE2E2', color: '#DC2626' }}>38 / 100</div>
           </div>
           <div className="px-5 py-4">
-            <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">生存成本层 · 60分</div>
+            <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">Cost of Living Layer · 60 pts</div>
             <div className="space-y-2">
               {DIMS.filter(d => ['hpi', 'rpi', 'cpi'].includes(d.id)).map(dim => {
                 const colors = LEVEL_COLORS[dim.level]
@@ -365,7 +364,7 @@ function ResultsContent() {
           </div>
           <div className="h-px bg-[#F3F4F6] mx-5" />
           <div className="px-5 py-4">
-            <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">环境指数层 · 40分</div>
+            <div className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3">Environment Layer · 40 pts</div>
             <div className="space-y-2">
               {DIMS.filter(d => ['eqi', 'edi', 'hci', 'tci'].includes(d.id)).map(dim => {
                 const colors = LEVEL_COLORS[dim.level]
@@ -390,26 +389,26 @@ function ResultsContent() {
             </div>
           </div>
           <div className="px-5 py-3 border-t border-[#F3F4F6] text-center">
-            <p className="text-xs text-[#D1D5DB]">数据来源：StatCan · CREA · CMHC · Health Canada · Fraser · CIHI · Walk Score</p>
-            <p className="text-xs text-[#D1D5DB] mt-0.5">更新于 2026年Q1 · lakive.com</p>
+            <p className="text-xs text-[#D1D5DB]">Data: StatCan · CREA · CMHC · Health Canada · Fraser · CIHI · Walk Score</p>
+            <p className="text-xs text-[#D1D5DB] mt-0.5">Updated Q1 2026 · lakive.com</p>
           </div>
         </div>
         <div className="flex gap-3 mt-4">
           <a href={`/compare?city=${city}&occupation=${occupation}`}
             className="flex-1 py-3 rounded-xl text-white text-sm font-semibold text-center block"
             style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
-            对比其他城市 →
+            Compare Other Cities →
           </a>
           <a href={`/share?city=${city}&occupation=${occupation}`}
             className="px-4 py-3 rounded-xl text-sm font-medium text-[#374151] text-center"
             style={{ background: 'white', border: '1.5px solid #E5E7EB' }}>
-            分享 ↗
+            Share ↗
           </a>
         </div>
         <a href={`/subscribe?city=${city}&occupation=${occupation}`}
           className="w-full py-3 rounded-xl text-sm font-medium text-center mt-2 block"
           style={{ background: 'white', border: '1.5px solid #E5E7EB', color: '#6B7280' }}>
-          📊 订阅城市生活报告
+          📊 Subscribe to City Intelligence Report
         </a>
       </div>
     </main>
@@ -419,7 +418,7 @@ function ResultsContent() {
 export default function Results() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-[#151827] flex items-center justify-center">
-      <div className="text-white/50">加载中...</div>
+      <div className="text-white/50">Loading...</div>
     </div>}>
       <ResultsContent />
     </Suspense>

@@ -19,103 +19,100 @@ interface City {
 }
 
 const CITIES: City[] = [
-  { id: 'vancouver', name: '温哥华', nameEn: 'Vancouver',   lat: 49.25,  lng: -123.12, active: true,  score: 70, tai: 72, eoi: 80, eqi: 90, hpiYears: 10.2, rpi: 43.6 },
-  { id: 'toronto',   name: '多伦多', nameEn: 'Toronto',     lat: 43.65,  lng: -79.38,  active: true,  score: 70, tai: 68, eoi: 92, eqi: 75, hpiYears: 9.6,  rpi: 41.2 },
-  { id: 'calgary',   name: '卡尔加里', nameEn: 'Calgary',   lat: 51.05,  lng: -114.07, active: true,  score: 72, tai: 90, eoi: 65, eqi: 82, hpiYears: 3.9,  rpi: 24.1 },
-  { id: 'montreal',  name: '蒙特利尔', nameEn: 'Montréal',  lat: 45.50,  lng: -73.57,  active: true,  score: 75, tai: 42, eoi: 72, eqi: 78, hpiYears: 5.5,  rpi: 30.2 },
-  { id: 'ottawa',    name: '渥太华', nameEn: 'Ottawa',      lat: 45.42,  lng: -75.69,  active: true,  score: 73, tai: 68, eoi: 75, eqi: 80, hpiYears: 6.8,  rpi: 28.4 },
-  { id: 'newyork',   name: '纽约',     nameEn: 'New York',       lat: 40.71, lng: -74.01,  active: false },
-  { id: 'london',    name: '伦敦',     nameEn: 'London',         lat: 51.51, lng: -0.13,   active: false },
-  { id: 'tokyo',     name: '东京',     nameEn: 'Tokyo',          lat: 35.68, lng: 139.69,  active: false },
-  { id: 'sydney',    name: '悉尼',     nameEn: 'Sydney',         lat: -33.87,lng: 151.21,  active: false },
-  { id: 'melbourne', name: '墨尔本',   nameEn: 'Melbourne',      lat: -37.81,lng: 144.96,  active: false },
-  { id: 'singapore', name: '新加坡',   nameEn: 'Singapore',      lat: 1.35,  lng: 103.82,  active: false },
-  { id: 'shanghai',  name: '上海',     nameEn: 'Shanghai',       lat: 31.23, lng: 121.47,  active: false },
-  { id: 'beijing',   name: '北京',     nameEn: 'Beijing',        lat: 39.91, lng: 116.39,  active: false },
-  { id: 'paris',     name: '巴黎',     nameEn: 'Paris',          lat: 48.85, lng: 2.35,    active: false },
-  { id: 'berlin',    name: '柏林',     nameEn: 'Berlin',         lat: 52.52, lng: 13.40,   active: false },
-  { id: 'amsterdam', name: '阿姆斯特丹', nameEn: 'Amsterdam',    lat: 52.37, lng: 4.90,    active: false },
-  { id: 'zurich',    name: '苏黎世',   nameEn: 'Zürich',         lat: 47.38, lng: 8.54,    active: false },
-  { id: 'dubai',     name: '迪拜',     nameEn: 'Dubai',          lat: 25.20, lng: 55.27,   active: false },
-  { id: 'seoul',     name: '首尔',     nameEn: 'Seoul',          lat: 37.57, lng: 126.98,  active: false },
-  { id: 'hongkong',  name: '香港',     nameEn: 'Hong Kong',      lat: 22.32, lng: 114.16,  active: false },
-  { id: 'taipei',    name: '台北',     nameEn: 'Taipei',         lat: 25.05, lng: 121.53,  active: false },
-  { id: 'sf',        name: '旧金山',   nameEn: 'San Francisco',  lat: 37.77, lng: -122.42, active: false },
-  { id: 'losangeles',name: '洛杉矶',   nameEn: 'Los Angeles',    lat: 34.05, lng: -118.24, active: false },
-  { id: 'chicago',   name: '芝加哥',   nameEn: 'Chicago',        lat: 41.88, lng: -87.63,  active: false },
-  { id: 'miami',     name: '迈阿密',   nameEn: 'Miami',          lat: 25.77, lng: -80.19,  active: false },
-  { id: 'seattle',   name: '西雅图',   nameEn: 'Seattle',        lat: 47.61, lng: -122.33, active: false },
-  { id: 'auckland',  name: '奥克兰',   nameEn: 'Auckland',       lat: -36.85,lng: 174.76,  active: false },
-  { id: 'dublin',    name: '都柏林',   nameEn: 'Dublin',         lat: 53.34, lng: -6.27,   active: false },
-  { id: 'stockholm', name: '斯德哥尔摩', nameEn: 'Stockholm',    lat: 59.33, lng: 18.07,   active: false },
-  { id: 'nairobi',   name: '内罗毕',   nameEn: 'Nairobi',        lat: -1.29, lng: 36.82,   active: false },
-  { id: 'mexico',    name: '墨西哥城', nameEn: 'Mexico City',    lat: 19.43, lng: -99.13,  active: false },
-  { id: 'saopaulo',  name: '圣保罗',   nameEn: 'São Paulo',      lat: -23.55,lng: -46.63,  active: false },
+  { id: 'vancouver', name: 'Vancouver',   nameEn: 'Vancouver',   lat: 49.25,  lng: -123.12, active: true,  score: 70, tai: 72, eoi: 80, eqi: 90, hpiYears: 10.2, rpi: 43.6 },
+  { id: 'toronto',   name: 'Toronto',     nameEn: 'Toronto',     lat: 43.65,  lng: -79.38,  active: true,  score: 70, tai: 68, eoi: 92, eqi: 75, hpiYears: 9.6,  rpi: 41.2 },
+  { id: 'calgary',   name: 'Calgary',     nameEn: 'Calgary',     lat: 51.05,  lng: -114.07, active: true,  score: 72, tai: 90, eoi: 65, eqi: 82, hpiYears: 3.9,  rpi: 24.1 },
+  { id: 'montreal',  name: 'Montréal',    nameEn: 'Montréal',    lat: 45.50,  lng: -73.57,  active: true,  score: 75, tai: 42, eoi: 72, eqi: 78, hpiYears: 5.5,  rpi: 30.2 },
+  { id: 'ottawa',    name: 'Ottawa',      nameEn: 'Ottawa',      lat: 45.42,  lng: -75.69,  active: true,  score: 73, tai: 68, eoi: 75, eqi: 80, hpiYears: 6.8,  rpi: 28.4 },
+  { id: 'newyork',   name: 'New York',    nameEn: 'New York',    lat: 40.71,  lng: -74.01,  active: false },
+  { id: 'london',    name: 'London',      nameEn: 'London',      lat: 51.51,  lng: -0.13,   active: false },
+  { id: 'tokyo',     name: 'Tokyo',       nameEn: 'Tokyo',       lat: 35.68,  lng: 139.69,  active: false },
+  { id: 'sydney',    name: 'Sydney',      nameEn: 'Sydney',      lat: -33.87, lng: 151.21,  active: false },
+  { id: 'melbourne', name: 'Melbourne',   nameEn: 'Melbourne',   lat: -37.81, lng: 144.96,  active: false },
+  { id: 'singapore', name: 'Singapore',   nameEn: 'Singapore',   lat: 1.35,   lng: 103.82,  active: false },
+  { id: 'shanghai',  name: 'Shanghai',    nameEn: 'Shanghai',    lat: 31.23,  lng: 121.47,  active: false },
+  { id: 'beijing',   name: 'Beijing',     nameEn: 'Beijing',     lat: 39.91,  lng: 116.39,  active: false },
+  { id: 'paris',     name: 'Paris',       nameEn: 'Paris',       lat: 48.85,  lng: 2.35,    active: false },
+  { id: 'berlin',    name: 'Berlin',      nameEn: 'Berlin',      lat: 52.52,  lng: 13.40,   active: false },
+  { id: 'amsterdam', name: 'Amsterdam',   nameEn: 'Amsterdam',   lat: 52.37,  lng: 4.90,    active: false },
+  { id: 'zurich',    name: 'Zürich',      nameEn: 'Zürich',      lat: 47.38,  lng: 8.54,    active: false },
+  { id: 'dubai',     name: 'Dubai',       nameEn: 'Dubai',       lat: 25.20,  lng: 55.27,   active: false },
+  { id: 'seoul',     name: 'Seoul',       nameEn: 'Seoul',       lat: 37.57,  lng: 126.98,  active: false },
+  { id: 'hongkong',  name: 'Hong Kong',   nameEn: 'Hong Kong',   lat: 22.32,  lng: 114.16,  active: false },
+  { id: 'taipei',    name: 'Taipei',      nameEn: 'Taipei',      lat: 25.05,  lng: 121.53,  active: false },
+  { id: 'sf',        name: 'San Francisco', nameEn: 'San Francisco', lat: 37.77, lng: -122.42, active: false },
+  { id: 'losangeles',name: 'Los Angeles', nameEn: 'Los Angeles', lat: 34.05,  lng: -118.24, active: false },
+  { id: 'chicago',   name: 'Chicago',     nameEn: 'Chicago',     lat: 41.88,  lng: -87.63,  active: false },
+  { id: 'miami',     name: 'Miami',       nameEn: 'Miami',       lat: 25.77,  lng: -80.19,  active: false },
+  { id: 'seattle',   name: 'Seattle',     nameEn: 'Seattle',     lat: 47.61,  lng: -122.33, active: false },
+  { id: 'auckland',  name: 'Auckland',    nameEn: 'Auckland',    lat: -36.85, lng: 174.76,  active: false },
+  { id: 'dublin',    name: 'Dublin',      nameEn: 'Dublin',      lat: 53.34,  lng: -6.27,   active: false },
+  { id: 'stockholm', name: 'Stockholm',   nameEn: 'Stockholm',   lat: 59.33,  lng: 18.07,   active: false },
+  { id: 'nairobi',   name: 'Nairobi',     nameEn: 'Nairobi',     lat: -1.29,  lng: 36.82,   active: false },
+  { id: 'mexico',    name: 'Mexico City', nameEn: 'Mexico City', lat: 19.43,  lng: -99.13,  active: false },
+  { id: 'saopaulo',  name: 'São Paulo',   nameEn: 'São Paulo',   lat: -23.55, lng: -46.63,  active: false },
 ]
 
-// ── Static data: 今日发现 ────────────────────────────────────────────────────
+// ── Static data: City Insights ───────────────────────────────────────────────
 const INSIGHTS = [
   {
     id: 1,
-    tag: '买房',
+    tag: 'Housing',
     tagColor: '#EF4444',
     stat: '3.3x',
-    title: '电工在卡尔加里买房比温哥华快',
-    detail: '卡尔加里 3.9年收入 vs 温哥华 13.0年收入（2居室公寓）',
+    title: 'Electricians buy homes 3x faster in Calgary than Vancouver',
+    detail: 'Calgary: 3.9 income years vs Vancouver: 13.0 income years (2BR condo)',
     href: '/compare?cities=calgary,vancouver&occupation=electrician',
   },
   {
     id: 2,
-    tag: '税收',
+    tag: 'Tax',
     tagColor: '#10B981',
     stat: '$22,000',
-    title: '工程师移居AB省每年少交税',
-    detail: '年薪$120K，AB省无PST、仅GST 5%，综合税负全国最低',
+    title: 'Engineers save $22K/yr in taxes by moving to Alberta',
+    detail: 'At $120K salary, Alberta has no PST and only 5% GST — the lowest tax burden in Canada',
     href: '/city/calgary',
   },
   {
     id: 3,
-    tag: '收入',
+    tag: 'Income',
     tagColor: '#F59E0B',
     stat: '#2',
-    title: '多伦多软件工程师买房压力全国第二高',
-    detail: '收入全国最高，但房价收入比仅次于温哥华',
+    title: 'Toronto software engineers face the 2nd highest housing pressure in Canada',
+    detail: 'Highest salaries nationally, but price-to-income ratio second only to Vancouver',
     href: '/city/toronto',
   },
 ]
 
-// ── Static data: 热门对比 ────────────────────────────────────────────────────
+// ── Static data: Popular Comparisons ────────────────────────────────────────
 const HOT_COMPARISONS = [
   {
-    occupation: '电工',
-    occupationEn: 'Electrician',
-    cityA: { name: '温哥华', id: 'vancouver', years: 13.0, color: '#EF4444' },
-    cityB: { name: '卡尔加里', id: 'calgary',  years: 3.9,  color: '#10B981' },
+    occupation: 'Electrician',
+    cityA: { name: 'Vancouver', id: 'vancouver', years: 13.0, color: '#EF4444' },
+    cityB: { name: 'Calgary',   id: 'calgary',   years: 3.9,  color: '#10B981' },
   },
   {
-    occupation: '注册护士',
-    occupationEn: 'Registered Nurse',
-    cityA: { name: '多伦多', id: 'toronto', years: 12.0, color: '#EF4444' },
-    cityB: { name: '渥太华', id: 'ottawa',  years: 6.5,  color: '#F59E0B' },
+    occupation: 'Registered Nurse',
+    cityA: { name: 'Toronto', id: 'toronto', years: 12.0, color: '#EF4444' },
+    cityB: { name: 'Ottawa',  id: 'ottawa',  years: 6.5,  color: '#F59E0B' },
   },
   {
-    occupation: '软件工程师',
-    occupationEn: 'Software Engineer',
-    cityA: { name: '温哥华', id: 'vancouver', years: 9.5, color: '#F59E0B' },
-    cityB: { name: '卡尔加里', id: 'calgary',  years: 5.2, color: '#10B981' },
+    occupation: 'Software Engineer',
+    cityA: { name: 'Vancouver', id: 'vancouver', years: 9.5, color: '#F59E0B' },
+    cityB: { name: 'Calgary',   id: 'calgary',   years: 5.2, color: '#10B981' },
   },
 ]
 
 // ── Occupations for hero selector ────────────────────────────────────────────
 const OCCUPATIONS = [
-  { id: 'software_eng', name: '软件工程师' },
-  { id: 'electrician',  name: '电工' },
-  { id: 'nurse',        name: '注册护士' },
-  { id: 'teacher',      name: '中学教师' },
-  { id: 'accountant',   name: '会计师' },
-  { id: 'truck_driver', name: '卡车司机' },
-  { id: 'police',       name: '警察' },
-  { id: 'retail',       name: '零售店员' },
+  { id: 'software_eng', name: 'Software Engineer' },
+  { id: 'electrician',  name: 'Electrician' },
+  { id: 'nurse',        name: 'Registered Nurse' },
+  { id: 'teacher',      name: 'Secondary School Teacher' },
+  { id: 'accountant',   name: 'Accountant' },
+  { id: 'truck_driver', name: 'Truck Driver' },
+  { id: 'police',       name: 'Police Officer' },
+  { id: 'retail',       name: 'Retail Associate' },
 ]
 
 const ACTIVE_CITIES = CITIES.filter(c => c.active)
@@ -469,7 +466,7 @@ export default function Home() {
         {!ready && (
           <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
             <div className="w-12 h-12 rounded-full border-2 border-[#4F8EF7]/20 border-t-[#4F8EF7] animate-spin mb-4" />
-            <div className="text-white/40 text-sm">加载地球数据...</div>
+            <div className="text-white/40 text-sm">Loading...</div>
           </div>
         )}
 
@@ -497,7 +494,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-1.5 mb-5 px-3 py-1 rounded-full text-xs font-medium"
                 style={{ background: 'rgba(79,142,247,0.15)', border: '1px solid rgba(79,142,247,0.3)', color: '#93C5FD' }}>
                 <div className="w-1.5 h-1.5 rounded-full bg-[#4F8EF7] animate-pulse" />
-                加拿大五大城市 · 持续扩展中
+                5 Canadian Cities · Expanding Soon
               </div>
 
               {/* H1 */}
@@ -505,40 +502,37 @@ export default function Home() {
                 From data<br />
                 to <span style={{ color: '#14B8A6' }}>belonging.</span>
               </h1>
-              <p style={{ fontSize:13, color:'rgba(255,255,255,0.55)', letterSpacing:'0.06em', marginBottom:0, marginTop:-14, fontWeight:500 }}>
-                从数据，到归属
-              </p>
 
               {/* Subtitle */}
               <p className="text-sm leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.60)' }}>
-                城市数据智能平台——基于职业、税负、住房与就业，<br />帮你找到真正适合自己的城市
+                City intelligence for your next chapter — built on career, tax, housing, and opportunity.
               </p>
 
               {/* Selectors */}
               <div className="space-y-3 mb-4">
                 <div>
-                  <label className="block text-xs mb-1.5" style={{ color: 'rgba(255,255,255,0.55)' }}>我的职业</label>
+                  <label className="block text-xs mb-1.5" style={{ color: 'rgba(255,255,255,0.55)' }}>Your Occupation</label>
                   <select
                     value={heroOccupation}
                     onChange={e => setHeroOccupation(e.target.value)}
                     style={selectStyle}
                   >
-                    <option value="" style={{ background: '#0d1f44', color: 'rgba(255,255,255,0.4)' }}>选择职业...</option>
+                    <option value="" style={{ background: '#0d1f44', color: 'rgba(255,255,255,0.4)' }}>Select occupation...</option>
                     {OCCUPATIONS.map(o => (
                       <option key={o.id} value={o.id} style={{ background: '#0d1f44', color: 'white' }}>{o.name}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs mb-1.5" style={{ color: 'rgba(255,255,255,0.55)' }}>考虑的城市</label>
+                  <label className="block text-xs mb-1.5" style={{ color: 'rgba(255,255,255,0.55)' }}>City you&apos;re considering</label>
                   <select
                     value={heroCity}
                     onChange={e => setHeroCity(e.target.value)}
                     style={selectStyle}
                   >
-                    <option value="" style={{ background: '#0d1f44', color: 'rgba(255,255,255,0.4)' }}>选择城市...</option>
+                    <option value="" style={{ background: '#0d1f44', color: 'rgba(255,255,255,0.4)' }}>Select city...</option>
                     {ACTIVE_CITIES.map(c => (
-                      <option key={c.id} value={c.id} style={{ background: '#0d1f44', color: 'white' }}>{c.name}</option>
+                      <option key={c.id} value={c.id} style={{ background: '#0d1f44', color: 'white' }}>{c.nameEn}</option>
                     ))}
                   </select>
                 </div>
@@ -551,16 +545,16 @@ export default function Home() {
                 className="w-full py-3 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90 active:opacity-75"
                 style={{ background: heroOccupation && heroCity ? 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' : 'rgba(255,255,255,0.10)', cursor: heroOccupation && heroCity ? 'pointer' : 'not-allowed' }}
               >
-                查看城市适配分 →
+                View My City Fit Score →
               </button>
 
               {/* Quick links */}
               <div className="flex items-center gap-3 mt-4">
-                <a href="/ranking"  className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>排行榜</a>
+                <a href="/ranking"   className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>Rankings</a>
                 <span style={{ color: 'rgba(255,255,255,0.35)' }}>·</span>
-                <a href="/compare"  className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>城市对比</a>
+                <a href="/compare"   className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>Compare</a>
                 <span style={{ color: 'rgba(255,255,255,0.35)' }}>·</span>
-                <a href="/calculate" className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>算成本</a>
+                <a href="/calculate" className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>Calculate</a>
               </div>
             </div>
           </div>
@@ -598,12 +592,12 @@ export default function Home() {
               style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', backdropFilter: 'blur(12px)' }}>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full" style={{ background: '#FDE047', boxShadow: '0 0 8px #FDE047' }} />
-                <span className="text-white/70 text-xs">已上线城市（点击）</span>
+                <span className="text-white/70 text-xs">Live cities (tap to explore)</span>
               </div>
               <div className="w-px h-3.5 bg-white/10" />
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#93C5FD]/50" />
-                <span className="text-white/50 text-xs">即将推出</span>
+                <span className="text-white/50 text-xs">Coming soon</span>
               </div>
             </div>
           </div>
@@ -617,32 +611,32 @@ export default function Home() {
           {selectedCity && (
             <div className="mx-3 mb-3 rounded-2xl overflow-hidden shadow-2xl"
               style={{ background: 'rgba(10,16,36,0.97)', border: '1px solid rgba(79,142,247,0.3)', backdropFilter: 'blur(24px)' }}>
-              <button onClick={closePanel} className="w-full flex justify-center pt-3 pb-1" aria-label="关闭">
+              <button onClick={closePanel} className="w-full flex justify-center pt-3 pb-1" aria-label="Close">
                 <div className="w-9 h-1 rounded-full bg-white/20" />
               </button>
               <div className="px-5 pb-5">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-xl font-bold text-white leading-tight">{selectedCity.name}</h2>
-                    <div className="text-white/40 text-sm">{selectedCity.nameEn}</div>
+                    <h2 className="text-xl font-bold text-white leading-tight">{selectedCity.nameEn}</h2>
+                    <div className="text-white/40 text-sm">Canada</div>
                   </div>
                   {selectedCity.active && selectedCity.score !== undefined ? (
                     <div className="text-right">
                       <div className="text-2xl font-bold font-mono leading-none" style={{ color: '#4F8EF7' }}>{selectedCity.score}</div>
-                      <div className="text-white/55 text-xs mt-0.5">综合指数 / 100</div>
+                      <div className="text-white/55 text-xs mt-0.5">City Fit Score / 100</div>
                     </div>
                   ) : (
                     <span className="text-xs font-semibold px-3 py-1.5 rounded-full text-white"
-                      style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>即将推出</span>
+                      style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>Coming Soon</span>
                   )}
                 </div>
                 {selectedCity.active ? (
                   <>
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       {[
-                        { label: '环境质量', value: selectedCity.eqi, color: '#10B981' },
-                        { label: '税负友好', value: selectedCity.tai, color: '#4F8EF7' },
-                        { label: '就业机会', value: selectedCity.eoi, color: '#F59E0B' },
+                        { label: 'Environment', value: selectedCity.eqi, color: '#10B981' },
+                        { label: 'Tax Friendly', value: selectedCity.tai, color: '#4F8EF7' },
+                        { label: 'Employment',   value: selectedCity.eoi, color: '#F59E0B' },
                       ].map(({ label, value, color }) => (
                         <div key={label} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)' }}>
                           <div className="text-xs mb-1" style={{ color: 'rgba(255,255,255,0.45)' }}>{label}</div>
@@ -656,22 +650,22 @@ export default function Home() {
                       <a href={`/city/${selectedCity.id}`}
                         className="flex-1 py-3 rounded-xl text-white text-sm font-semibold text-center"
                         style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
-                        查看城市详情 →
+                        View City Details →
                       </a>
                       <a href="/ranking"
                         className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 hover:text-white text-center transition-colors"
                         style={{ border: '1px solid rgba(255,255,255,0.12)' }}>
-                        排行榜
+                        Rankings
                       </a>
                     </div>
                   </>
                 ) : (
                   <div className="text-center py-2">
-                    <p className="text-white/30 text-sm mb-3">正在收集 {selectedCity.nameEn} 的生活指数数据</p>
+                    <p className="text-white/30 text-sm mb-3">We&apos;re collecting data for {selectedCity.nameEn}</p>
                     <a href="/subscribe"
                       className="inline-block px-6 py-2.5 rounded-xl text-white text-sm font-semibold"
                       style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
-                      订阅上线通知 →
+                      Notify Me When Live →
                     </a>
                   </div>
                 )}
@@ -681,15 +675,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 2: 今日发现 ───────────────────────────────────────────── */}
+      {/* ── SECTION 2: City Insights ──────────────────────────────────────── */}
       <section style={{ background: '#070d1f', padding: '64px 24px' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>
 
           {/* Section header */}
           <div className="flex items-center gap-3 mb-8">
             <div className="w-1 h-6 rounded-full" style={{ background: '#4F8EF7' }} />
-            <h2 className="text-xl font-bold text-white">今日发现</h2>
-            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>数据驱动的城市洞察</span>
+            <h2 className="text-xl font-bold text-white">City Insights</h2>
+            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>Data-driven urban intelligence</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -718,7 +712,7 @@ export default function Home() {
                 {/* Arrow */}
                 <div className="mt-4 flex items-center gap-1 text-xs font-medium transition-all group-hover:gap-2"
                   style={{ color: 'rgba(255,255,255,0.3)' }}>
-                  了解更多 <span>→</span>
+                  Learn more <span>→</span>
                 </div>
               </a>
             ))}
@@ -726,17 +720,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 3: 热门对比 ───────────────────────────────────────────── */}
+      {/* ── SECTION 3: Popular Comparisons ───────────────────────────────── */}
       <section style={{ background: '#04091a', padding: '64px 24px' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>
 
           {/* Section header */}
           <div className="flex items-center gap-3 mb-2">
             <div className="w-1 h-6 rounded-full" style={{ background: '#FDE047' }} />
-            <h2 className="text-xl font-bold text-white">热门对比</h2>
+            <h2 className="text-xl font-bold text-white">Popular Comparisons</h2>
           </div>
           <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.50)', paddingLeft: '16px' }}>
-            职业决定城市体验 — 以买房年数为例
+            Your career shapes your city experience — measured in years to own a home
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -762,7 +756,7 @@ export default function Home() {
                       </div>
                       <div className="flex items-baseline gap-1">
                         <span className="text-xl font-black font-mono" style={{ color: city.color }}>{city.years}</span>
-                        <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>年收入</span>
+                        <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>yrs income</span>
                       </div>
                     </div>
                   ))}
@@ -777,12 +771,12 @@ export default function Home() {
                 </div>
 
                 <div className="text-xs group-hover:opacity-80" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                  {cmp.cityA.name}买房耗时是{cmp.cityB.name}的 <strong style={{ color: 'rgba(255,255,255,0.6)' }}>{(cmp.cityA.years / cmp.cityB.years).toFixed(1)}x</strong>
+                  {cmp.cityA.name} takes <strong style={{ color: 'rgba(255,255,255,0.6)' }}>{(cmp.cityA.years / cmp.cityB.years).toFixed(1)}x</strong> longer than {cmp.cityB.name}
                 </div>
 
                 <div className="mt-3 flex items-center gap-1 text-xs font-medium transition-all group-hover:gap-2"
                   style={{ color: 'rgba(255,255,255,0.3)' }}>
-                  查看完整对比 <span>→</span>
+                  View full comparison <span>→</span>
                 </div>
               </a>
             ))}
@@ -793,7 +787,7 @@ export default function Home() {
             <a href="/ranking"
               className="px-6 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-80"
               style={{ background: 'rgba(79,142,247,0.12)', border: '1px solid rgba(79,142,247,0.3)', color: '#93C5FD' }}>
-              查看完整排行榜 →
+              View full rankings →
             </a>
           </div>
         </div>
