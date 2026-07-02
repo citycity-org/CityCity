@@ -17,11 +17,11 @@ const CITIES: Record<string, {
   tai:number; eoi:number; hai:number; eqi:number; tci:number; psi:number; edi:number
   taiNote:string; effectiveTax:number
 }> = {
-  vancouver: { name:'温哥华',   short:'YVR', province:'BC', basePrice:1050000, medianRent:2950, tai:72, eoi:80, hai:88, eqi:90, tci:82, psi:72, edi:80, taiNote:'GST+PST ~12%', effectiveTax:0.28 },
-  toronto:   { name:'多伦多',   short:'YYZ', province:'ON', basePrice:980000,  medianRent:2750, tai:68, eoi:92, hai:90, eqi:75, tci:78, psi:68, edi:82, taiNote:'HST 13%',      effectiveTax:0.30 },
-  calgary:   { name:'卡尔加里', short:'YYC', province:'AB', basePrice:550000,  medianRent:1950, tai:90, eoi:65, hai:78, eqi:82, tci:48, psi:78, edi:72, taiNote:'仅GST 5%',     effectiveTax:0.22 },
-  montreal:  { name:'蒙特利尔', short:'YUL', province:'QC', basePrice:580000,  medianRent:1850, tai:42, eoi:72, hai:75, eqi:78, tci:72, psi:70, edi:80, taiNote:'GST+QST ~15%', effectiveTax:0.33 },
-  ottawa:    { name:'渥太华',   short:'YOW', province:'ON', basePrice:650000,  medianRent:2100, tai:68, eoi:75, hai:82, eqi:80, tci:55, psi:82, edi:85, taiNote:'HST 13%',      effectiveTax:0.29 },
+  vancouver: { name:'温哥华',   short:'YVR', province:'BC', basePrice:1050000, medianRent:3300, tai:72, eoi:80, hai:88, eqi:90, tci:82, psi:72, edi:80, taiNote:'GST+PST ~12%', effectiveTax:0.28 },
+  toronto:   { name:'多伦多',   short:'YYZ', province:'ON', basePrice:980000,  medianRent:2600, tai:68, eoi:92, hai:90, eqi:75, tci:78, psi:68, edi:82, taiNote:'HST 13%',      effectiveTax:0.30 },
+  calgary:   { name:'卡尔加里', short:'YYC', province:'AB', basePrice:550000,  medianRent:1750, tai:90, eoi:65, hai:78, eqi:82, tci:48, psi:78, edi:72, taiNote:'仅GST 5%',     effectiveTax:0.22 },
+  montreal:  { name:'蒙特利尔', short:'YUL', province:'QC', basePrice:580000,  medianRent:1900, tai:42, eoi:72, hai:75, eqi:78, tci:72, psi:70, edi:80, taiNote:'GST+QST ~15%', effectiveTax:0.33 },
+  ottawa:    { name:'渥太华',   short:'YOW', province:'ON', basePrice:650000,  medianRent:2400, tai:68, eoi:75, hai:82, eqi:80, tci:55, psi:82, edi:85, taiNote:'HST 13%',      effectiveTax:0.29 },
 }
 const CITY_IDS = ['vancouver', 'toronto', 'calgary', 'montreal', 'ottawa']
 
