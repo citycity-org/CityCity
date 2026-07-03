@@ -260,6 +260,61 @@ function ResultsContent() {
   const val2019 = db2019 || 0
   const unit = purpose === 'car' ? ' mo salary' : 'yr'
 
+  // ── AI Summary (rule-based) ───────────────────────────────────────────────
+  function generateSummary(): string | null {
+    if (dbCurrent === null) return null
+    const v = dbCurrent
+
+    if (purpose === 'buy') {
+      const yr = Math.round(v)
+      const affordability =
+        yr <= 6  ? `This is among the most accessible scenarios for ${occupationName}s in Canada.` :
+        yr <= 10 ? `This is within reach — comparable to Calgary, one of Canada's more affordable major markets.` :
+        yr <= 15 ? `This is above the national average for ${occupationName}s and requires disciplined long-term saving.` :
+                   `At ${yr} years, this ranks among the most demanding housing markets in Canada for ${occupationName}s.`
+
+      const recommendation =
+        city === 'calgary'  ? `Calgary currently offers ${occupationName}s the strongest balance of housing affordability and career opportunity among major Canadian cities.` :
+        city === 'vancouver' ? `For ${occupationName}s prioritising home ownership, Calgary offers a comparable job market at roughly half the timeline.` :
+        city === 'toronto'  ? `Toronto's deep job market commands a premium. Calgary provides similar career options at a significantly lower housing cost.` :
+        city === 'montreal' ? `Montréal combines lower housing costs with a growing bilingual professional market — a strong value case relative to Toronto and Vancouver.` :
+                              `Ottawa's stable federal job market and moderate housing costs make it a reliable long-term choice for ${occupationName}s.`
+
+      return `As a ${occupationName} in ${cityName}, buying a ${propertyLabel} takes an estimated ${yr} year${yr === 1 ? '' : 's'} of gross income. ${affordability} ${recommendation}`
+    }
+
+    if (purpose === 'rent') {
+      const rpi = Math.round(v)
+      const assessment =
+        rpi < 25 ? `At ${rpi}%, this leaves substantial room for saving — one of the healthiest rent ratios in Canada.` :
+        rpi < 33 ? `At ${rpi}% of income, rent is manageable, though it leaves limited margin for aggressive saving.` :
+        rpi < 42 ? `At ${rpi}%, rent exceeds the recommended 30% threshold, creating real financial pressure for ${occupationName}s.` :
+                   `At ${rpi}%, rent consumes well over a third of gross income — among the highest ratios for ${occupationName}s in Canada.`
+
+      const comparison =
+        (city === 'vancouver' || city === 'toronto')
+          ? ` Calgary and Ottawa offer similar career options at rent ratios closer to 24–28%.`
+          : city === 'calgary'
+          ? ` This is one of the lowest rent ratios among Canadian metros, leaving more room for saving and investment.`
+          : ` Compared to Vancouver (≈ 44%) and Toronto (≈ 41%), ${cityName} remains a relatively affordable rental market.`
+
+      return `Renting a ${propertyLabel} in ${cityName} as a ${occupationName} consumes ${rpi}% of gross income. ${assessment}${comparison}`
+    }
+
+    if (purpose === 'car') {
+      const mo = Math.round(v)
+      const verdict =
+        mo <= 5  ? `This is well within the Edmunds 20/4/10 affordability guideline.` :
+        mo <= 8  ? `This is broadly acceptable, though near the upper limit of most financial planning guidelines.` :
+                   `This exceeds standard guidelines. A lower trim or used vehicle would significantly improve the ratio.`
+      return `Buying a ${propertyLabel} takes approximately ${mo} month${mo === 1 ? '' : 's'} of gross income for a ${occupationName} in ${cityName}. ${verdict}`
+    }
+
+    return null
+  }
+
+  const aiSummary = generateSummary()
+
   return (
     <main className="min-h-screen bg-[#F5F7FB]">
       <div className="relative overflow-hidden px-6 py-8"
@@ -285,11 +340,15 @@ function ResultsContent() {
                   {purpose === 'car' ? ' mo' : `yr ${months}mo`}
                 </span>
               </div>
-              <div className="text-white/50 text-sm mb-2">
-                {purpose === 'car' ? `to buy a ${propertyLabel}` : `to buy a ${propertyLabel}`}
+              <div className="text-white/55 text-sm mb-1">
+                {purpose === 'car'
+                  ? `months of income · ${propertyLabel}`
+                  : purpose === 'rent'
+                  ? `% of gross income on rent`
+                  : `Years to Own · ${propertyLabel}`}
               </div>
-              <div className="text-[#F59E0B] text-sm font-semibold">
-                {purpose === 'car' ? 'Based on Edmunds 20/4/10 rule' : '= one quarter of your career'}
+              <div className="text-[#F59E0B] text-xs">
+                {purpose === 'car' ? 'Edmunds 20/4/10 rule' : 'Based on annual gross income'}
               </div>
             </div>
             <div className="flex-shrink-0 text-center">
@@ -331,6 +390,23 @@ function ResultsContent() {
       </div>
 
       <div className="max-w-2xl mx-auto px-6 py-6">
+
+        {/* AI Summary */}
+        {aiSummary && (
+          <div className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden mb-4 shadow-sm">
+            <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#F3F4F6]">
+              <div className="w-1 h-4 rounded-full flex-shrink-0" style={{ background: '#14B8A6' }} />
+              <div className="text-sm font-semibold text-[#111827]">Lakive Insight</div>
+            </div>
+            <div className="px-5 py-4">
+              <p className="text-[13px] text-[#374151] leading-relaxed">{aiSummary}</p>
+            </div>
+            <div className="px-5 pb-3">
+              <p className="text-[11px] text-[#C4C9D4]">For reference only · Not financial or immigration advice</p>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#F3F4F6]">
             <div className="text-sm font-semibold text-[#111827]">7-Dimension Life Index</div>

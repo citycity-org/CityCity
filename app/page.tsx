@@ -105,14 +105,43 @@ const HOT_COMPARISONS = [
 
 // ── Occupations for hero selector ────────────────────────────────────────────
 const OCCUPATIONS = [
-  { id: 'software_eng', name: 'Software Engineer' },
-  { id: 'electrician',  name: 'Electrician' },
-  { id: 'nurse',        name: 'Registered Nurse' },
-  { id: 'teacher',      name: 'Secondary School Teacher' },
-  { id: 'accountant',   name: 'Accountant' },
-  { id: 'truck_driver', name: 'Truck Driver' },
-  { id: 'police',       name: 'Police Officer' },
-  { id: 'retail',       name: 'Retail Associate' },
+  // Healthcare
+  { id: 'nurse',            name: 'Registered Nurse' },
+  { id: 'doctor',           name: 'Family Physician' },
+  { id: 'pharmacist',       name: 'Pharmacist' },
+  { id: 'dentist',          name: 'Dentist' },
+  { id: 'social_worker',    name: 'Social Worker' },
+  // Tech
+  { id: 'software_eng',     name: 'Software Engineer' },
+  { id: 'data_analyst',     name: 'Data Analyst' },
+  { id: 'it_support',       name: 'IT Support' },
+  // Trades
+  { id: 'electrician',      name: 'Electrician' },
+  { id: 'plumber',          name: 'Plumber' },
+  { id: 'carpenter',        name: 'Carpenter' },
+  { id: 'welder',           name: 'Welder' },
+  { id: 'mechanic',         name: 'Auto Mechanic' },
+  { id: 'construction_worker', name: 'Construction Worker' },
+  // Professional
+  { id: 'engineer',         name: 'Civil Engineer' },
+  { id: 'lawyer',           name: 'Lawyer' },
+  { id: 'accountant',       name: 'Accountant' },
+  { id: 'financial_advisor',name: 'Financial Advisor' },
+  { id: 'real_estate',      name: 'Real Estate Agent' },
+  { id: 'marketing',        name: 'Marketing Specialist' },
+  { id: 'hr',               name: 'HR Specialist' },
+  // Public Service
+  { id: 'teacher',          name: 'Secondary Teacher' },
+  { id: 'firefighter',      name: 'Firefighter' },
+  { id: 'police',           name: 'Police Officer' },
+  // Transport & Logistics
+  { id: 'truck_driver',     name: 'Truck Driver' },
+  { id: 'pilot',            name: 'Commercial Pilot' },
+  // Service
+  { id: 'chef',             name: 'Chef' },
+  { id: 'retail',           name: 'Retail Associate' },
+  { id: 'security',         name: 'Security Guard' },
+  { id: 'cleaner',          name: 'Cleaner' },
 ]
 
 const ACTIVE_CITIES = CITIES.filter(c => c.active)
