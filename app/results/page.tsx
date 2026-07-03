@@ -260,54 +260,107 @@ function ResultsContent() {
   const val2019 = db2019 || 0
   const unit = purpose === 'car' ? ' mo salary' : 'yr'
 
-  // ── AI Summary (rule-based) ───────────────────────────────────────────────
+  // ── AI Summary ───────────────────────────────────────────────────────────
+  // Occupation category for tailored language
+  const OCC_CATEGORY: Record<string, string> = {
+    doctor: 'high', lawyer: 'high', pharmacist: 'high', dentist: 'high', pilot: 'high',
+    software_eng: 'tech', data_analyst: 'tech', it_support: 'tech', financial_advisor: 'tech',
+    electrician: 'trades', plumber: 'trades', carpenter: 'trades', welder: 'trades',
+    mechanic: 'trades', construction_worker: 'trades',
+    nurse: 'healthcare', social_worker: 'healthcare', firefighter: 'healthcare',
+  }
+  const occCat = OCC_CATEGORY[occupation] ?? 'general'
+
+  // Benchmark hpiYears per city for 2BR (used in cross-city comparisons)
+  const CITY_HPI_BUY: Record<string, number> = {
+    vancouver: 16.2, toronto: 15.1, calgary: 8.5, montreal: 10.0, ottawa: 9.8,
+  }
+  const CITY_RPI_BENCH: Record<string, number> = {
+    vancouver: 43.6, toronto: 41.2, calgary: 24.1, montreal: 30.2, ottawa: 28.4,
+  }
+  // Best alternative city for comparison
+  const ALT: Record<string, { city: string; name: string }> = {
+    vancouver: { city: 'calgary',   name: 'Calgary' },
+    toronto:   { city: 'calgary',   name: 'Calgary' },
+    calgary:   { city: 'ottawa',    name: 'Ottawa' },
+    montreal:  { city: 'calgary',   name: 'Calgary' },
+    ottawa:    { city: 'calgary',   name: 'Calgary' },
+  }
+  const alt = ALT[city] ?? { city: 'calgary', name: 'Calgary' }
+
   function generateSummary(): string | null {
     if (dbCurrent === null) return null
     const v = dbCurrent
 
     if (purpose === 'buy') {
-      const yr = Math.round(v)
-      const affordability =
-        yr <= 6  ? `This is among the most accessible scenarios for ${occupationName}s in Canada.` :
-        yr <= 10 ? `This is within reach — comparable to Calgary, one of Canada's more affordable major markets.` :
-        yr <= 15 ? `This is above the national average for ${occupationName}s and requires disciplined long-term saving.` :
-                   `At ${yr} years, this ranks among the most demanding housing markets in Canada for ${occupationName}s.`
+      const yr   = parseFloat(v.toFixed(1))
+      const yrI  = Math.floor(yr)
+      const yrMo = Math.round((yr % 1) * 12)
+      const display = yrMo > 0 ? `${yrI} yr ${yrMo} mo` : `${yrI} yr`
+      const altHpi  = CITY_HPI_BUY[alt.city] ?? 8.5
+      const diff    = parseFloat((yr - altHpi).toFixed(1))
+      const isBest  = diff <= 0.5
 
-      const recommendation =
-        city === 'calgary'  ? `Calgary currently offers ${occupationName}s the strongest balance of housing affordability and career opportunity among major Canadian cities.` :
-        city === 'vancouver' ? `For ${occupationName}s prioritising home ownership, Calgary offers a comparable job market at roughly half the timeline.` :
-        city === 'toronto'  ? `Toronto's deep job market commands a premium. Calgary provides similar career options at a significantly lower housing cost.` :
-        city === 'montreal' ? `Montréal combines lower housing costs with a growing bilingual professional market — a strong value case relative to Toronto and Vancouver.` :
-                              `Ottawa's stable federal job market and moderate housing costs make it a reliable long-term choice for ${occupationName}s.`
+      // Opening — lead with the number, not "As a X..."
+      const opening = isBest
+        ? `${display} to own a ${propertyLabel} in ${cityName}. That puts you among the most affordable scenarios for ${occupationName}s in Canada.`
+        : `${display}. That's how long it takes a ${occupationName} to own a ${propertyLabel} in ${cityName} — ${diff} years longer than ${alt.name} (${altHpi} yr).`
 
-      return `As a ${occupationName} in ${cityName}, buying a ${propertyLabel} takes an estimated ${yr} year${yr === 1 ? '' : 's'} of gross income. ${affordability} ${recommendation}`
+      // City-specific, occupation-aware insight
+      const insight: Record<string, string> = {
+        vancouver: occCat === 'trades'
+          ? `Vancouver pays tradespeople well, but the housing cost rarely justifies staying unless your work is site-specific. Calgary's construction boom offers equivalent pay at nearly half the ownership timeline.`
+          : occCat === 'tech'
+          ? `Tech salaries in Vancouver run 8–15% above Calgary — but that gap closes within 5 years when you account for the ${diff}-year ownership difference. Remote work makes this comparison sharper than ever.`
+          : occCat === 'high'
+          ? `Even at the upper end of ${occupationName} salaries, Vancouver's ${yr}-year timeline requires 15+ years of aggressive saving before a down payment is realistic. Calgary's ${altHpi} yr benchmark is materially more achievable.`
+          : `Vancouver's lifestyle premium is real, but ${yr} years of gross income is a steep price for ${occupationName}s. Unless your career is tied to BC, ${alt.name} delivers comparable quality of life at ${altHpi} yr.`,
+        toronto:
+          occCat === 'healthcare'
+          ? `Toronto's hospital network pays Ontario rates and offers rare subspecialty access — but ${yr} years of income is a high cost for ${occupationName}s. Ottawa provides similar federal health jobs at ${CITY_HPI_BUY.ottawa} yr.`
+          : occCat === 'tech'
+          ? `Toronto's Bay Street and Shopify ecosystem push tech salaries 10–20% above Calgary — but ${yr} years vs ${altHpi} years means Calgary still wins on net worth growth for most ${occupationName}s over a 10-year horizon.`
+          : `Toronto's job density creates a premium. For ${occupationName}s, that premium is worth it only if income growth consistently outpaces the ${diff}-year ownership gap with ${alt.name}.`,
+        calgary: `Alberta's zero provincial income tax adds effectively 10–14% to your take-home vs BC or Ontario — compressing your real ownership timeline further. At ${yr} yr, this is one of the best ratios in Canada for ${occupationName}s right now. Energy and construction demand is at multi-year highs.`,
+        montreal:
+          occCat === 'tech'
+          ? `Montréal's ${yr}-year timeline is achievable, but rent is rising at 2.1% annually. The city's AI cluster (Mila, Element AI) creates real upside for ${occupationName}s, but bilingual credential requirements add friction for those arriving without French.`
+          : `Montréal offers ${occupationName}s a workable ${yr}-year path to ownership — but fast-rising rents (↑2.1%) mean the window is narrowing. The bilingual job market rewards those who invest in French.`,
+        ottawa: `Ottawa's ${yr}-year timeline is predictable — federal employment stability means fewer income disruptions derailing the plan. The trade-off: salary growth is capped relative to Toronto or Vancouver, and career pivots are harder outside the public sector.`,
+      }
+
+      return `${opening} ${insight[city] ?? ''}`
     }
 
     if (purpose === 'rent') {
-      const rpi = Math.round(v)
-      const assessment =
-        rpi < 25 ? `At ${rpi}%, this leaves substantial room for saving — one of the healthiest rent ratios in Canada.` :
-        rpi < 33 ? `At ${rpi}% of income, rent is manageable, though it leaves limited margin for aggressive saving.` :
-        rpi < 42 ? `At ${rpi}%, rent exceeds the recommended 30% threshold, creating real financial pressure for ${occupationName}s.` :
-                   `At ${rpi}%, rent consumes well over a third of gross income — among the highest ratios for ${occupationName}s in Canada.`
+      const rpi    = parseFloat(v.toFixed(1))
+      const altRpi = CITY_RPI_BENCH[alt.city] ?? 24.1
+      const diff   = parseFloat((rpi - altRpi).toFixed(1))
 
-      const comparison =
-        (city === 'vancouver' || city === 'toronto')
-          ? ` Calgary and Ottawa offer similar career options at rent ratios closer to 24–28%.`
-          : city === 'calgary'
-          ? ` This is one of the lowest rent ratios among Canadian metros, leaving more room for saving and investment.`
-          : ` Compared to Vancouver (≈ 44%) and Toronto (≈ 41%), ${cityName} remains a relatively affordable rental market.`
+      const opening =
+        rpi < 25 ? `${rpi}% of gross income on rent — well inside the 30% guideline. For a ${occupationName} in ${cityName}, this leaves real room to save.` :
+        rpi < 33 ? `${rpi}% of gross income goes to rent in ${cityName}. You're above the 30% guideline but still in the range most planners consider manageable for ${occupationName}s.` :
+        rpi < 42 ? `${rpi}% of gross income consumed by rent. That's ${Math.round(rpi - 30)} points above the 30% threshold — for a ${occupationName} in ${cityName}, this leaves limited monthly margin.` :
+                   `${rpi}% of gross income on rent. At this level, ${cityName} is one of the most expensive rental markets in Canada for ${occupationName}s — less than 60% of income remains for everything else.`
 
-      return `Renting a ${propertyLabel} in ${cityName} as a ${occupationName} consumes ${rpi}% of gross income. ${assessment}${comparison}`
+      const comparison = city === 'calgary'
+        ? ` Compared to Vancouver (44%) and Toronto (41%), Calgary is the clear outlier — the most affordable major rental market in Canada by this measure.`
+        : ` In ${alt.name}, the same occupation typically sees a rent ratio around ${altRpi}% — ${diff} points lower, which translates to roughly $${Math.round(diff * 700)}/month more in disposable income.`
+
+      return `${opening}${comparison}`
     }
 
     if (purpose === 'car') {
-      const mo = Math.round(v)
+      const mo  = parseFloat(v.toFixed(1))
+      const moI = Math.round(mo)
+
       const verdict =
-        mo <= 5  ? `This is well within the Edmunds 20/4/10 affordability guideline.` :
-        mo <= 8  ? `This is broadly acceptable, though near the upper limit of most financial planning guidelines.` :
-                   `This exceeds standard guidelines. A lower trim or used vehicle would significantly improve the ratio.`
-      return `Buying a ${propertyLabel} takes approximately ${mo} month${mo === 1 ? '' : 's'} of gross income for a ${occupationName} in ${cityName}. ${verdict}`
+        mo <= 4 ? `Well within the Edmunds 20/4/10 rule. After 20% down and a 4-year term, monthly payments stay under 10% of income.` :
+        mo <= 6 ? `Manageable — but at the upper edge of the 20/4/10 guideline. A used model or lower trim could bring this under 4 months.` :
+        mo <= 9 ? `Above standard affordability guidelines for a ${occupationName} in ${cityName}. A used equivalent or smaller model would be the financially stronger move.` :
+                  `At ${moI} months of income, this vehicle creates serious budget pressure. Most financial planners would flag anything above 6 months as a risk for ${occupationName}s at this income level.`
+
+      return `${moI} months of gross income to buy a ${propertyLabel} in ${cityName}. ${verdict}`
     }
 
     return null

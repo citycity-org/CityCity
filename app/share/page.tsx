@@ -122,137 +122,178 @@ function ShareContent() {
           </div>
           <div className="p-5 flex justify-center" style={{ background: '#E8EAF2' }}>
 
-            {/* Share card — Insight format */}
-            <div className="w-72 rounded-2xl p-5 relative overflow-hidden shadow-xl"
-              style={{ background: 'linear-gradient(145deg, #0d1117, #151f35)' }}>
+            {/* Share card — Spotify Wrapped style */}
+            {(() => {
+              const altCity = city === 'calgary' ? 'vancouver' : 'calgary'
+              const altName = CITY_NAMES[altCity] ?? 'Calgary'
+              const cityHpi = CITY_HPI[city] ?? 10
+              const altHpi  = CITY_HPI[altCity] ?? 8.5
+              const cheaper = cityHpi <= altHpi ? city : altCity
+              const diff    = Math.abs(cityHpi - altHpi).toFixed(1)
+              const maxHpi  = Math.max(cityHpi, altHpi)
+              const cityRpi = city === 'vancouver' ? 43.6 : city === 'toronto' ? 41.2 : city === 'calgary' ? 24.1 : city === 'montreal' ? 30.2 : 28.4
+              const score   = CITY_SCORE[city] ?? 75
 
-              {/* Glow */}
-              <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-[0.07] pointer-events-none"
-                style={{ background: 'radial-gradient(circle, #14B8A6 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
+              return (
+                <div className="w-[288px] rounded-3xl relative overflow-hidden shadow-2xl"
+                  style={{ background: 'linear-gradient(160deg, #07111e 0%, #0a1628 60%, #081420 100%)', minHeight: '380px' }}>
 
-              {/* Logo */}
-              <div className="flex items-center justify-between mb-5 relative z-10">
-                <div>
-                  <div className="text-[15px] font-light tracking-widest" style={{ color: 'white', letterSpacing: '0.12em' }}>
-                    <span style={{ color: '#14B8A6' }}>LA</span>KıVE
+                  {/* Background glow — changes by card */}
+                  <div className="absolute inset-0 pointer-events-none" style={{
+                    background: activeCard === 'compare'
+                      ? 'radial-gradient(ellipse at 80% 10%, rgba(20,184,166,0.12) 0%, transparent 60%)'
+                      : activeCard === 'rent'
+                      ? 'radial-gradient(ellipse at 80% 10%, rgba(239,68,68,0.10) 0%, transparent 60%)'
+                      : 'radial-gradient(ellipse at 80% 10%, rgba(79,142,247,0.10) 0%, transparent 60%)'
+                  }} />
+
+                  <div className="relative z-10 p-6 flex flex-col h-full" style={{ minHeight: '380px' }}>
+
+                    {/* Top: logo + badge */}
+                    <div className="flex items-start justify-between mb-6">
+                      <div>
+                        <div style={{ fontSize: '16px', fontWeight: 300, letterSpacing: '0.14em', color: 'white' }}>
+                          <span style={{ color: '#14B8A6' }}>LA</span>KıVE
+                        </div>
+                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.22)', marginTop: '2px', letterSpacing: '0.04em' }}>
+                          From Data to Belonging
+                        </div>
+                      </div>
+                      <div style={{
+                        fontSize: '9px', color: 'rgba(255,255,255,0.35)',
+                        background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                        padding: '4px 8px', borderRadius: '6px', maxWidth: '100px', textAlign: 'right', lineHeight: 1.4
+                      }}>
+                        {occupationName}
+                      </div>
+                    </div>
+
+                    {/* ── COMPARE card ── */}
+                    {activeCard === 'compare' && (
+                      <div className="flex flex-col flex-1">
+                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '18px' }}>
+                          Same job · Two cities · One number
+                        </div>
+
+                        {/* Two cities */}
+                        <div className="flex items-end gap-3 mb-4">
+                          <div className="flex-1">
+                            <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.35)', marginBottom: '6px' }}>{cityName}</div>
+                            <div style={{ fontFamily: 'monospace', fontSize: '52px', fontWeight: 800, lineHeight: 1, letterSpacing: '-2px', color: cityHpi <= altHpi ? '#14B8A6' : '#F87171' }}>
+                              {cityHpi}
+                            </div>
+                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>yr to own</div>
+                          </div>
+                          <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.15)', paddingBottom: '14px' }}>vs</div>
+                          <div className="flex-1">
+                            <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.35)', marginBottom: '6px' }}>{altName}</div>
+                            <div style={{ fontFamily: 'monospace', fontSize: '52px', fontWeight: 800, lineHeight: 1, letterSpacing: '-2px', color: altHpi <= cityHpi ? '#14B8A6' : '#F87171' }}>
+                              {altHpi}
+                            </div>
+                            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', marginTop: '3px' }}>yr to own</div>
+                          </div>
+                        </div>
+
+                        {/* Bar comparison */}
+                        <div className="mb-4">
+                          {[{ name: cityName, val: cityHpi }, { name: altName, val: altHpi }].map(b => (
+                            <div key={b.name} className="flex items-center gap-2 mb-1.5">
+                              <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', width: '62px', flexShrink: 0 }}>{b.name}</div>
+                              <div style={{ flex: 1, height: '5px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
+                                <div style={{ height: '100%', width: `${(b.val / maxHpi) * 100}%`, borderRadius: '3px', background: b.val <= (b.name === cityName ? altHpi : cityHpi) ? '#14B8A6' : '#F87171' }} />
+                              </div>
+                              <div style={{ fontSize: '9px', fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', width: '28px', textAlign: 'right', flexShrink: 0 }}>{b.val}yr</div>
+                            </div>
+                          ))}
+                          <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.18)', marginTop: '4px' }}>Years of gross income to own a home</div>
+                        </div>
+
+                        {/* Divider */}
+                        <div style={{ height: '1px', background: 'rgba(255,255,255,0.07)', marginBottom: '14px' }} />
+
+                        {/* Verdict */}
+                        <div style={{ fontSize: '15px', fontWeight: 800, color: 'white', lineHeight: 1.25, marginBottom: '5px' }}>
+                          {CITY_NAMES[cheaper]} is {diff} years faster.
+                        </div>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>
+                          Same income. Same job. Different future.
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ── BUY card ── */}
+                    {activeCard === 'buy' && (
+                      <div className="flex flex-col flex-1">
+                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '18px' }}>
+                          Home ownership · {cityName}
+                        </div>
+                        <div style={{ fontFamily: 'monospace', fontSize: '72px', fontWeight: 800, lineHeight: 1, letterSpacing: '-3px', color: cityHpi <= 10 ? '#14B8A6' : cityHpi <= 14 ? '#F59E0B' : '#F87171' }}>
+                          {cityHpi}
+                        </div>
+                        <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginTop: '6px', marginBottom: '4px' }}>years to own a home</div>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)', marginBottom: '20px' }}>Based on annual gross income · {occupationName}</div>
+                        <div style={{ height: '1px', background: 'rgba(255,255,255,0.07)', marginBottom: '14px' }} />
+                        <div style={{ fontSize: '15px', fontWeight: 800, color: 'white', lineHeight: 1.25, marginBottom: '5px' }}>
+                          {cityHpi <= 9 ? 'Within reach.' : cityHpi <= 13 ? 'Challenging, but achievable.' : 'One of Canada\'s hardest markets.'}
+                        </div>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>
+                          {cityHpi <= 9 ? `${CITY_HPI.vancouver} yr in Vancouver for the same job.` : `Calgary: ${CITY_HPI.calgary} yr for the same occupation.`}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ── RENT card ── */}
+                    {activeCard === 'rent' && (
+                      <div className="flex flex-col flex-1">
+                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '18px' }}>
+                          Rent burden · {cityName}
+                        </div>
+                        <div style={{ fontFamily: 'monospace', fontSize: '72px', fontWeight: 800, lineHeight: 1, letterSpacing: '-3px', color: cityRpi > 38 ? '#F87171' : cityRpi > 30 ? '#F59E0B' : '#14B8A6' }}>
+                          {cityRpi}
+                        </div>
+                        <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginTop: '6px', marginBottom: '4px' }}>% of income on rent</div>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)', marginBottom: '20px' }}>{occupationName} · {cityName}</div>
+                        <div style={{ height: '1px', background: 'rgba(255,255,255,0.07)', marginBottom: '14px' }} />
+                        <div style={{ fontSize: '15px', fontWeight: 800, color: 'white', lineHeight: 1.25, marginBottom: '5px' }}>
+                          {cityRpi < 28 ? 'Healthy. Room to grow.' : cityRpi < 36 ? 'Above the 30% guideline.' : 'Financially under pressure.'}
+                        </div>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>
+                          Guideline: 30% max · Calgary: 24.1%
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ── CAREER card ── */}
+                    {activeCard === 'career' && (
+                      <div className="flex flex-col flex-1">
+                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '18px' }}>
+                          City fit score · {cityName}
+                        </div>
+                        <div style={{ fontFamily: 'monospace', fontSize: '72px', fontWeight: 800, lineHeight: 1, letterSpacing: '-3px', color: score >= 80 ? '#14B8A6' : score >= 70 ? '#F59E0B' : '#F87171' }}>
+                          {score}
+                        </div>
+                        <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginTop: '6px', marginBottom: '4px' }}>out of 100</div>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)', marginBottom: '20px' }}>Lakive City Intelligence · Q2 2026</div>
+                        <div style={{ height: '1px', background: 'rgba(255,255,255,0.07)', marginBottom: '14px' }} />
+                        <div style={{ fontSize: '15px', fontWeight: 800, color: 'white', lineHeight: 1.25, marginBottom: '5px' }}>
+                          {score >= 82 ? 'Top-rated for skilled workers.' : score >= 74 ? 'Strong fit for this career.' : 'Moderate — worth comparing.'}
+                        </div>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>
+                          {occupationName} · {cityName}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between mt-auto pt-4">
+                      <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.15)' }}>CREA · StatCan · CMHC</div>
+                      <div style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(255,255,255,0.25)', letterSpacing: '0.04em' }}>lakive.com</div>
+                    </div>
+
                   </div>
-                  <div className="text-[10px] text-white/25 mt-0.5">From Data to Belonging</div>
                 </div>
-                <div className="text-[10px] text-white/35 text-right px-2 py-1 rounded-lg"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                  {occupationName}
-                </div>
-              </div>
-
-              {/* Card content */}
-              <div className="relative z-10">
-
-                {/* Compare card */}
-                {activeCard === 'compare' && (() => {
-                  const altCity = city === 'calgary' ? 'vancouver' : 'calgary'
-                  const altName = CITY_NAMES[altCity]
-                  const cityHpi = CITY_HPI[city] ?? 10
-                  const altHpi  = CITY_HPI[altCity] ?? 8.5
-                  const diff    = Math.abs(cityHpi - altHpi).toFixed(1)
-                  const cheaper = cityHpi < altHpi ? city : altCity
-                  return (
-                    <div>
-                      <div className="text-[10px] text-white/30 uppercase tracking-widest mb-3">Same job · Different city · Different future</div>
-                      <div className="flex items-end gap-4 mb-3">
-                        <div>
-                          <div className="text-[10px] text-white/40 mb-1">{cityName}</div>
-                          <div className="text-4xl font-bold leading-none"
-                            style={{ fontFamily: 'monospace', color: cityHpi <= altHpi ? '#10B981' : '#EF4444', letterSpacing: '-1px' }}>
-                            {cityHpi}<span className="text-lg text-white/40 ml-0.5">yr</span>
-                          </div>
-                        </div>
-                        <div className="text-white/20 text-xs mb-1">vs</div>
-                        <div>
-                          <div className="text-[10px] text-white/40 mb-1">{altName}</div>
-                          <div className="text-4xl font-bold leading-none"
-                            style={{ fontFamily: 'monospace', color: altHpi <= cityHpi ? '#10B981' : '#EF4444', letterSpacing: '-1px' }}>
-                            {altHpi}<span className="text-lg text-white/40 ml-0.5">yr</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-xs text-white/60 mb-1">Years to own a home · {occupationName}</div>
-                      <div className="h-px mb-3" style={{ background: 'rgba(255,255,255,0.07)' }} />
-                      <div className="text-[13px] font-bold text-white leading-snug">
-                        {CITY_NAMES[cheaper]} saves you {diff} years.
-                      </div>
-                      <div className="text-[11px] text-white/40 mt-1">Same income. Different future.</div>
-                    </div>
-                  )
-                })()}
-
-                {/* Buy card */}
-                {activeCard === 'buy' && (() => {
-                  const hpi = CITY_HPI[city] ?? 10
-                  return (
-                    <div>
-                      <div className="text-[10px] text-white/30 uppercase tracking-widest mb-3">Home ownership · {cityName}</div>
-                      <div className="text-6xl font-bold text-white leading-none mb-1"
-                        style={{ fontFamily: 'monospace', letterSpacing: '-2px' }}>
-                        {hpi}<span className="text-2xl text-white/40 ml-1">yr</span>
-                      </div>
-                      <div className="text-xs text-white/50 mb-3">to own a 2BR home · {occupationName}</div>
-                      <div className="h-px mb-3" style={{ background: 'rgba(255,255,255,0.07)' }} />
-                      <div className="text-[13px] font-bold text-white leading-snug">
-                        {hpi <= 9 ? 'Within reach.' : hpi <= 13 ? 'Challenging — but possible.' : 'One of Canada\'s toughest markets.'}
-                      </div>
-                      <div className="text-[11px] text-white/40 mt-1">Based on annual gross income.</div>
-                    </div>
-                  )
-                })()}
-
-                {/* Rent card */}
-                {activeCard === 'rent' && (() => {
-                  const rpi = city === 'vancouver' ? 43.6 : city === 'toronto' ? 41.2 : city === 'calgary' ? 24.1 : city === 'montreal' ? 30.2 : 28.4
-                  return (
-                    <div>
-                      <div className="text-[10px] text-white/30 uppercase tracking-widest mb-3">Rent burden · {cityName}</div>
-                      <div className="text-6xl font-bold text-white leading-none mb-1"
-                        style={{ fontFamily: 'monospace', letterSpacing: '-2px', color: rpi > 38 ? '#EF4444' : rpi > 30 ? '#F59E0B' : '#10B981' }}>
-                        {rpi}<span className="text-2xl text-white/40 ml-1">%</span>
-                      </div>
-                      <div className="text-xs text-white/50 mb-3">of gross income on rent · {occupationName}</div>
-                      <div className="h-px mb-3" style={{ background: 'rgba(255,255,255,0.07)' }} />
-                      <div className="text-[13px] font-bold text-white leading-snug">
-                        {rpi < 30 ? 'Healthy — room to save.' : rpi < 38 ? 'Above the 30% guideline.' : 'Financially stressful.'}
-                      </div>
-                      <div className="text-[11px] text-white/40 mt-1">Recommended ceiling: 30% of income.</div>
-                    </div>
-                  )
-                })()}
-
-                {/* Career card */}
-                {activeCard === 'career' && (() => {
-                  const score = CITY_SCORE[city] ?? 75
-                  return (
-                    <div>
-                      <div className="text-[10px] text-white/30 uppercase tracking-widest mb-3">Career fit · {cityName}</div>
-                      <div className="text-6xl font-bold leading-none mb-1"
-                        style={{ fontFamily: 'monospace', letterSpacing: '-2px', color: score >= 80 ? '#10B981' : score >= 70 ? '#F59E0B' : '#EF4444' }}>
-                        {score}<span className="text-2xl text-white/40 ml-1">/100</span>
-                      </div>
-                      <div className="text-xs text-white/50 mb-3">city fit score · {occupationName}</div>
-                      <div className="h-px mb-3" style={{ background: 'rgba(255,255,255,0.07)' }} />
-                      <div className="text-[13px] font-bold text-white leading-snug">
-                        {score >= 82 ? 'Top-rated destination for skilled workers.' : score >= 74 ? 'Strong fit for this occupation.' : 'Moderate fit — review before committing.'}
-                      </div>
-                      <div className="text-[11px] text-white/40 mt-1">Lakive City Intelligence · Q2 2026</div>
-                    </div>
-                  )
-                })()}
-
-              </div>
-
-              {/* Footer */}
-              <div className="flex items-center justify-between mt-5 relative z-10">
-                <div className="text-[10px] text-white/20">CREA · StatCan · CMHC</div>
-                <div className="text-[10px] font-semibold text-white/30">lakive.com</div>
-              </div>
-            </div>
+              )
+            })()}
           </div>
         </div>
 
