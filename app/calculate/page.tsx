@@ -131,13 +131,14 @@ export default function CalculatePage() {
   const [showDetail,  setShowDetail ] = useState(false)
   const [copied,      setCopied     ] = useState(false)
   const [step,        setStep       ] = useState(1)
+  const [cityFromURL, setCityFromURL] = useState(false)
   const resultsRef = useRef<HTMLDivElement>(null)
 
-  // Read URL params — jump to results if all params present
+  // Read URL params — pre-fill city/occupation; skip step 3 if city already known
   useEffect(() => {
     const p = new URLSearchParams(window.location.search)
     const c = p.get('city'), o = p.get('occupation'), h = p.get('housing')
-    if (c && CITIES[c]) setCityId(c)
+    if (c && CITIES[c]) { setCityId(c); setCityFromURL(true) }
     if (o && ALL_OCCS.find(x => x.id === o)) {
       setOccId(o)
       const def = ALL_OCCS.find(x => x.id === o)?.income
@@ -155,7 +156,18 @@ export default function CalculatePage() {
   }
 
   const goNext = () => {
-    if (step < 3) { setStep(s => s + 1); return }
+    if (step === 1) { setStep(2); return }
+    if (step === 2) {
+      if (cityFromURL) {
+        // City already known from homepage — skip step 3
+        setSubmitted(true); setShowDetail(false); setStep(4)
+        setTimeout(() => resultsRef.current?.scrollIntoView({ behavior:'smooth', block:'start' }), 100)
+      } else {
+        setStep(3)
+      }
+      return
+    }
+    // step === 3 (city selection)
     setSubmitted(true)
     setShowDetail(false)
     setStep(4)
@@ -163,7 +175,7 @@ export default function CalculatePage() {
   }
 
   const goBack = () => {
-    if (step === 4) { setStep(3); setSubmitted(false); return }
+    if (step === 4) { setStep(cityFromURL ? 2 : 3); setSubmitted(false); return }
     setStep(s => Math.max(1, s - 1))
   }
 
@@ -230,7 +242,9 @@ export default function CalculatePage() {
   const noIncome = income === 0
   const step1Ready = !!occId && (isUnemployed ? true : income >= 10000)
 
-  const STEP_LABELS = ['Occupation', 'Housing', 'City', 'Results']
+  const STEP_LABELS = cityFromURL
+    ? ['Occupation', 'Housing', 'Results']
+    : ['Occupation', 'Housing', 'City', 'Results']
 
   return (
     <main style={{ minHeight:'100vh', background:'#0d1117' }}>
@@ -257,15 +271,20 @@ export default function CalculatePage() {
             Can you afford to live there?
           </h1>
           <p style={{ color:'rgba(255,255,255,0.42)', fontSize:14, margin:'0 0 28px', lineHeight:1.6 }}>
-            3 steps to your personalized City Fit Report
+            {cityFromURL ? '2 steps to your personalized City Fit Report' : '3 steps to your personalized City Fit Report'}
           </p>
 
           {/* ── Step progress bar ── */}
+          {/* When cityFromURL: internal steps 1,2,4 map to display steps 1,2,3 */}
           <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:0, maxWidth:380, margin:'0 auto' }}>
             {STEP_LABELS.map((label, i) => {
               const n = i + 1
-              const active  = n === step
-              const done    = n < step
+              // Map internal step number to display step number
+              const displayStep = cityFromURL
+                ? (step === 4 ? 3 : step)   // step4=results → display as 3rd bubble
+                : (step === 4 ? 4 : step)
+              const active  = n === displayStep
+              const done    = n < displayStep
               return (
                 <div key={n} style={{ display:'flex', alignItems:'center', flex: i < STEP_LABELS.length - 1 ? 1 : 'none' }}>
                   <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
