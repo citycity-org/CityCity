@@ -135,6 +135,7 @@ function SubscribeContent() {
   const [occ,       setOcc]       = useState('')
   const [propType,  setPropType]  = useState('')
   const [frequency, setFrequency] = useState<'quarterly'|'monthly'>('quarterly')
+  const [lang,      setLang]      = useState<'en'|'zh'>('en')
   const [email,     setEmail]     = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading,   setLoading]   = useState(false)
@@ -173,7 +174,7 @@ function SubscribeContent() {
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, city, occ, propType, frequency }),
+        body: JSON.stringify({ email, city, occ, propType, frequency, lang }),
       })
       if (!res.ok) throw new Error('failed')
       setSubmitted(true)
@@ -334,6 +335,43 @@ function SubscribeContent() {
           </div>
         </div>
 
+        {/* Report language */}
+        <div style={cardClip}>
+          <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={sectionTitle}>Report Language</div>
+            <div style={subText}>Choose the language for your reports</div>
+          </div>
+          <div style={{ padding: 16, display: 'flex', gap: 10 }}>
+            {([
+              { id: 'en' as const, label: 'English', flag: '🇨🇦' },
+              { id: 'zh' as const, label: '中文',    flag: '🇨🇳' },
+            ] as const).map(opt => {
+              const active = lang === opt.id
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => setLang(opt.id)}
+                  style={{
+                    flex: 1, padding: '12px 16px', borderRadius: 12, cursor: 'pointer',
+                    border: `2px solid ${active ? 'rgba(79,142,247,0.50)' : 'rgba(255,255,255,0.10)'}`,
+                    background: active ? 'rgba(79,142,247,0.12)' : 'rgba(255,255,255,0.03)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  <span style={{ fontSize: 18 }}>{opt.flag}</span>
+                  <span style={{ color: active ? '#93C5FD' : 'rgba(255,255,255,0.65)', fontSize: 14, fontWeight: 700 }}>
+                    {opt.label}
+                  </span>
+                  {active && (
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4F8EF7', marginLeft: 2 }} />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
         {/* Email / Success */}
         {!submitted ? (
           <div style={cardClip}>
@@ -384,6 +422,9 @@ function SubscribeContent() {
             <div style={{ color: 'rgba(255,255,255,0.50)', fontSize: 14, lineHeight: 1.9 }}>
               Your {cityName}{occName ? ` × ${occName}` : ''}<br />
               {frequency === 'quarterly' ? 'Quarterly City Intelligence Report' : 'Monthly City Brief'}<br />
+              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>
+                {lang === 'zh' ? 'Delivered in Chinese · 中文版' : 'Delivered in English'}
+              </span><br />
               will be sent to your inbox with the next issue<br />
               <span style={{ color: 'rgba(255,255,255,0.30)', fontSize: 12 }}>Please check for a confirmation email</span>
             </div>
