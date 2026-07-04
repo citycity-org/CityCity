@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Comments from '../../_comments'
+import { LakiveLogo } from '../../../components/LakiveLogo'
 import {
   OCCUPATIONS, CITIES,
   calcHpiYears, calcRpi,
@@ -170,30 +171,30 @@ export default async function GuidePage(
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="max-w-3xl mx-auto px-4 py-10">
+      <main className="max-w-3xl mx-auto px-4 py-10" style={{ color: 'white' }}>
 
         {/* Breadcrumb */}
-        <nav className="text-xs text-gray-400 mb-6 flex flex-wrap gap-1 items-center">
-          <Link href="/" className="hover:text-gray-600">Home</Link>
+        <nav className="text-xs mb-6 flex flex-wrap gap-1 items-center" style={{ color: 'rgba(255,255,255,0.35)' }}>
+          <Link href="/" className="hover:text-white/70 transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/guide" className="hover:text-gray-600">Guides</Link>
+          <Link href="/guide" className="hover:text-white/70 transition-colors">Guides</Link>
           <span>/</span>
-          <Link href={`/city/${city}`} className="hover:text-gray-600">{cty.displayName}</Link>
+          <Link href={`/city/${city}`} className="hover:text-white/70 transition-colors">{cty.displayName}</Link>
           <span>/</span>
-          <span className="text-gray-600">{occ.name}</span>
+          <span style={{ color: 'rgba(255,255,255,0.55)' }}>{occ.name}</span>
         </nav>
 
         {/* Hero */}
         <div className="mb-8">
           <div className="inline-block text-xs font-semibold px-2.5 py-1 rounded-full mb-3"
-            style={{ background: `${vColor}18`, color: vColor, border: `1px solid ${vColor}40` }}>
+            style={{ background: `${vColor}20`, color: vColor, border: `1px solid ${vColor}40` }}>
             {verdict}
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight mb-3">
+          <h1 className="text-2xl sm:text-3xl font-bold leading-tight mb-3" style={{ color: 'white' }}>
             {occ.name} in {cty.displayName}
-            <span className="block text-gray-400 font-normal text-lg mt-1">Housing &amp; Career Guide · 2026</span>
+            <span className="block font-normal text-lg mt-1" style={{ color: 'rgba(255,255,255,0.40)' }}>Housing &amp; Career Guide · 2026</span>
           </h1>
-          <p className="text-gray-600 text-base leading-relaxed">{intro}</p>
+          <p className="text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.60)' }}>{intro}</p>
         </div>
 
         {/* Key stats */}
@@ -201,64 +202,62 @@ export default async function GuidePage(
           {[
             { label: 'Years to Own', value: formatYears(hpi), sub: '2BR condo', color: hpiLbl.color },
             { label: 'Rent Burden',  value: `${rpi}%`,        sub: 'of gross income', color: rpiLbl.color },
-            { label: 'Avg Salary',   value: formatSalary(occ.salary), sub: 'annual gross', color: '#6B7280' },
-            { label: 'Avg Rent 2BR', value: `$${(cty.avgRent2BR).toLocaleString()}`, sub: 'per month', color: '#6B7280' },
+            { label: 'Avg Salary',   value: formatSalary(occ.salary), sub: 'annual gross', color: 'rgba(255,255,255,0.55)' },
+            { label: 'Avg Rent 2BR', value: `$${(cty.avgRent2BR).toLocaleString()}`, sub: 'per month', color: 'rgba(255,255,255,0.55)' },
           ].map(s => (
-            <div key={s.label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-              <div className="text-xs text-gray-400 mb-1">{s.label}</div>
-              <div className="text-xl font-bold" style={{ color: s.color }}>{s.value}</div>
-              <div className="text-xs text-gray-400 mt-0.5">{s.sub}</div>
+            <div key={s.label} className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="text-xs mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>{s.label}</div>
+              <div className="text-xl font-bold font-mono" style={{ color: s.color }}>{s.value}</div>
+              <div className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.30)' }}>{s.sub}</div>
             </div>
           ))}
         </div>
 
         {/* City comparison */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">
+          <h2 className="text-lg font-bold mb-3" style={{ color: 'white' }}>
             How {cty.displayName} compares for {occ.name}s
           </h2>
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="rounded-xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-50">
-                  <th className="text-left text-xs text-gray-400 font-medium px-4 py-3">City</th>
-                  <th className="text-right text-xs text-gray-400 font-medium px-4 py-3">Yrs to Own</th>
-                  <th className="text-right text-xs text-gray-400 font-medium px-4 py-3">Rent Burden</th>
-                  <th className="text-right text-xs text-gray-400 font-medium px-4 py-3 hidden sm:table-cell">Avg Rent</th>
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                  <th className="text-left text-xs font-medium px-4 py-3" style={{ color: 'rgba(255,255,255,0.35)' }}>City</th>
+                  <th className="text-right text-xs font-medium px-4 py-3" style={{ color: 'rgba(255,255,255,0.35)' }}>Yrs to Own</th>
+                  <th className="text-right text-xs font-medium px-4 py-3" style={{ color: 'rgba(255,255,255,0.35)' }}>Rent Burden</th>
+                  <th className="text-right text-xs font-medium px-4 py-3 hidden sm:table-cell" style={{ color: 'rgba(255,255,255,0.35)' }}>Avg Rent</th>
                 </tr>
               </thead>
               <tbody>
-                {/* Current city first */}
-                <tr className="border-b border-gray-50 bg-teal-50/40">
-                  <td className="px-4 py-3 font-semibold text-gray-900">
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', background: 'rgba(20,184,166,0.08)' }}>
+                  <td className="px-4 py-3 font-semibold" style={{ color: 'white' }}>
                     {cty.displayName}
-                    <span className="ml-2 text-[10px] font-normal text-teal-600 bg-teal-100 px-1.5 py-0.5 rounded-full">current</span>
+                    <span className="ml-2 text-[10px] font-normal px-1.5 py-0.5 rounded-full" style={{ color: '#14B8A6', background: 'rgba(20,184,166,0.15)' }}>current</span>
                   </td>
                   <td className="px-4 py-3 text-right font-mono font-semibold" style={{ color: hpiLbl.color }}>{formatYears(hpi)}</td>
                   <td className="px-4 py-3 text-right font-mono" style={{ color: rpiLbl.color }}>{rpi}%</td>
-                  <td className="px-4 py-3 text-right text-gray-500 hidden sm:table-cell">${cty.avgRent2BR.toLocaleString()}/mo</td>
+                  <td className="px-4 py-3 text-right hidden sm:table-cell" style={{ color: 'rgba(255,255,255,0.40)' }}>${cty.avgRent2BR.toLocaleString()}/mo</td>
                 </tr>
-                {/* Other cities sorted best→worst */}
                 {alts.map(a => {
-                  const ac   = CITIES[a.slug]
-                  const aHl  = hpiLabel(a.years)
-                  const aRl  = rpiLabel(a.rpi)
+                  const ac  = CITIES[a.slug]
+                  const aHl = hpiLabel(a.years)
+                  const aRl = rpiLabel(a.rpi)
                   return (
-                    <tr key={a.slug} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                      <td className="px-4 py-3 text-gray-700">
-                        <Link href={`/guide/${occupation}/${a.slug}`} className="hover:text-teal-600 hover:underline">
+                    <tr key={a.slug} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <td className="px-4 py-3" style={{ color: 'rgba(255,255,255,0.65)' }}>
+                        <Link href={`/guide/${occupation}/${a.slug}`} style={{ color: 'rgba(255,255,255,0.65)' }} className="hover:text-teal-400 transition-colors">
                           {ac.displayName}
                         </Link>
                       </td>
                       <td className="px-4 py-3 text-right font-mono" style={{ color: aHl.color }}>{formatYears(a.years)}</td>
                       <td className="px-4 py-3 text-right font-mono" style={{ color: aRl.color }}>{a.rpi}%</td>
-                      <td className="px-4 py-3 text-right text-gray-400 hidden sm:table-cell">${ac.avgRent2BR.toLocaleString()}/mo</td>
+                      <td className="px-4 py-3 text-right hidden sm:table-cell" style={{ color: 'rgba(255,255,255,0.30)' }}>${ac.avgRent2BR.toLocaleString()}/mo</td>
                     </tr>
                   )
                 })}
               </tbody>
             </table>
-            <div className="px-4 py-2 text-[11px] text-gray-400 border-t border-gray-50">
+            <div className="px-4 py-2 text-[11px]" style={{ color: 'rgba(255,255,255,0.20)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
               Years to own a 2BR condo · Rent burden = annual rent ÷ gross salary · Sources: CREA, CMHC, StatCan, Indeed CA (2025–2026)
             </div>
           </div>
@@ -266,7 +265,7 @@ export default async function GuidePage(
 
         {/* Tax & market context */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">
+          <h2 className="text-lg font-bold mb-3" style={{ color: 'white' }}>
             {cty.displayName} context for {occ.name}s
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
@@ -276,62 +275,59 @@ export default async function GuidePage(
               { title: 'For Newcomers',   body: cty.immigrantNote, icon: '🌏' },
               { title: 'Job Demand',      body: occ.demandNote,    icon: '📊' },
             ].map(c => (
-              <div key={c.title} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+              <div key={c.title} className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-base">{c.icon}</span>
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{c.title}</span>
+                  <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'rgba(255,255,255,0.35)' }}>{c.title}</span>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed">{c.body}</p>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.60)' }}>{c.body}</p>
               </div>
             ))}
           </div>
           {occ.licenseNote && (
-            <div className="mt-3 bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <div className="mt-3 rounded-xl p-4" style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.20)' }}>
               <div className="flex items-center gap-2 mb-1">
                 <span>⚠️</span>
-                <span className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Licensing & Credential Recognition</span>
+                <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#F59E0B' }}>Licensing & Credential Recognition</span>
               </div>
-              <p className="text-sm text-amber-800 leading-relaxed">{occ.licenseNote}</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,158,11,0.85)' }}>{occ.licenseNote}</p>
             </div>
           )}
         </section>
 
         {/* FAQ */}
         <section className="mb-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">
+          <h2 className="text-lg font-bold mb-4" style={{ color: 'white' }}>
             Frequently Asked Questions
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {faqs.map((faq, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">{faq.q}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{faq.a}</p>
+              <div key={i} className="rounded-xl p-5" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <h3 className="text-sm font-semibold mb-2" style={{ color: 'white' }}>{faq.q}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>{faq.a}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* CTA */}
-        <section className="bg-[#0a1628] rounded-2xl p-6 text-center">
-          <div className="text-sm font-light tracking-widest text-white/60 mb-2">
-            <span style={{ color: '#14B8A6' }}>LA</span>KıVE
+        <section className="rounded-2xl p-6 text-center" style={{ background: 'rgba(20,184,166,0.08)', border: '1px solid rgba(20,184,166,0.20)' }}>
+          <div className="flex justify-center mb-3">
+            <LakiveLogo size={20} theme="dark" />
           </div>
-          <h2 className="text-lg font-bold text-white mb-2">
-            Get your personalised numbers
-          </h2>
-          <p className="text-sm text-white/50 mb-5 max-w-sm mx-auto">
+          <h2 className="text-lg font-bold text-white mb-2">Get your personalised numbers</h2>
+          <p className="text-sm mb-5 max-w-sm mx-auto" style={{ color: 'rgba(255,255,255,0.45)' }}>
             The figures above are based on market averages. Use the calculator to model your specific salary, property type, and timeline.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href={`/?occupation=${occ.id}&city=${city}`}
+            <Link href={`/?occupation=${occ.id}&city=${city}`}
               className="inline-block px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
               style={{ background: '#14B8A6' }}>
               Calculate My Numbers
             </Link>
-            <Link
-              href={`/city/${city}`}
-              className="inline-block px-5 py-2.5 rounded-xl text-sm font-semibold text-white/70 border border-white/15 hover:border-white/30 transition-colors">
+            <Link href={`/city/${city}`}
+              className="inline-block px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+              style={{ color: 'rgba(255,255,255,0.60)', border: '1px solid rgba(255,255,255,0.15)' }}>
               {cty.displayName} City Report
             </Link>
           </div>
@@ -347,20 +343,18 @@ export default async function GuidePage(
 
         {/* Related guides */}
         <section className="mt-8">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">Related Guides</h2>
+          <h2 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.30)' }}>Related Guides</h2>
           <div className="flex flex-wrap gap-2">
             {alts.slice(0, 2).map(a => (
               <Link key={a.slug} href={`/guide/${occupation}/${a.slug}`}
-                className="text-xs px-3 py-1.5 bg-white border border-gray-200 rounded-full text-gray-600 hover:border-teal-400 hover:text-teal-600 transition-colors">
+                className="text-xs px-3 py-1.5 rounded-full transition-colors"
+                style={{ color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.04)' }}>
                 {occ.name} in {CITIES[a.slug].displayName}
               </Link>
             ))}
-            <Link href={`/guide/${occupation}/vancouver`}
-              className="text-xs px-3 py-1.5 bg-white border border-gray-200 rounded-full text-gray-600 hover:border-teal-400 hover:text-teal-600 transition-colors">
-              {occ.name} in Vancouver
-            </Link>
             <Link href="/guide"
-              className="text-xs px-3 py-1.5 bg-white border border-gray-200 rounded-full text-gray-600 hover:border-teal-400 hover:text-teal-600 transition-colors">
+              className="text-xs px-3 py-1.5 rounded-full transition-colors"
+              style={{ color: 'rgba(255,255,255,0.45)', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.04)' }}>
               All Guides →
             </Link>
           </div>
