@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     icon: "/lakive-icon.svg",
     apple: "/lakive-icon.svg",
   },
+  verification: {
+    google: "4W1tuUk8yHbfrkan5AZ5lY82-YOiPua5NHl3rWU3ha4",
+  },
 };
 
 export default function RootLayout({
