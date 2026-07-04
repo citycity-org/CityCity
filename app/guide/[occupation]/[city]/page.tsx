@@ -171,7 +171,8 @@ export default async function GuidePage(
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="max-w-3xl mx-auto px-4 py-10" style={{ color: 'white', background: '#080c14', minHeight: '100vh' }}>
+      <div style={{ background: '#080c14', minHeight: '100vh' }}>
+      <main className="max-w-3xl mx-auto px-4 py-10" style={{ color: 'white' }}>
 
         {/* Breadcrumb */}
         <nav className="text-xs mb-6 flex flex-wrap gap-1 items-center" style={{ color: 'rgba(255,255,255,0.35)' }}>
@@ -361,6 +362,7 @@ export default async function GuidePage(
         </section>
 
       </main>
+      </div>
     </>
   )
 }
