@@ -8,6 +8,7 @@ export default function NavBar() {
   const links = [
     { href: '/ranking',   label: 'Rankings' },
     { href: '/compare',   label: 'Compare' },
+    { href: '/guide',     label: 'Guides' },
     { href: '/calculate', label: 'Calculate' },
     { href: '/subscribe', label: 'Subscribe' },
   ]
