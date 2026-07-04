@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import Comments from '../../_comments'
 import {
   OCCUPATIONS, CITIES,
   calcHpiYears, calcRpi,
@@ -335,6 +336,14 @@ export default async function GuidePage(
             </Link>
           </div>
         </section>
+
+        {/* Comments */}
+        <Comments
+          occupation={occupation}
+          city={city}
+          occName={occ.name}
+          cityName={cty.displayName}
+        />
 
         {/* Related guides */}
         <section className="mt-8">
