@@ -24,7 +24,7 @@ export default function GuidePage() {
   const cityNames  = Object.fromEntries(Object.entries(CITIES).map(([k, v]) => [k, v.displayName]))
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-10" style={{ color: 'white' }}>
+    <main className="max-w-5xl mx-auto px-4 py-10" style={{ color: 'white', background: '#080c14', minHeight: '100vh' }}>
 
       {/* Header */}
       <div className="mb-10 max-w-2xl">

@@ -102,27 +102,27 @@ export default function Comments({ occupation, city, occName, cityName }: Props)
       {loading ? (
         <div className="space-y-3 mb-6">
           {[1,2].map(i => (
-            <div key={i} className="bg-white rounded-xl border border-gray-100 p-4 animate-pulse">
-              <div className="h-3 bg-gray-100 rounded w-24 mb-3" />
-              <div className="h-3 bg-gray-100 rounded w-full mb-2" />
-              <div className="h-3 bg-gray-100 rounded w-3/4" />
+            <div key={i} className="rounded-xl p-4 animate-pulse" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              <div className="h-3 rounded w-24 mb-3" style={{ background: 'rgba(255,255,255,0.08)' }} />
+              <div className="h-3 rounded w-full mb-2" style={{ background: 'rgba(255,255,255,0.06)' }} />
+              <div className="h-3 rounded w-3/4" style={{ background: 'rgba(255,255,255,0.06)' }} />
             </div>
           ))}
         </div>
       ) : comments.length === 0 ? (
-        <div className="bg-white rounded-xl border border-dashed border-gray-200 p-6 text-center mb-6">
+        <div className="rounded-xl p-6 text-center mb-6" style={{ border: '1px dashed rgba(255,255,255,0.12)' }}>
           <div className="text-2xl mb-2">💬</div>
-          <div className="text-sm text-gray-400">No experiences shared yet — be the first.</div>
+          <div className="text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>No experiences shared yet — be the first.</div>
         </div>
       ) : (
         <div className="space-y-3 mb-6">
           {comments.map(c => (
-            <div key={c.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+            <div key={c.id} className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-800">{c.author_name}</span>
-                <span className="text-xs text-gray-400">{timeAgo(c.created_at)}</span>
+                <span className="text-sm font-semibold" style={{ color: 'white' }}>{c.author_name}</span>
+                <span className="text-xs" style={{ color: 'rgba(255,255,255,0.30)' }}>{timeAgo(c.created_at)}</span>
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{c.content}</p>
+              <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'rgba(255,255,255,0.60)' }}>{c.content}</p>
             </div>
           ))}
         </div>
@@ -130,19 +130,18 @@ export default function Comments({ occupation, city, occName, cityName }: Props)
 
       {/* Submit form */}
       {submitted ? (
-        <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 text-center">
-          <div className="text-teal-700 font-semibold text-sm mb-1">Thanks for sharing.</div>
-          <div className="text-teal-600 text-xs">Your comment helps others make better decisions.</div>
+        <div className="rounded-xl p-4 text-center" style={{ background: 'rgba(20,184,166,0.08)', border: '1px solid rgba(20,184,166,0.25)' }}>
+          <div className="font-semibold text-sm mb-1" style={{ color: '#14B8A6' }}>Thanks for sharing.</div>
+          <div className="text-xs" style={{ color: 'rgba(20,184,166,0.70)' }}>Your comment helps others make better decisions.</div>
           <button onClick={() => setSubmitted(false)}
-            className="mt-3 text-xs text-teal-600 underline underline-offset-2">
+            className="mt-3 text-xs underline underline-offset-2" style={{ color: 'rgba(20,184,166,0.70)' }}>
             Add another comment
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-          <div className="text-sm font-semibold text-gray-800 mb-4">Share your experience</div>
+        <form onSubmit={handleSubmit} className="rounded-xl p-5" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <div className="text-sm font-semibold mb-4" style={{ color: 'white' }}>Share your experience</div>
 
-          {/* Honeypot — hidden from real users */}
           <input type="text" name="honeypot" className="hidden" tabIndex={-1} aria-hidden="true" />
 
           <div className="mb-3">
@@ -152,7 +151,8 @@ export default function Comments({ occupation, city, occName, cityName }: Props)
               onChange={e => setName(e.target.value)}
               placeholder="Your name (optional)"
               maxLength={50}
-              className="w-full text-sm px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-teal-400 text-gray-800 placeholder-gray-400"
+              className="w-full text-sm px-3 py-2 rounded-lg focus:outline-none"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'white' }}
             />
           </div>
           <div className="mb-3 relative">
@@ -162,17 +162,16 @@ export default function Comments({ occupation, city, occName, cityName }: Props)
               placeholder={`Your experience as a ${occName} in ${cityName} — salary, rent, job market, lifestyle...`}
               rows={4}
               maxLength={1000}
-              className="w-full text-sm px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-teal-400 text-gray-800 placeholder-gray-400 resize-none"
+              className="w-full text-sm px-3 py-2 rounded-lg focus:outline-none resize-none"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'white' }}
             />
-            <div className="absolute bottom-2 right-3 text-xs text-gray-300">{text.length}/1000</div>
+            <div className="absolute bottom-2 right-3 text-xs" style={{ color: 'rgba(255,255,255,0.20)' }}>{text.length}/1000</div>
           </div>
 
-          {error && (
-            <div className="text-xs text-red-500 mb-3">{error}</div>
-          )}
+          {error && <div className="text-xs mb-3" style={{ color: '#F87171' }}>{error}</div>}
 
           <div className="flex items-center justify-between">
-            <p className="text-xs text-gray-400">No account needed · Anonymous OK</p>
+            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.30)' }}>No account needed · Anonymous OK</p>
             <button
               type="submit"
               disabled={submitting || text.trim().length < 10}
