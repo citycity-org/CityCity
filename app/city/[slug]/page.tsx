@@ -843,6 +843,54 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
           </div>
         </section>
 
+        {/* ── Career Guides ─────────────────────────────────────────────── */}
+        <section style={{ marginTop: 32 }}>
+          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+            Career Guides for {city.name}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {[
+              ['registered-nurse',    'Registered Nurse'],
+              ['family-physician',    'Family Physician'],
+              ['pharmacist',          'Pharmacist'],
+              ['dentist',             'Dentist'],
+              ['software-engineer',   'Software Engineer'],
+              ['data-analyst',        'Data Analyst'],
+              ['electrician',         'Electrician'],
+              ['plumber',             'Plumber'],
+              ['carpenter',           'Carpenter'],
+              ['welder',              'Welder'],
+              ['auto-mechanic',       'Auto Mechanic'],
+              ['civil-engineer',      'Civil Engineer'],
+              ['lawyer',              'Lawyer'],
+              ['accountant',          'Accountant'],
+              ['financial-advisor',   'Financial Advisor'],
+              ['secondary-teacher',   'Secondary Teacher'],
+              ['firefighter',         'Firefighter'],
+              ['police-officer',      'Police Officer'],
+              ['truck-driver',        'Truck Driver'],
+              ['commercial-pilot',    'Commercial Pilot'],
+              ['social-worker',       'Social Worker'],
+              ['it-support',          'IT Support'],
+              ['marketing-specialist','Marketing Specialist'],
+              ['hr-specialist',       'HR Specialist'],
+              ['real-estate-agent',   'Real Estate Agent'],
+              ['construction-worker', 'Construction Worker'],
+              ['truck-driver',        'Truck Driver'],
+              ['chef',                'Chef'],
+              ['security-guard',      'Security Guard'],
+              ['cleaner',             'Cleaner'],
+            ].filter((v, i, a) => a.findIndex(x => x[0] === v[0]) === i).map(([id, name]) => (
+              <a key={id} href={`/guide/${id}/${slug}`}
+                style={{ fontSize: 11, padding: '4px 10px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.40)', textDecoration: 'none', background: 'rgba(255,255,255,0.03)', whiteSpace: 'nowrap', transition: 'all 0.15s' }}
+                onMouseEnter={e => { (e.target as HTMLAnchorElement).style.color = '#14B8A6'; (e.target as HTMLAnchorElement).style.borderColor = 'rgba(20,184,166,0.4)' }}
+                onMouseLeave={e => { (e.target as HTMLAnchorElement).style.color = 'rgba(255,255,255,0.40)'; (e.target as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.10)' }}>
+                {name}
+              </a>
+            ))}
+          </div>
+        </section>
+
         {/* ── Footer ────────────────────────────────────────────────────── */}
         <p style={{ color: 'rgba(255,255,255,0.12)', fontSize: 11, textAlign: 'center' }}>
           Data: CMHC · StatCan · CIHI · Environment Canada · Job Bank · CRA<br />
