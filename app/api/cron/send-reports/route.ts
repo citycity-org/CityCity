@@ -817,8 +817,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Missing RESEND_API_KEY or RESEND_AUDIENCE_ID' }, { status: 500 })
   }
 
-  // 2. Compute report period
-  const now    = new Date()
+  // 2. Only run on the 5th of each month
+  const now = new Date()
+  if (now.getUTCDate() !== 5) {
+    return NextResponse.json({ skipped: true, reason: 'not 5th', date: now.toUTCString() })
+  }
+
   const period = computePeriod(now)
 
   // 3. Fetch all contacts
