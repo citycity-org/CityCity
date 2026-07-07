@@ -7,24 +7,6 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 )
 
-// ── Enabled pages (occupation:city) ──────────────────────────────────────────
-const ENABLED = new Set([
-  'registered-nurse:calgary',
-  'registered-nurse:toronto',
-  'registered-nurse:vancouver',
-  'software-engineer:vancouver',
-  'software-engineer:toronto',
-  'software-engineer:calgary',
-  'electrician:calgary',
-  'electrician:vancouver',
-  'family-physician:calgary',
-  'family-physician:vancouver',
-  'accountant:toronto',
-  'accountant:calgary',
-  'truck-driver:calgary',
-  'police-officer:calgary',
-])
-
 // ── Simple in-memory rate limit (per IP, max 3 posts / hour) ─────────────────
 const rateLimitMap = new Map<string, number[]>()
 function isRateLimited(ipHash: string): boolean {
@@ -67,11 +49,6 @@ export async function POST(req: NextRequest) {
 
   // Bot trap
   if (honeypot) return NextResponse.json({ ok: true })
-
-  // Validate enabled
-  if (!ENABLED.has(`${occupation}:${city}`)) {
-    return NextResponse.json({ error: 'Comments not enabled for this page' }, { status: 403 })
-  }
 
   // Validate content
   const name = (author_name ?? '').trim().slice(0, 50) || 'Anonymous'

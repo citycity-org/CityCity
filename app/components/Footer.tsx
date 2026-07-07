@@ -43,10 +43,10 @@ export default function Footer() {
               <LakiveLogo size={26} theme="dark" />
             </a>
             <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, lineHeight: 1.8, maxWidth: 280 }}>
-              Helping people find a place where they can build a meaningful future — not just where they earn more, but where they belong.
+              Find the city where your career, your family, and your life all fit.
             </p>
             <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12, marginTop: 12, fontStyle: 'italic' }}>
-              From data to belonging.
+              From Data to Belonging.
             </p>
           </div>
 

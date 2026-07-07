@@ -20,16 +20,6 @@ function timeAgo(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-CA', { month: 'short', year: 'numeric' })
 }
 
-// ── Enabled combos ────────────────────────────────────────────────────────────
-const ENABLED = new Set([
-  'registered-nurse:calgary',   'registered-nurse:toronto',   'registered-nurse:vancouver',
-  'software-engineer:vancouver','software-engineer:toronto',  'software-engineer:calgary',
-  'electrician:calgary',        'electrician:vancouver',
-  'family-physician:calgary',   'family-physician:vancouver',
-  'accountant:toronto',         'accountant:calgary',
-  'truck-driver:calgary',       'police-officer:calgary',
-])
-
 // ── Props ─────────────────────────────────────────────────────────────────────
 type Props = {
   occupation: string
@@ -47,8 +37,6 @@ export default function Comments({ occupation, city, occName, cityName }: Props)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError]         = useState('')
 
-  const enabled = ENABLED.has(`${occupation}:${city}`)
-
   const fetchComments = useCallback(async () => {
     setLoading(true)
     const res = await fetch(`/api/comments?occupation=${occupation}&city=${city}`)
@@ -57,7 +45,7 @@ export default function Comments({ occupation, city, occName, cityName }: Props)
     setLoading(false)
   }, [occupation, city])
 
-  useEffect(() => { if (enabled) fetchComments() }, [enabled, fetchComments])
+  useEffect(() => { fetchComments() }, [fetchComments])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -82,19 +70,17 @@ export default function Comments({ occupation, city, occName, cityName }: Props)
     fetchComments()
   }
 
-  if (!enabled) return null
-
   return (
     <section className="mt-10">
       <div className="flex items-center gap-3 mb-5">
-        <h2 className="text-lg font-bold text-gray-900">Real Experiences</h2>
+        <h2 className="text-lg font-bold" style={{ color: 'white' }}>Real Experiences</h2>
         {!loading && (
-          <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.45)' }}>
             {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
           </span>
         )}
       </div>
-      <p className="text-sm text-gray-400 mb-6 -mt-3">
+      <p className="text-sm mb-6 -mt-3" style={{ color: 'rgba(255,255,255,0.40)' }}>
         Share your real experience as a {occName} in {cityName} — salary, rent, job market, anything useful.
       </p>
 

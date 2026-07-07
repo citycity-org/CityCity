@@ -67,12 +67,17 @@ const TOPICS = [
   },
 ]
 
-const CITY_STATS: Record<string, { label: string; hpi: number; rpi: number; note: string }> = {
-  calgary:   { label: 'Calgary, AB',   hpi: 8.5,  rpi: 24.1, note: 'No provincial tax · Fastest growth' },
-  ottawa:    { label: 'Ottawa, ON',    hpi: 9.8,  rpi: 28.4, note: 'Federal jobs · Stable market' },
-  montreal:  { label: 'Montréal, QC',  hpi: 10.0, rpi: 30.2, note: 'Most affordable major city' },
-  toronto:   { label: 'Toronto, ON',   hpi: 15.1, rpi: 41.2, note: 'Largest job market in Canada' },
-  vancouver: { label: 'Vancouver, BC', hpi: 16.2, rpi: 43.6, note: 'Tech hub · Highest housing cost' },
+const CITY_STATS: Record<string, { label: string; hpi: number; rpi: number; note: string; currency?: string }> = {
+  // Canada
+  calgary:         { label: 'Calgary, AB',       hpi: 8.5,  rpi: 24.1, note: 'No provincial tax · Fastest growth' },
+  seattle:         { label: 'Seattle, WA',        hpi: 8.8,  rpi: 21.3, note: 'No state income tax · Amazon/Microsoft', currency: 'USD' },
+  ottawa:          { label: 'Ottawa, ON',         hpi: 9.8,  rpi: 28.4, note: 'Federal jobs · Stable market' },
+  montreal:        { label: 'Montréal, QC',       hpi: 10.0, rpi: 30.2, note: 'Most affordable major city' },
+  boston:          { label: 'Boston, MA',          hpi: 11.8, rpi: 24.4, note: 'Biotech & universities hub', currency: 'USD' },
+  toronto:         { label: 'Toronto, ON',         hpi: 15.1, rpi: 41.2, note: 'Largest job market in Canada' },
+  'new-york':      { label: 'New York City, NY',   hpi: 14.8, rpi: 29.2, note: 'Finance capital · Highest diversity', currency: 'USD' },
+  'san-francisco': { label: 'San Francisco, CA',   hpi: 15.6, rpi: 27.6, note: 'Top tech salaries · Extreme housing', currency: 'USD' },
+  vancouver:       { label: 'Vancouver, BC',       hpi: 16.2, rpi: 43.6, note: 'Tech hub · Highest housing cost' },
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -232,7 +237,12 @@ export default function GuidePage() {
                   <div key={slug} className="rounded-xl p-5" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <div className="font-bold" style={{ color: 'white' }}>{cs.label}</div>
+                        <div className="flex items-center gap-2">
+                          <div className="font-bold" style={{ color: 'white' }}>{cs.label}</div>
+                          {cs.currency === 'USD' && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold" style={{ background: 'rgba(79,142,247,0.15)', color: '#4F8EF7' }}>USD</span>
+                          )}
+                        </div>
                         <div className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>{cs.note}</div>
                       </div>
                       <div className="text-right">
@@ -243,11 +253,13 @@ export default function GuidePage() {
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <Link href={`/city/${slug}`}
-                        className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
-                        style={{ background: 'rgba(20,184,166,0.15)', color: '#14B8A6', border: '1px solid rgba(20,184,166,0.25)', textDecoration: 'none' }}>
-                        City Overview
-                      </Link>
+                      {!cs.currency && (
+                        <Link href={`/city/${slug}`}
+                          className="text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors"
+                          style={{ background: 'rgba(20,184,166,0.15)', color: '#14B8A6', border: '1px solid rgba(20,184,166,0.25)', textDecoration: 'none' }}>
+                          City Overview
+                        </Link>
+                      )}
                       {['registered-nurse', 'software-engineer', 'electrician'].map(occ => (
                         <Link key={occ} href={`/guide/${occ}/${slug}`}
                           className="text-xs px-3 py-1.5 rounded-lg transition-colors"

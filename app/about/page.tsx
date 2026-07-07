@@ -49,15 +49,15 @@ export default function AboutPage() {
 
           {/* From Data to Belonging */}
           <div>
-            <h2 style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 20 }}>From Data to Belonging</h2>
+            <h2 style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 20 }}>City Intelligence Built Around Your Life</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <p>Data alone doesn't change lives. <strong style={{ color: 'white' }}>Better decisions do.</strong></p>
               </div>
-              <p>Every chart, every comparison, and every report on Lakive is designed with one purpose: helping people find a place where they can build a meaningful future.</p>
+              <p>Every chart, every comparison, and every report on Lakive is designed with one purpose: helping you find the city where your career, your family, and your life all fit.</p>
               <div>
-                <p style={{ color: 'rgba(255,255,255,0.85)' }}>Because the right city isn't simply where you earn more.</p>
-                <p style={{ color: 'white', fontWeight: 700, marginTop: 12 }}>It's where you belong.</p>
+                <p style={{ color: 'rgba(255,255,255,0.85)' }}>Because the right city isn't an average — it's the one that fits who you are.</p>
+                <p style={{ color: 'white', fontWeight: 700, marginTop: 12 }}>Not averages. Your life.</p>
               </div>
             </div>
           </div>
