@@ -106,7 +106,7 @@ export default function GuidePage() {
             What would you like to understand?
           </h1>
           <p className="text-base max-w-lg mx-auto leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>
-            Lakive helps you navigate Canada's cities with data — not opinions.
+            Lakive helps you navigate cities across Canada and the US with data — not opinions.
             Choose where to start.
           </p>
         </div>

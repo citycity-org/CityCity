@@ -50,6 +50,7 @@ const REGIONS = [
   { id:'ab',     label:'AB',        subLabel:'Alberta',            cities:['calgary'] },
   { id:'on',     label:'ON',        subLabel:'Ontario',            cities:['toronto','ottawa'] },
   { id:'qc',     label:'QC',        subLabel:'Québec',             cities:['montreal'] },
+  { id:'usa',    label:'USA',       subLabel:'United States',      cities:['seattle','san-francisco','new-york','boston'] },
 ]
 
 // ── Property types ────────────────────────────────────────────────────────────
@@ -207,6 +208,110 @@ const FIT_MATRIX: Record<string, Record<string, OccFit>> = {
     unemployed:    { score:32, hpiYears:26.0, rpi:101,eoi:'Low'  },
     retired:       { score:52, hpiYears:15.5, rpi:60, eoi:'Low'  },
   },
+  seattle: {
+    electrician:   { score:78, hpiYears:8.8,  rpi:32, eoi:'High' },
+    software_eng:  { score:90, hpiYears:5.8,  rpi:22, eoi:'High' },
+    nurse:         { score:76, hpiYears:9.2,  rpi:34, eoi:'High' },
+    doctor:        { score:86, hpiYears:4.5,  rpi:15, eoi:'High' },
+    pharmacist:    { score:78, hpiYears:7.8,  rpi:28, eoi:'High' },
+    data_analyst:  { score:82, hpiYears:7.2,  rpi:26, eoi:'High' },
+    it_support:    { score:68, hpiYears:10.5, rpi:38, eoi:'High' },
+    engineer:      { score:78, hpiYears:8.2,  rpi:30, eoi:'High' },
+    plumber:       { score:72, hpiYears:9.5,  rpi:36, eoi:'Mid'  },
+    carpenter:     { score:64, hpiYears:11.0, rpi:42, eoi:'Mid'  },
+    teacher:       { score:68, hpiYears:10.5, rpi:38, eoi:'Mid'  },
+    accountant:    { score:72, hpiYears:9.8,  rpi:36, eoi:'Mid'  },
+    lawyer:        { score:80, hpiYears:7.0,  rpi:26, eoi:'High' },
+    police:        { score:72, hpiYears:9.0,  rpi:34, eoi:'Mid'  },
+    firefighter:   { score:70, hpiYears:9.2,  rpi:35, eoi:'Mid'  },
+    social_worker: { score:52, hpiYears:13.5, rpi:50, eoi:'Mid'  },
+    truck_driver:  { score:65, hpiYears:10.8, rpi:40, eoi:'Mid'  },
+    mechanic:      { score:60, hpiYears:11.5, rpi:44, eoi:'Mid'  },
+    chef:          { score:42, hpiYears:15.0, rpi:58, eoi:'Mid'  },
+    retail:        { score:35, hpiYears:20.0, rpi:60, eoi:'Mid'  },
+    self_employed: { score:62, hpiYears:12.0, rpi:46, eoi:'Low'  },
+    freelancer:    { score:55, hpiYears:15.0, rpi:58, eoi:'Low'  },
+    unemployed:    { score:30, hpiYears:32.0, rpi:110,eoi:'Low'  },
+    retired:       { score:48, hpiYears:18.0, rpi:68, eoi:'Low'  },
+  },
+  'san-francisco': {
+    electrician:   { score:58, hpiYears:14.5, rpi:52, eoi:'High' },
+    software_eng:  { score:82, hpiYears:8.2,  rpi:32, eoi:'High' },
+    nurse:         { score:65, hpiYears:13.0, rpi:48, eoi:'High' },
+    doctor:        { score:78, hpiYears:6.8,  rpi:24, eoi:'High' },
+    pharmacist:    { score:65, hpiYears:12.5, rpi:46, eoi:'High' },
+    data_analyst:  { score:75, hpiYears:10.5, rpi:40, eoi:'High' },
+    it_support:    { score:55, hpiYears:16.0, rpi:58, eoi:'High' },
+    engineer:      { score:65, hpiYears:12.0, rpi:44, eoi:'High' },
+    plumber:       { score:50, hpiYears:16.5, rpi:60, eoi:'Mid'  },
+    carpenter:     { score:44, hpiYears:19.0, rpi:70, eoi:'Mid'  },
+    teacher:       { score:48, hpiYears:17.5, rpi:65, eoi:'Mid'  },
+    accountant:    { score:55, hpiYears:15.5, rpi:58, eoi:'Mid'  },
+    lawyer:        { score:72, hpiYears:9.5,  rpi:36, eoi:'High' },
+    police:        { score:52, hpiYears:16.0, rpi:60, eoi:'Mid'  },
+    firefighter:   { score:50, hpiYears:16.5, rpi:62, eoi:'Mid'  },
+    social_worker: { score:35, hpiYears:22.0, rpi:82, eoi:'Mid'  },
+    truck_driver:  { score:42, hpiYears:18.0, rpi:68, eoi:'Mid'  },
+    mechanic:      { score:40, hpiYears:19.5, rpi:72, eoi:'Mid'  },
+    chef:          { score:30, hpiYears:26.0, rpi:92, eoi:'Mid'  },
+    retail:        { score:22, hpiYears:34.0, rpi:95, eoi:'Low'  },
+    self_employed: { score:48, hpiYears:18.5, rpi:72, eoi:'Low'  },
+    freelancer:    { score:40, hpiYears:22.0, rpi:85, eoi:'Low'  },
+    unemployed:    { score:18, hpiYears:52.0, rpi:145,eoi:'Low'  },
+    retired:       { score:35, hpiYears:28.0, rpi:100,eoi:'Low'  },
+  },
+  'new-york': {
+    electrician:   { score:55, hpiYears:13.5, rpi:48, eoi:'High' },
+    software_eng:  { score:80, hpiYears:8.0,  rpi:30, eoi:'High' },
+    nurse:         { score:62, hpiYears:12.5, rpi:46, eoi:'High' },
+    doctor:        { score:76, hpiYears:6.5,  rpi:22, eoi:'High' },
+    pharmacist:    { score:63, hpiYears:12.0, rpi:44, eoi:'High' },
+    data_analyst:  { score:74, hpiYears:10.0, rpi:38, eoi:'High' },
+    it_support:    { score:54, hpiYears:15.5, rpi:56, eoi:'High' },
+    engineer:      { score:64, hpiYears:11.5, rpi:42, eoi:'High' },
+    plumber:       { score:55, hpiYears:14.5, rpi:52, eoi:'Mid'  },
+    carpenter:     { score:46, hpiYears:17.0, rpi:62, eoi:'Mid'  },
+    teacher:       { score:52, hpiYears:15.5, rpi:58, eoi:'Mid'  },
+    accountant:    { score:60, hpiYears:14.0, rpi:52, eoi:'High' },
+    lawyer:        { score:75, hpiYears:8.5,  rpi:32, eoi:'High' },
+    police:        { score:58, hpiYears:14.0, rpi:52, eoi:'Mid'  },
+    firefighter:   { score:56, hpiYears:14.5, rpi:54, eoi:'Mid'  },
+    social_worker: { score:38, hpiYears:20.0, rpi:74, eoi:'Mid'  },
+    truck_driver:  { score:48, hpiYears:16.5, rpi:62, eoi:'Mid'  },
+    mechanic:      { score:44, hpiYears:18.0, rpi:68, eoi:'Mid'  },
+    chef:          { score:35, hpiYears:23.5, rpi:82, eoi:'Mid'  },
+    retail:        { score:25, hpiYears:30.0, rpi:88, eoi:'Low'  },
+    self_employed: { score:45, hpiYears:17.5, rpi:68, eoi:'Low'  },
+    freelancer:    { score:38, hpiYears:20.5, rpi:78, eoi:'Low'  },
+    unemployed:    { score:20, hpiYears:46.0, rpi:138,eoi:'Low'  },
+    retired:       { score:36, hpiYears:26.0, rpi:96, eoi:'Low'  },
+  },
+  boston: {
+    electrician:   { score:68, hpiYears:10.5, rpi:40, eoi:'High' },
+    software_eng:  { score:82, hpiYears:7.0,  rpi:28, eoi:'High' },
+    nurse:         { score:74, hpiYears:10.0, rpi:38, eoi:'High' },
+    doctor:        { score:84, hpiYears:5.5,  rpi:20, eoi:'High' },
+    pharmacist:    { score:74, hpiYears:9.5,  rpi:35, eoi:'High' },
+    data_analyst:  { score:76, hpiYears:8.5,  rpi:32, eoi:'High' },
+    it_support:    { score:62, hpiYears:12.5, rpi:46, eoi:'High' },
+    engineer:      { score:72, hpiYears:9.8,  rpi:36, eoi:'High' },
+    plumber:       { score:65, hpiYears:11.5, rpi:44, eoi:'Mid'  },
+    carpenter:     { score:57, hpiYears:13.5, rpi:51, eoi:'Mid'  },
+    teacher:       { score:65, hpiYears:12.0, rpi:45, eoi:'Mid'  },
+    accountant:    { score:68, hpiYears:11.0, rpi:42, eoi:'Mid'  },
+    lawyer:        { score:78, hpiYears:7.5,  rpi:28, eoi:'High' },
+    police:        { score:68, hpiYears:10.5, rpi:40, eoi:'Mid'  },
+    firefighter:   { score:66, hpiYears:11.0, rpi:42, eoi:'Mid'  },
+    social_worker: { score:48, hpiYears:15.0, rpi:56, eoi:'Mid'  },
+    truck_driver:  { score:58, hpiYears:12.5, rpi:48, eoi:'Mid'  },
+    mechanic:      { score:55, hpiYears:13.5, rpi:52, eoi:'Mid'  },
+    chef:          { score:40, hpiYears:17.5, rpi:65, eoi:'Low'  },
+    retail:        { score:32, hpiYears:22.5, rpi:68, eoi:'Low'  },
+    self_employed: { score:58, hpiYears:14.0, rpi:54, eoi:'Low'  },
+    freelancer:    { score:50, hpiYears:17.5, rpi:65, eoi:'Low'  },
+    unemployed:    { score:26, hpiYears:35.0, rpi:118,eoi:'Low'  },
+    retired:       { score:44, hpiYears:20.5, rpi:76, eoi:'Low'  },
+  },
 }
 
 // ── City base ─────────────────────────────────────────────────────────────────
@@ -215,11 +320,15 @@ const CITY_BASE: Record<string, {
   eoi:number; tai:number; hai:number; eqi:number; tci:number; psi:number; edi:number
   taiNote:string
 }> = {
-  vancouver: { name:'Vancouver', province:'BC', short:'YVR', eoi:80, tai:72, hai:88, eqi:90, tci:82, psi:72, edi:80, taiNote:'GST 5% + PST 7%' },
-  toronto:   { name:'Toronto',   province:'ON', short:'YYZ', eoi:92, tai:68, hai:90, eqi:75, tci:78, psi:68, edi:82, taiNote:'HST 13%' },
-  calgary:   { name:'Calgary',   province:'AB', short:'YYC', eoi:65, tai:90, hai:78, eqi:82, tci:48, psi:78, edi:72, taiNote:'GST 5% only' },
-  montreal:  { name:'Montréal',  province:'QC', short:'YUL', eoi:72, tai:42, hai:75, eqi:78, tci:72, psi:70, edi:80, taiNote:'GST + QST ≈ 15%' },
-  ottawa:    { name:'Ottawa',    province:'ON', short:'YOW', eoi:75, tai:68, hai:82, eqi:80, tci:55, psi:82, edi:85, taiNote:'HST 13%' },
+  vancouver:       { name:'Vancouver',     province:'BC',            short:'YVR', eoi:80, tai:72, hai:88, eqi:90, tci:82, psi:72, edi:80, taiNote:'GST 5% + PST 7%' },
+  toronto:         { name:'Toronto',       province:'ON',            short:'YYZ', eoi:92, tai:68, hai:90, eqi:75, tci:78, psi:68, edi:82, taiNote:'HST 13%' },
+  calgary:         { name:'Calgary',       province:'AB',            short:'YYC', eoi:65, tai:90, hai:78, eqi:82, tci:48, psi:78, edi:72, taiNote:'GST 5% only' },
+  montreal:        { name:'Montréal',      province:'QC',            short:'YUL', eoi:72, tai:42, hai:75, eqi:78, tci:72, psi:70, edi:80, taiNote:'GST + QST ≈ 15%' },
+  ottawa:          { name:'Ottawa',        province:'ON',            short:'YOW', eoi:75, tai:68, hai:82, eqi:80, tci:55, psi:82, edi:85, taiNote:'HST 13%' },
+  seattle:         { name:'Seattle',       province:'Washington',    short:'SEA', eoi:88, tai:95, hai:72, eqi:78, tci:65, psi:72, edi:82, taiNote:'No state income tax' },
+  'san-francisco': { name:'San Francisco', province:'California',    short:'SFO', eoi:95, tai:35, hai:75, eqi:70, tci:75, psi:55, edi:90, taiNote:'CA top rate 13.3%' },
+  'new-york':      { name:'New York City', province:'New York',      short:'NYC', eoi:92, tai:30, hai:78, eqi:62, tci:88, psi:58, edi:92, taiNote:'NY+NYC tax up to 14.8%' },
+  boston:          { name:'Boston',        province:'Massachusetts', short:'BOS', eoi:85, tai:60, hai:80, eqi:75, tci:72, psi:68, edi:88, taiNote:'MA flat 5% state tax' },
 }
 
 // ── City Insights ─────────────────────────────────────────────────────────────
@@ -253,6 +362,29 @@ const INSIGHTS: Record<string, Record<string, string>> = {
     nurse:        'Federal and provincial healthcare employment is stable; strong environmental quality and lower rent pressure than Vancouver or Toronto.',
     default:      'Dense federal government employment, strong environmental quality — suited for those who value job stability alongside quality of life.',
   },
+  seattle: {
+    software_eng: 'No state income tax (TAI 95) and Amazon/Microsoft/Boeing headquarters create massive tech demand — the strongest after-tax tech city on the list (score 90).',
+    nurse:        'Strong healthcare employment, no state income tax boosts take-home pay — buying takes 9.2 years, which is manageable for the US market.',
+    data_analyst: 'Tech density is among the highest in North America; no state income tax makes after-tax earnings highly competitive (TAI 95).',
+    default:      'No state income tax delivers a major after-tax advantage; housing is expensive but more accessible than San Francisco or New York — a strong option for tech and healthcare professionals.',
+  },
+  'san-francisco': {
+    software_eng: 'Highest employment opportunity index (EOI 95) — concentration of FAANG employers, AI/startup density is unmatched; CA income tax (13.3%) significantly reduces take-home pay.',
+    data_analyst: 'Unrivaled tech ecosystem and data science demand (EOI 95); high salaries partially offset by CA tax burden and extreme housing costs (8.2 yrs to buy).',
+    default:      'The highest job market density in tech and healthcare, but CA state tax (up to 13.3%) and severe housing costs limit financial upside — best suited for career-first candidates at peak earning years.',
+  },
+  'new-york': {
+    software_eng: 'Strong fintech/media/tech employment hub (EOI 92); combined NY+NYC tax rate up to 14.8% is among the highest — weigh career access against tax drag.',
+    lawyer:       'Legal sector is the densest in North America (EOI 92, score 75); combined NY+NYC tax is punishing at top rates — compare total after-tax compensation carefully.',
+    accountant:   'Financial services sector is extremely active (EOI 92); tax burden is severe and housing costs are high — suited for top earners who prioritize career access.',
+    default:      'Unmatched transit (TCI 88) and industry density across finance, media, and healthcare; NY+NYC tax burden up to 14.8% is the highest of all cities on this list — compare carefully against Seattle.',
+  },
+  boston: {
+    software_eng: 'Strong tech and biotech ecosystem; MA flat 5% state tax is the most favorable on the East Coast — buying takes 7 years (better than NYC or SF).',
+    nurse:        'One of the top healthcare hubs in North America (Mass General, MGH system); strong employment (EOI 85) with manageable tax burden.',
+    doctor:       'Exceptional medical employment density (EOI 85, score 84); Boston is home to top-ranked hospitals — the strongest East Coast city for medical professionals.',
+    default:      'Best balance of tech/healthcare employment and tax environment on the US East Coast; lower housing pressure than NYC or SF — a practical alternative for East Coast career-seekers.',
+  },
 }
 
 function getInsight(cityId:string, occ:string):string {
@@ -262,12 +394,21 @@ function getInsight(cityId:string, occ:string):string {
 
 // ── Unemployed-specific insights ──────────────────────────────────────────────
 const UNEMPLOYED_INSIGHTS: Record<string, string> = {
-  toronto:   'Highest employment opportunity index nationally (EOI 92) with the most job density; best odds of finding work, but housing costs are high — secure employment before committing to housing.',
-  ottawa:    'Federal government jobs are concentrated with strong stability (EOI 75); living costs are lower than Vancouver and Toronto — a solid transition city.',
-  vancouver: 'Strong employment opportunity index (EOI 80) with active tech and service sectors; housing is expensive, so budget carefully for the job search period.',
-  montreal:  'Lowest cost of living nationally — great for controlling expenses during a job search; bilingual background expands your options; moderate employment (EOI 72).',
-  calgary:   'No provincial PST means strong take-home pay once employed; employment is concentrated in energy, construction, and trades (EOI 65) — best for candidates with relevant backgrounds.',
+  toronto:         'Highest employment opportunity index nationally (EOI 92) with the most job density; best odds of finding work, but housing costs are high — secure employment before committing to housing.',
+  ottawa:          'Federal government jobs are concentrated with strong stability (EOI 75); living costs are lower than Vancouver and Toronto — a solid transition city.',
+  vancouver:       'Strong employment opportunity index (EOI 80) with active tech and service sectors; housing is expensive, so budget carefully for the job search period.',
+  montreal:        'Lowest cost of living nationally — great for controlling expenses during a job search; bilingual background expands your options; moderate employment (EOI 72).',
+  calgary:         'No provincial PST means strong take-home pay once employed; employment is concentrated in energy, construction, and trades (EOI 65) — best for candidates with relevant backgrounds.',
+  seattle:         'No state income tax maximizes take-home pay once hired (TAI 95); strong tech and healthcare demand (EOI 88) — a solid landing city for tech job seekers.',
+  'san-francisco': 'Highest tech and startup employment density in North America (EOI 95); high living costs require a quick path to employment — best for experienced tech candidates only.',
+  'new-york':      'Exceptional employment density across finance, media, and healthcare (EOI 92); high cost of living demands rapid job placement — have savings to cover 3–6 months.',
+  boston:          'Strong healthcare and biotech employment (EOI 85); more manageable living costs than NYC or SF on the East Coast — a practical choice for healthcare and tech job seekers.',
 }
+
+// ── US city IDs (no /city/ page — use guide instead) ─────────────────────────
+const US_CITY_IDS = new Set(['seattle', 'san-francisco', 'new-york', 'boston'])
+const cityDetailLink = (id: string, occ: string) =>
+  US_CITY_IDS.has(id) ? `/guide/software-engineer/${id}` : `/city/${id}?occupation=${occ}`
 
 // ── Auto-generate ranking title ───────────────────────────────────────────────
 function getRankingTitle(regionLabel:string, occName:string, sortId:string):string {
@@ -468,7 +609,7 @@ export default function RankingPage() {
           <div style={{ marginBottom:20 }}>
             <h1 style={{ color:'white', fontSize:28, fontWeight:900, margin:'0 0 6px', letterSpacing:'-0.5px' }}>City Rankings</h1>
             <p style={{ color:'rgba(255,255,255,0.32)', fontSize:13, margin:0 }}>
-              Not a "best city" ranking — a fit score for your occupation across Canadian cities.
+              Not a "best city" ranking — a fit score for your occupation across cities in Canada and the US.
             </p>
           </div>
 
@@ -674,7 +815,7 @@ export default function RankingPage() {
                       <p style={{ color:'rgba(255,255,255,0.55)', fontSize:12, lineHeight:1.65, margin:0 }}>{insight}</p>
                     </div>
                     <div style={{ display:'flex', gap:14, paddingTop:6, borderTop:'1px solid rgba(255,255,255,0.06)' }}>
-                      <a href={`/city/${id}?occupation=${occ}`}
+                      <a href={cityDetailLink(id, occ)}
                         onClick={e=>e.stopPropagation()}
                         className="quick-link"
                         style={{ color:'#60A5FA', fontSize:12, fontWeight:600, textDecoration:'none' }}>
@@ -724,7 +865,7 @@ export default function RankingPage() {
                         <div style={{ color:'rgba(255,255,255,0.55)', fontSize:10, marginBottom:2 }}>Personalized</div>
                         <div style={{ color:'white', fontWeight:700, fontSize:12 }}>Calculate for {city.name} →</div>
                       </a>
-                      <a href={`/city/${id}?occupation=${occ}`}
+                      <a href={cityDetailLink(id, occ)}
                         onClick={e=>e.stopPropagation()}
                         style={{ display:'block', padding:'12px 14px', borderRadius:12, textDecoration:'none', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.10)', textAlign:'center' }}>
                         <div style={{ color:'rgba(255,255,255,0.50)', fontSize:11, marginBottom:2 }}>Deep dive</div>
