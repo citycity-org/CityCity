@@ -658,6 +658,9 @@ function ComparePageInner() {
   const rankB       = rankList.findIndex(c => c.id === slugB) + 1
   const totalCities = rankList.length
 
+  const US_IDS = new Set(['seattle', 'san-francisco', 'new-york', 'boston'])
+  const isCrossCountry = ready && (US_IDS.has(slugA) !== US_IDS.has(slugB))
+
   const aWins    = adjA.score >= adjB.score
   const winSlug  = aWins ? slugA : slugB
   const loseSlug = aWins ? slugB : slugA
@@ -900,6 +903,21 @@ function ComparePageInner() {
           </div>}
         </div>
       </div>
+
+      {/* ── CROSS-COUNTRY DISCLAIMER ─────────────────────────────────────── */}
+      {isCrossCountry && (
+        <div style={{ maxWidth:1100, margin:'16px auto 0', padding:'0 32px' }}>
+          <div style={{ display:'flex', gap:12, alignItems:'flex-start', padding:'12px 16px', background:'rgba(245,158,11,0.06)', border:'1px solid rgba(245,158,11,0.20)', borderRadius:12 }}>
+            <span style={{ fontSize:15, flexShrink:0, lineHeight:'20px', marginTop:1 }}>⚠️</span>
+            <p style={{ color:'rgba(255,255,255,0.50)', fontSize:12, lineHeight:1.7, margin:0 }}>
+              <strong style={{ color:'rgba(255,255,255,0.75)', fontWeight:700 }}>Cross-country comparison note: </strong>
+              This comparison assumes each person earns local wages in local currency — a {US_IDS.has(slugA) ? cityA.name : cityB.name} worker earning USD vs a {US_IDS.has(slugA) ? cityB.name : cityA.name} worker earning CAD.
+              {' '}Housing pressure (years to buy) and rent pressure (% of income) are currency-neutral ratios and are valid to compare across countries.
+              {' '}If you earn in one currency and plan to live in a city priced in another, use the Calculate page with your actual income instead.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── BODY ──────────────────────────────────────────────────────────── */}
       {ready && <div style={{ maxWidth:1100, margin:'0 auto', padding:'36px 32px', display:'flex', flexDirection:'column', gap:28 }}>
