@@ -526,7 +526,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-1.5 mb-5 px-3 py-1 rounded-full text-xs font-medium"
                 style={{ background: 'rgba(79,142,247,0.15)', border: '1px solid rgba(79,142,247,0.3)', color: '#93C5FD' }}>
                 <div className="w-1.5 h-1.5 rounded-full bg-[#4F8EF7] animate-pulse" />
-                5 Canadian Cities · Expanding Soon
+                9 Cities · Canada & USA
               </div>
 
               {/* H1 */}
@@ -563,9 +563,16 @@ export default function Home() {
                     style={selectStyle}
                   >
                     <option value="" style={{ background: '#0d1f44', color: 'rgba(255,255,255,0.4)' }}>Select city...</option>
-                    {ACTIVE_CITIES_CA.map(c => (
-                      <option key={c.id} value={c.id} style={{ background: '#0d1f44', color: 'white' }}>{c.nameEn}</option>
-                    ))}
+                    <optgroup label="🇨🇦 Canada" style={{ background: '#0d1f44' }}>
+                      {ACTIVE_CITIES_CA.map(c => (
+                        <option key={c.id} value={c.id} style={{ background: '#0d1f44', color: 'white' }}>{c.nameEn}</option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="🇺🇸 United States" style={{ background: '#0d1f44' }}>
+                      {ACTIVE_CITIES.filter(c => c.country === 'US').map(c => (
+                        <option key={c.id} value={c.id} style={{ background: '#0d1f44', color: 'white' }}>{c.nameEn}</option>
+                      ))}
+                    </optgroup>
                   </select>
                 </div>
               </div>
