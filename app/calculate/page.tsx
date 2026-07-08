@@ -12,18 +12,26 @@ const PROP_TYPES = [
 
 // ── City data ──────────────────────────────────────────────────────────────────
 const CITIES: Record<string, {
-  name:string; short:string; province:string
+  name:string; short:string; province:string; currency?:'CAD'|'USD'
   basePrice:number; medianRent:number
   tai:number; eoi:number; hai:number; eqi:number; tci:number; psi:number; edi:number
   taiNote:string; effectiveTax:number
 }> = {
-  vancouver: { name:'Vancouver', short:'YVR', province:'BC', basePrice:1050000, medianRent:3300, tai:72, eoi:80, hai:88, eqi:90, tci:82, psi:72, edi:80, taiNote:'GST + PST ~12%', effectiveTax:0.28 },
-  toronto:   { name:'Toronto',   short:'YYZ', province:'ON', basePrice:980000,  medianRent:2600, tai:68, eoi:92, hai:90, eqi:75, tci:78, psi:68, edi:82, taiNote:'HST 13%',        effectiveTax:0.30 },
-  calgary:   { name:'Calgary',   short:'YYC', province:'AB', basePrice:550000,  medianRent:1750, tai:90, eoi:65, hai:78, eqi:82, tci:48, psi:78, edi:72, taiNote:'GST 5% only',    effectiveTax:0.22 },
-  montreal:  { name:'Montréal',  short:'YUL', province:'QC', basePrice:580000,  medianRent:1900, tai:42, eoi:72, hai:75, eqi:78, tci:72, psi:70, edi:80, taiNote:'GST + QST ~15%', effectiveTax:0.33 },
-  ottawa:    { name:'Ottawa',    short:'YOW', province:'ON', basePrice:650000,  medianRent:2400, tai:68, eoi:75, hai:82, eqi:80, tci:55, psi:82, edi:85, taiNote:'HST 13%',        effectiveTax:0.29 },
+  // ── Canada (CAD) ──────────────────────────────────────────────────────────────
+  vancouver:       { name:'Vancouver',     short:'YVR', province:'BC',               basePrice:1050000, medianRent:3300, tai:72, eoi:80, hai:88, eqi:90, tci:82, psi:72, edi:80, taiNote:'GST + PST ~12%',       effectiveTax:0.28 },
+  toronto:         { name:'Toronto',       short:'YYZ', province:'ON',               basePrice:980000,  medianRent:2600, tai:68, eoi:92, hai:90, eqi:75, tci:78, psi:68, edi:82, taiNote:'HST 13%',              effectiveTax:0.30 },
+  calgary:         { name:'Calgary',       short:'YYC', province:'AB',               basePrice:550000,  medianRent:1750, tai:90, eoi:65, hai:78, eqi:82, tci:48, psi:78, edi:72, taiNote:'GST 5% only',          effectiveTax:0.22 },
+  montreal:        { name:'Montréal',      short:'YUL', province:'QC',               basePrice:580000,  medianRent:1900, tai:42, eoi:72, hai:75, eqi:78, tci:72, psi:70, edi:80, taiNote:'GST + QST ~15%',       effectiveTax:0.33 },
+  ottawa:          { name:'Ottawa',        short:'YOW', province:'ON',               basePrice:650000,  medianRent:2400, tai:68, eoi:75, hai:82, eqi:80, tci:55, psi:82, edi:85, taiNote:'HST 13%',              effectiveTax:0.29 },
+  // ── United States (USD) ───────────────────────────────────────────────────────
+  seattle:         { name:'Seattle',       short:'SEA', province:'Washington',  currency:'USD', basePrice:800000,  medianRent:2700, tai:95, eoi:88, hai:72, eqi:78, tci:65, psi:72, edi:82, taiNote:'No state income tax', effectiveTax:0.22 },
+  'san-francisco': { name:'San Francisco', short:'SFO', province:'California',  currency:'USD', basePrice:1250000, medianRent:3500, tai:35, eoi:95, hai:38, eqi:70, tci:75, psi:55, edi:90, taiNote:'CA top rate 13.3%',  effectiveTax:0.35 },
+  'new-york':      { name:'New York City', short:'NYC', province:'New York',    currency:'USD', basePrice:1100000, medianRent:3700, tai:30, eoi:92, hai:40, eqi:62, tci:88, psi:58, edi:92, taiNote:'NY+NYC tax up to 14.8%', effectiveTax:0.36 },
+  boston:          { name:'Boston',        short:'BOS', province:'Massachusetts', currency:'USD', basePrice:850000, medianRent:3100, tai:60, eoi:85, hai:58, eqi:75, tci:72, psi:68, edi:82, taiNote:'MA flat 5% state tax', effectiveTax:0.27 },
 }
-const CITY_IDS = ['vancouver', 'toronto', 'calgary', 'montreal', 'ottawa']
+const CITY_IDS    = ['vancouver', 'toronto', 'calgary', 'montreal', 'ottawa']
+const CITY_IDS_US = ['seattle', 'san-francisco', 'new-york', 'boston']
+const ALL_CITY_IDS = [...CITY_IDS, ...CITY_IDS_US]
 
 // ── Occupation groups ──────────────────────────────────────────────────────────
 const OCC_GROUPS = [
@@ -204,8 +212,10 @@ export default function CalculatePage() {
       ? getRentVerdict(city.name, rpi, monthlyRentDisp, score)
       : getBuyVerdict(city.name, hpiYears, monthlyMortgage, monthlyNet, downYears)
 
-    // ── Cross-city comparison ──────────────────────────────────────────────────
-    const allCities = CITY_IDS.map(id => {
+    // ── Cross-city comparison (same currency only) ────────────────────────────
+    const selectedCurrency = city.currency ?? 'CAD'
+    const compareCityIDs = ALL_CITY_IDS.filter(id => (CITIES[id].currency ?? 'CAD') === selectedCurrency)
+    const allCities = compareCityIDs.map(id => {
       const c      = CITIES[id]
       const aPrice = c.basePrice  * pt.priceMult
       const aRent  = c.medianRent * pt.rentMult
@@ -367,7 +377,7 @@ export default function CalculatePage() {
                     min={isUnemployed ? 0 : 10000} max={500000} step={1000}
                     style={{ width:'100%', padding:'14px 16px 14px 28px', borderRadius:12, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.10)', color:'white', fontSize:18, fontWeight:700, fontFamily:'monospace', outline:'none', boxSizing:'border-box' }}
                   />
-                  <span style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', color:'rgba(255,255,255,0.38)', fontSize:11 }}>CAD / yr</span>
+                  <span style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', color:'rgba(255,255,255,0.38)', fontSize:11 }}>{city.currency ?? 'CAD'} / yr</span>
                 </div>
               </div>
 
@@ -442,7 +452,7 @@ export default function CalculatePage() {
             <div>
               <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.07em', marginBottom:20 }}>STEP 3 — Which city are you targeting?</div>
               <div style={{ display:'flex', flexDirection:'column', gap:10, marginBottom:28 }}>
-                {CITY_IDS.map(id => {
+                {ALL_CITY_IDS.map(id => {
                   const c = CITIES[id]
                   const sel = id === cityId
                   return (
@@ -460,7 +470,7 @@ export default function CalculatePage() {
                       <div style={{ textAlign:'right' }}>
                         <div style={{ color:'rgba(255,255,255,0.40)', fontSize:11, marginBottom:2 }}>Benchmark Price</div>
                         <div style={{ color:sel?'#60A5FA':'rgba(255,255,255,0.50)', fontSize:14, fontWeight:700, fontFamily:'monospace' }}>
-                          ${(c.basePrice/1000000).toFixed(2)}M
+                          ${(c.basePrice/1000000).toFixed(2)}M {c.currency ?? 'CAD'}
                         </div>
                       </div>
                     </button>

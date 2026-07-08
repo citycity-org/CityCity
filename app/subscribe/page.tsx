@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 const CITY_NAMES: Record<string, string> = {
   vancouver: 'Vancouver', toronto: 'Toronto', calgary: 'Calgary',
   montreal: 'Montréal', ottawa: 'Ottawa',
+  seattle: 'Seattle', 'san-francisco': 'San Francisco', 'new-york': 'New York City', boston: 'Boston',
 }
 
 const PT_NAMES: Record<string, string> = {
