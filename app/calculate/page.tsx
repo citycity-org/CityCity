@@ -644,7 +644,7 @@ export default function CalculatePage() {
           <div style={{ marginBottom:20 }}>
             <div style={{ marginBottom:14 }}>
               <div style={{ color:'#FFFFFF', fontSize:17, fontWeight:800, marginBottom:4 }}>Same income, different city. What changes?</div>
-              <div style={{ color:'rgba(255,255,255,0.35)', fontSize:12 }}>Based on your ${income.toLocaleString()} annual income, compared across 5 cities</div>
+              <div style={{ color:'rgba(255,255,255,0.35)', fontSize:12 }}>Based on your ${income.toLocaleString()} {city.currency ?? 'CAD'} annual income, compared across {results.allCities.length} cities</div>
             </div>
 
             {/* Column headers */}
@@ -652,7 +652,7 @@ export default function CalculatePage() {
               <span style={{ color:'rgba(255,255,255,0.55)', fontSize:11, fontWeight:700, letterSpacing:'0.04em' }}>City</span>
               <span style={{ color:'rgba(255,255,255,0.55)', fontSize:11, fontWeight:700, textAlign:'center' }}>Score</span>
               <span style={{ color:'rgba(255,255,255,0.55)', fontSize:11, fontWeight:700, textAlign:'center' }}>{intent==='rent'?'Rent %':'Yrs to Buy'}</span>
-              <span style={{ color:'rgba(255,255,255,0.55)', fontSize:11, fontWeight:700, textAlign:'right' }}>{intent==='rent'?'Disposable':'Mortgage'}</span>
+              <span style={{ color:'rgba(255,255,255,0.55)', fontSize:11, fontWeight:700, textAlign:'right' }}>{intent==='rent'?'Disposable':'Mortgage'} <span style={{ color:'rgba(255,255,255,0.30)', fontWeight:400 }}>{city.currency ?? 'CAD'}</span></span>
             </div>
 
             {results.allCities.map((c, i) => {
@@ -668,7 +668,7 @@ export default function CalculatePage() {
                 : { val:`$${c.monthlyMortgage.toLocaleString()}`, color:c.monthlyBuyDisp>0?'#F59E0B':'#EF4444', badge:'Lowest' }
               return (
                 <a key={c.id}
-                  href={`/city/${c.id}?occupation=${occId}&housing=${propType}`}
+                  href={CITIES[c.id]?.currency === 'USD' ? `/guide/software-engineer/${c.id}` : `/city/${c.id}?occupation=${occId}&housing=${propType}`}
                   style={{ display:'grid', gridTemplateColumns:'1fr 52px 80px 90px', gap:6, padding:'12px 12px', borderRadius:12, marginBottom:6, textDecoration:'none', background:isCurrent?'rgba(79,142,247,0.08)':i===0&&!isCurrent?'rgba(20,184,166,0.05)':'rgba(255,255,255,0.025)', border:isCurrent?'1px solid rgba(79,142,247,0.30)':i===0&&!isCurrent?'1px solid rgba(20,184,166,0.18)':'1px solid rgba(255,255,255,0.06)', alignItems:'center' }}>
                   {/* City name */}
                   <div style={{ display:'flex', alignItems:'center', gap:8 }}>
@@ -700,7 +700,7 @@ export default function CalculatePage() {
               )
             })}
             <p style={{ color:'rgba(255,255,255,0.38)', fontSize:11, margin:'8px 4px 0' }}>
-              Based on your ${income.toLocaleString()} income, {pt.label}. Click any city to view the full report.
+              Based on your ${income.toLocaleString()} {city.currency ?? 'CAD'} income, {pt.label}. Click any city to view the full report.
             </p>
           </div>
 
