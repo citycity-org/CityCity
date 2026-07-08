@@ -13,6 +13,7 @@ interface City {
   lat: number
   lng: number
   active: boolean
+  country?: 'CA' | 'US'
   score?: number; tai?: number; eoi?: number; eqi?: number
   hpiYears?: number
   rpi?: number
@@ -24,7 +25,10 @@ const CITIES: City[] = [
   { id: 'calgary',   name: 'Calgary',     nameEn: 'Calgary',     lat: 51.05,  lng: -114.07, active: true,  score: 72, tai: 90, eoi: 65, eqi: 82, hpiYears: 3.9,  rpi: 24.1 },
   { id: 'montreal',  name: 'Montréal',    nameEn: 'Montréal',    lat: 45.50,  lng: -73.57,  active: true,  score: 75, tai: 42, eoi: 72, eqi: 78, hpiYears: 5.5,  rpi: 30.2 },
   { id: 'ottawa',    name: 'Ottawa',      nameEn: 'Ottawa',      lat: 45.42,  lng: -75.69,  active: true,  score: 73, tai: 68, eoi: 75, eqi: 80, hpiYears: 6.8,  rpi: 28.4 },
-  { id: 'newyork',   name: 'New York',    nameEn: 'New York',    lat: 40.71,  lng: -74.01,  active: false },
+  { id: 'new-york',   name: 'New York City', nameEn: 'New York City', lat: 40.71, lng: -74.01,  active: true,  country: 'US', score: 68, tai: 30, eoi: 92, eqi: 62, hpiYears: 14.8, rpi: 29.2 },
+  { id: 'san-francisco', name: 'San Francisco', nameEn: 'San Francisco', lat: 37.77, lng: -122.42, active: true, country: 'US', score: 65, tai: 35, eoi: 95, eqi: 70, hpiYears: 15.6, rpi: 27.6 },
+  { id: 'seattle',   name: 'Seattle',     nameEn: 'Seattle',     lat: 47.61,  lng: -122.33, active: true,  country: 'US', score: 75, tai: 95, eoi: 88, eqi: 78, hpiYears: 8.8,  rpi: 21.3 },
+  { id: 'boston',    name: 'Boston',      nameEn: 'Boston',      lat: 42.36,  lng: -71.06,  active: true,  country: 'US', score: 72, tai: 60, eoi: 85, eqi: 75, hpiYears: 11.8, rpi: 24.4 },
   { id: 'london',    name: 'London',      nameEn: 'London',      lat: 51.51,  lng: -0.13,   active: false },
   { id: 'tokyo',     name: 'Tokyo',       nameEn: 'Tokyo',       lat: 35.68,  lng: 139.69,  active: false },
   { id: 'sydney',    name: 'Sydney',      nameEn: 'Sydney',      lat: -33.87, lng: 151.21,  active: false },
@@ -40,11 +44,9 @@ const CITIES: City[] = [
   { id: 'seoul',     name: 'Seoul',       nameEn: 'Seoul',       lat: 37.57,  lng: 126.98,  active: false },
   { id: 'hongkong',  name: 'Hong Kong',   nameEn: 'Hong Kong',   lat: 22.32,  lng: 114.16,  active: false },
   { id: 'taipei',    name: 'Taipei',      nameEn: 'Taipei',      lat: 25.05,  lng: 121.53,  active: false },
-  { id: 'sf',        name: 'San Francisco', nameEn: 'San Francisco', lat: 37.77, lng: -122.42, active: false },
   { id: 'losangeles',name: 'Los Angeles', nameEn: 'Los Angeles', lat: 34.05,  lng: -118.24, active: false },
   { id: 'chicago',   name: 'Chicago',     nameEn: 'Chicago',     lat: 41.88,  lng: -87.63,  active: false },
   { id: 'miami',     name: 'Miami',       nameEn: 'Miami',       lat: 25.77,  lng: -80.19,  active: false },
-  { id: 'seattle',   name: 'Seattle',     nameEn: 'Seattle',     lat: 47.61,  lng: -122.33, active: false },
   { id: 'auckland',  name: 'Auckland',    nameEn: 'Auckland',    lat: -36.85, lng: 174.76,  active: false },
   { id: 'dublin',    name: 'Dublin',      nameEn: 'Dublin',      lat: 53.34,  lng: -6.27,   active: false },
   { id: 'stockholm', name: 'Stockholm',   nameEn: 'Stockholm',   lat: 59.33,  lng: 18.07,   active: false },
@@ -144,7 +146,8 @@ const OCCUPATIONS = [
   { id: 'cleaner',          name: 'Cleaner' },
 ]
 
-const ACTIVE_CITIES = CITIES.filter(c => c.active)
+const ACTIVE_CITIES    = CITIES.filter(c => c.active)
+const ACTIVE_CITIES_CA = CITIES.filter(c => c.active && c.country !== 'US')
 
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -560,7 +563,7 @@ export default function Home() {
                     style={selectStyle}
                   >
                     <option value="" style={{ background: '#0d1f44', color: 'rgba(255,255,255,0.4)' }}>Select city...</option>
-                    {ACTIVE_CITIES.map(c => (
+                    {ACTIVE_CITIES_CA.map(c => (
                       <option key={c.id} value={c.id} style={{ background: '#0d1f44', color: 'white' }}>{c.nameEn}</option>
                     ))}
                   </select>
@@ -676,10 +679,10 @@ export default function Home() {
                       ))}
                     </div>
                     <div className="flex gap-2">
-                      <a href={`/city/${selectedCity.id}`}
+                      <a href={selectedCity.country === 'US' ? `/guide/software-engineer/${selectedCity.id}` : `/city/${selectedCity.id}`}
                         className="flex-1 py-3 rounded-xl text-white text-sm font-semibold text-center"
                         style={{ background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' }}>
-                        View City Details →
+                        {selectedCity.country === 'US' ? 'Explore City Guides →' : 'View City Details →'}
                       </a>
                       <a href="/ranking"
                         className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 hover:text-white text-center transition-colors"
