@@ -10,7 +10,7 @@ export default function NavBar() {
     { href: '/compare',   label: 'Compare' },
     { href: '/guide',     label: 'Guides' },
     { href: '/calculate', label: 'Calculate' },
-    { href: '/subscribe', label: 'Subscribe' },
+    { href: '/newsletter', label: 'Newsletter' },
   ]
 
   const isActive = (href: string) => {
