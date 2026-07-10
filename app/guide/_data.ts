@@ -23,6 +23,8 @@ export type CityData = {
   taxNote: string
   sectorNote: string
   immigrantNote: string
+  eiuRank?: number            // EIU Global Liveability Index rank (out of 173 cities)
+  eiuYear?: number            // year of EIU ranking
 }
 
 // ── Occupations ───────────────────────────────────────────────────────────────
@@ -179,6 +181,7 @@ export const CITIES: Record<string, CityData> = {
     taxNote: 'BC has a 5.06%–20.5% provincial income tax and 7% PST on goods.',
     sectorNote: 'Tech (Amazon, Microsoft, EA, Capcom), film and TV production, and port/logistics drive Vancouver\'s economy.',
     immigrantNote: 'Canada\'s largest Chinese-speaking community outside China. Strong Cantonese and Mandarin services across healthcare, finance, and real estate.',
+    eiuRank: 9, eiuYear: 2026,
   },
   'toronto': {
     name: 'Toronto', displayName: 'Toronto', province: 'Ontario', country: 'CA', currency: 'CAD',
@@ -186,6 +189,7 @@ export const CITIES: Record<string, CityData> = {
     taxNote: 'Ontario has a 5.05%–13.16% provincial income tax and HST of 13%.',
     sectorNote: 'Canada\'s financial capital. Strong in finance, consulting, tech, and media. Most diverse job market nationally.',
     immigrantNote: 'Most diverse city in Canada. Large South Asian, Chinese, and Filipino communities with extensive settlement support.',
+    eiuRank: 16, eiuYear: 2025,
   },
   'calgary': {
     name: 'Calgary', displayName: 'Calgary', province: 'Alberta', country: 'CA', currency: 'CAD',
@@ -193,6 +197,7 @@ export const CITIES: Record<string, CityData> = {
     taxNote: 'Alberta has NO provincial income tax and NO PST — saving $5,000–$15,000/yr versus BC or Ontario at equivalent salaries.',
     sectorNote: 'Energy sector, construction, tech (rapidly growing), and agriculture. Highest average household income of any major Canadian city.',
     immigrantNote: 'Fastest-growing immigrant population in Canada. Active federal and provincial nomination streams. Large Filipino, South Asian, and Chinese communities.',
+    eiuRank: 18, eiuYear: 2025,
   },
   'montreal': {
     name: 'Montreal', displayName: 'Montréal', province: 'Quebec', country: 'CA', currency: 'CAD',
@@ -200,6 +205,7 @@ export const CITIES: Record<string, CityData> = {
     taxNote: 'Quebec has the highest combined provincial income tax in Canada (up to 25.75%). Offset by subsidized daycare ($10/day) and lower tuition.',
     sectorNote: 'AI research hub (Mila, Element AI), aerospace (Bombardier, CAE), gaming (Ubisoft), and bilingual business services.',
     immigrantNote: 'French language proficiency is a practical requirement for most employment outside anglophone sectors. Bill 96 strengthens French requirements.',
+    eiuRank: 19, eiuYear: 2025,
   },
   'ottawa': {
     name: 'Ottawa', displayName: 'Ottawa', province: 'Ontario', country: 'CA', currency: 'CAD',
@@ -233,6 +239,7 @@ export const CITIES: Record<string, CityData> = {
     taxNote: 'New York State (up to 10.9%) plus NYC city income tax (up to 3.876%) combine for one of the highest total income tax burdens in the US. Finance and law salaries are structured to offset this.',
     sectorNote: 'Global financial capital: Wall Street, Goldman Sachs, JPMorgan. Media, healthcare (Cornell, NYU Langone), and a growing tech sector (Google, Amazon offices) round out the market.',
     immigrantNote: 'Most diverse city in the US — over 800 languages spoken. Large Cantonese and Mandarin communities in Manhattan Chinatown, Flushing (Queens), and Sunset Park (Brooklyn). Extensive ethnic business networks.',
+    eiuRank: 66, eiuYear: 2026,
   },
   'boston': {
     name: 'Boston', displayName: 'Boston', province: 'Massachusetts', country: 'US', currency: 'USD',

@@ -225,9 +225,19 @@ export default async function GuidePage(
 
         {/* Hero */}
         <div className="mb-8">
-          <div className="inline-block text-xs font-semibold px-2.5 py-1 rounded-full mb-3"
-            style={{ background: `${vColor}20`, color: vColor, border: `1px solid ${vColor}40` }}>
-            {verdict}
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <div className="inline-block text-xs font-semibold px-2.5 py-1 rounded-full"
+              style={{ background: `${vColor}20`, color: vColor, border: `1px solid ${vColor}40` }}>
+              {verdict}
+            </div>
+            {cty.eiuRank && (
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full"
+                style={{ background: 'rgba(245,158,11,0.12)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.30)' }}>
+                <span>🌍</span>
+                <span>Global Liveability #{cty.eiuRank} / 173</span>
+                <span style={{ color: 'rgba(245,158,11,0.55)', fontWeight: 400 }}>EIU {cty.eiuYear}</span>
+              </div>
+            )}
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold leading-tight mb-3" style={{ color: 'white' }}>
             {occ.name} in {cty.displayName}
