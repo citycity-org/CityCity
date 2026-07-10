@@ -10,6 +10,7 @@ export default function NavBar() {
     { href: '/compare',   label: 'Compare' },
     { href: '/guide',     label: 'Guides' },
     { href: '/calculate', label: 'Calculate' },
+    { href: '/reports',    label: 'Reports'    },
     { href: '/newsletter', label: 'Newsletter' },
   ]
 
