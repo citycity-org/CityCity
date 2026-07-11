@@ -151,12 +151,15 @@ export default function ReportsPage() {
                 </p>
 
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 20, background: 'rgba(251,146,60,0.12)', border: '1px solid rgba(251,146,60,0.30)', color: '#FB923C', fontSize: 12, fontWeight: 700 }}>
-                    <span>⏳</span> Publishing Q3 2026
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 20, background: 'rgba(20,184,166,0.10)', border: '1px solid rgba(20,184,166,0.25)', color: '#14B8A6', fontSize: 12, fontWeight: 700 }}>
+                    ✓ Published H1 2026
                   </span>
-                  <Link href="/subscribe" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 22px', borderRadius: 12, background: 'linear-gradient(135deg,#4F8EF7,#5B5CF0)', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
-                    Get notified when published →
+                  <Link href="/reports/vancouver-livability-worker-affordability-2026" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 22px', borderRadius: 12, background: 'linear-gradient(135deg,#4F8EF7,#5B5CF0)', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+                    Read report →
                   </Link>
+                  <a href="/reports/pdf/vancouver-worker-affordability-2026.pdf" download style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 12, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                    ↓ PDF
+                  </a>
                 </div>
               </div>
             </div>
