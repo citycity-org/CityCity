@@ -19,13 +19,14 @@ function sc(s: number) {
 
 // ── Metadata ───────────────────────────────────────────────────────────────────
 export async function generateMetadata(
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ): Promise<Metadata> {
+  const { id } = await params
   const db   = createServerClient()
   const { data } = await db
     .from('shared_insights')
     .select('occupation_name,highest_score_city,key_insight,id')
-    .eq('id', params.id)
+    .eq('id', id)
     .maybeSingle()
 
   if (!data) return { title: 'City Fit | Lakive' }
@@ -54,12 +55,13 @@ export async function generateMetadata(
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────────
-export default async function SharePage({ params }: { params: { id: string } }) {
+export default async function SharePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const db = createServerClient()
   const { data, error } = await db
     .from('shared_insights')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .maybeSingle()
 
   if (error || !data) notFound()
@@ -72,7 +74,7 @@ export default async function SharePage({ params }: { params: { id: string } }) 
       last_accessed_at: new Date().toISOString(),
       access_count: (insight.access_count ?? 0) + 1,
     })
-    .eq('id', params.id)
+    .eq('id', id)
     .then()
 
   const sorted = [...insight.city_results].sort((a, b) => b.score - a.score)

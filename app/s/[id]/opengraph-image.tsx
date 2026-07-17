@@ -29,12 +29,13 @@ function propLabel(id: string): string {
   return map[id] ?? id
 }
 
-export default async function Image({ params }: { params: { id: string } }) {
+export default async function Image({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const db = createServerClient()
   const { data } = await db
     .from('shared_insights')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .maybeSingle()
 
   if (!data) {

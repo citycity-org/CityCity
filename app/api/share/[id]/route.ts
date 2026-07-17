@@ -4,9 +4,9 @@ import { createServerClient }        from '@/lib/supabase-server'
 // GET /api/share/[id]  — fetch share record + bump access tracking
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = params
+  const { id } = await params
 
   if (!id || id.length > 32) {
     return NextResponse.json({ error: 'Invalid ID' }, { status: 400 })
