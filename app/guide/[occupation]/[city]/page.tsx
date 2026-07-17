@@ -4,8 +4,8 @@ import Comments from '../../_comments'
 import { LakiveLogo } from '../../../components/LakiveLogo'
 import {
   OCCUPATIONS, CITIES,
-  calcHpiYears, calcRpi,
-  hpiLabel, rpiLabel, rankedCities,
+  calcHpiYears, calcRpi, calcLevel,
+  LEVEL_META, hpiLabel, rpiLabel, rankedCities,
   formatYears, formatSalary, formatSalaryUS,
 } from '../../_data'
 
@@ -52,18 +52,12 @@ export async function generateMetadata(
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function overallVerdict(hpi: number, rpi: number, category: string): string {
-  if (hpi < 7 && rpi < 30)  return 'Strongly Recommended'
-  if (hpi < 10 && rpi < 36) return 'Recommended'
-  if (hpi < 13 || rpi < 42) return 'Proceed with Caution'
-  return 'Difficult — Compare Alternatives'
+function overallVerdict(hpi: number, rpi: number): string {
+  return LEVEL_META[calcLevel(hpi, rpi)].label
 }
 
-function verdictColor(v: string): string {
-  if (v === 'Strongly Recommended') return '#14B8A6'
-  if (v === 'Recommended')          return '#10B981'
-  if (v === 'Proceed with Caution') return '#F59E0B'
-  return '#EF4444'
+function verdictColor(hpi: number, rpi: number): string {
+  return LEVEL_META[calcLevel(hpi, rpi)].color
 }
 
 function introText(occSlug: string, citySlug: string, hpi: number, rpi: number): string {
@@ -79,7 +73,7 @@ function introText(occSlug: string, citySlug: string, hpi: number, rpi: number):
 
   // City-specific lead
   const cityLead: Record<string, string> = {
-    calgary:        `Alberta's zero provincial income tax gives ${occ.name}s an immediate take-home advantage of roughly ${formatSalary(Math.round(occ.salary * 0.08 / 1000) * 1000)} per year compared to BC or Ontario.`,
+    calgary:        `Alberta's lower provincial income tax rates (10–15%) and no PST give ${occ.name}s a meaningful take-home advantage compared to BC or Ontario.`,
     vancouver:      `Vancouver offers some of Canada's strongest salaries for ${cat === 'tech' ? 'tech workers' : cat === 'trades' ? 'skilled trades' : 'this profession'}, but the housing market is the most expensive in the country.`,
     toronto:        `Toronto is Canada's largest job market for most professions, giving ${occ.name}s broad choice — but housing pressure remains close to Vancouver levels.`,
     montreal:       `Montréal offers the most affordable housing among major Canadian cities, but French language requirements shape which roles are realistically accessible for newcomers.`,
@@ -177,8 +171,8 @@ export default async function GuidePage(
   const rpi      = calcRpi(occupation, city)
   const hpiLbl   = hpiLabel(hpi)
   const rpiLbl   = rpiLabel(rpi)
-  const verdict  = overallVerdict(hpi, rpi, occ.category)
-  const vColor   = verdictColor(verdict)
+  const verdict  = overallVerdict(hpi, rpi)
+  const vColor   = verdictColor(hpi, rpi)
   const alts     = rankedCities(occupation, city)
   const intro    = introText(occupation, city, hpi, rpi)
   const faqs     = faqItems(occupation, city, hpi, rpi)

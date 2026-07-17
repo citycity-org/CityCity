@@ -19,10 +19,10 @@ function getVerdict(score: number, hpiYears?: number, rpi?: number) {
 
 // ── Color helpers ─────────────────────────────────────────────────────────────
 const sc = (s: number) => s >= 80 ? '#14B8A6' : s >= 70 ? '#F59E0B' : s >= 55 ? '#F59E0B' : s >= 40 ? '#E86C2F' : '#EF4444'
-const hc = (y: number) => y < 6 ? '#14B8A6' : y < 10 ? '#F59E0B' : y < 14 ? '#E86C2F' : '#EF4444'
-const hl = (y: number) => y < 6 ? 'Affordable' : y < 10 ? 'Manageable' : y < 14 ? 'Heavy' : 'Critical'
-const rc = (r: number) => r < 30 ? '#14B8A6' : r < 38 ? '#F59E0B' : r < 45 ? '#E86C2F' : '#EF4444'
-const rl = (r: number) => r < 30 ? 'Healthy' : r < 38 ? 'Elevated' : r < 45 ? 'High' : 'Danger'
+const hc = (y: number) => y<=5?'#14B8A6':y<=8?'#10B981':y<=12?'#F59E0B':y<=18?'#E86C2F':'#EF4444'
+const hl = (y: number) => y<=5?'L1 Lower Pressure':y<=8?'L2 Manageable':y<=12?'L3 Under Pressure':y<=18?'L4 Difficult':'L5 Severe Pressure'
+const rc = (r: number) => r<=25?'#14B8A6':r<=30?'#10B981':r<=38?'#F59E0B':r<=50?'#E86C2F':'#EF4444'
+const rl = (r: number) => r<=25?'L1 Lower Pressure':r<=30?'L2 Manageable':r<=38?'L3 Under Pressure':r<=50?'L4 Difficult':'L5 Severe Pressure'
 const dc = (v: number) => v >= 80 ? '#14B8A6' : v >= 65 ? '#60A5FA' : '#F59E0B'
 
 // ── Dynamic headline ──────────────────────────────────────────────────────────

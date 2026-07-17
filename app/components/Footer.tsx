@@ -8,7 +8,8 @@ const NAV = [
       { label: 'Calculate Cost', href: '/calculate' },
       { label: 'Compare Cities', href: '/compare' },
       { label: 'City Rankings', href: '/ranking' },
-      { label: 'Subscribe', href: '/subscribe' },
+      { label: 'Reports', href: '/reports' },
+      { label: 'Newsletter', href: '/subscribe' },
     ],
   },
   {

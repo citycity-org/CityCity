@@ -348,14 +348,14 @@ const DIM_GROUPS = [
 
 // ── Color helpers ─────────────────────────────────────────────────────────────
 const sc = (s:number) => s>=80?'#14B8A6':s>=70?'#F59E0B':s>=55?'#F59E0B':s>=40?'#E86C2F':'#EF4444'
-const hc = (y:number) => y<6?'#14B8A6':y<10?'#F59E0B':y<14?'#E86C2F':'#EF4444'
-const rc = (r:number) => r<30?'#14B8A6':r<38?'#F59E0B':r<45?'#E86C2F':'#EF4444'
+const hc = (y:number) => y<=5?'#14B8A6':y<=8?'#10B981':y<=12?'#F59E0B':y<=18?'#E86C2F':'#EF4444'
+const rc = (r:number) => r<=25?'#14B8A6':r<=30?'#10B981':r<=38?'#F59E0B':r<=50?'#E86C2F':'#EF4444'
 const dc = (v:number) => v>=80?'#14B8A6':v>=65?'#60A5FA':'#F59E0B'
 const eoiN = (e:EoiVal) => e==='High'?3:e==='Mid'?2:1
 const ec = (cityEoi:number) => cityEoi>=75?'#14B8A6':cityEoi>=55?'#F59E0B':'#E86C2F'
 const rkc = (r:number) => r===1?'#14B8A6':r===2?'#60A5FA':r===3?'#F59E0B':'rgba(255,255,255,0.35)'
-const hl = (y:number) => y<6?'Affordable':y<10?'Manageable':y<14?'Heavy':'Critical'
-const rl = (r:number) => r<30?'Healthy':r<38?'Elevated':r<45?'High':'Danger'
+const hl = (y:number) => y<=5?'L1 Lower Pressure':y<=8?'L2 Manageable':y<=12?'L3 Under Pressure':y<=18?'L4 Difficult':'L5 Severe Pressure'
+const rl = (r:number) => r<=25?'L1 Lower Pressure':r<=30?'L2 Manageable':r<=38?'L3 Under Pressure':r<=50?'L4 Difficult':'L5 Severe Pressure'
 
 function eoiBlend(cityEoi:number, fitEoi:EoiVal):string {
   if (cityEoi >= 75) return fitEoi

@@ -194,7 +194,7 @@ export const CITIES: Record<string, CityData> = {
   'calgary': {
     name: 'Calgary', displayName: 'Calgary', province: 'Alberta', country: 'CA', currency: 'CAD',
     benchmarkHpi: 8.5, avgRent2BR: 1900,
-    taxNote: 'Alberta has NO provincial income tax and NO PST — saving $5,000–$15,000/yr versus BC or Ontario at equivalent salaries.',
+    taxNote: 'Alberta has lower provincial income tax rates (10–15%) than BC or Ontario, plus no PST — a meaningful cost advantage, though provincial income tax does apply.',
     sectorNote: 'Energy sector, construction, tech (rapidly growing), and agriculture. Highest average household income of any major Canadian city.',
     immigrantNote: 'Fastest-growing immigrant population in Canada. Active federal and provincial nomination streams. Large Filipino, South Asian, and Chinese communities.',
     eiuRank: 18, eiuYear: 2025,
@@ -273,18 +273,47 @@ export function calcRpi(occSlug: string, citySlug: string): number {
   return Math.round((city.avgRent2BR * 12 / salary) * 100 * 10) / 10
 }
 
+// Lakive 5-level rating system
+// Level = max(hpiLevel, rpiLevel)
+// hpiLevel: L1≤5 | L2≤8 | L3≤12 | L4≤18 | L5>18
+// rpiLevel: L1≤25% | L2≤30% | L3≤38% | L4≤50% | L5>50%
+export const LEVEL_META: Record<number, { label: string; color: string }> = {
+  1: { label: 'L1 Lower Pressure',  color: '#14B8A6' },
+  2: { label: 'L2 Manageable',      color: '#10B981' },
+  3: { label: 'L3 Under Pressure',  color: '#F59E0B' },
+  4: { label: 'L4 Difficult',       color: '#E86C2F' },
+  5: { label: 'L5 Severe Pressure', color: '#EF4444' },
+}
+
+export function hpiLevel(years: number): 1|2|3|4|5 {
+  if (years <= 5)  return 1
+  if (years <= 8)  return 2
+  if (years <= 12) return 3
+  if (years <= 18) return 4
+  return 5
+}
+
+export function rpiLevel(rpi: number): 1|2|3|4|5 {
+  if (rpi <= 25) return 1
+  if (rpi <= 30) return 2
+  if (rpi <= 38) return 3
+  if (rpi <= 50) return 4
+  return 5
+}
+
+export function calcLevel(hpiYears: number, rpiPct: number): 1|2|3|4|5 {
+  return Math.max(hpiLevel(hpiYears), rpiLevel(rpiPct)) as 1|2|3|4|5
+}
+
+// Legacy helpers — kept for backward compatibility, now map to 5-level system
 export function hpiLabel(years: number): { text: string; color: string } {
-  if (years < 7)  return { text: 'Highly Affordable', color: '#14B8A6' }
-  if (years < 11) return { text: 'Manageable',        color: '#F59E0B' }
-  if (years < 15) return { text: 'Challenging',       color: '#E86C2F' }
-  return             { text: 'Very Difficult',         color: '#EF4444' }
+  const lv = hpiLevel(years)
+  return { text: LEVEL_META[lv].label, color: LEVEL_META[lv].color }
 }
 
 export function rpiLabel(rpi: number): { text: string; color: string } {
-  if (rpi < 28) return { text: 'Healthy',   color: '#14B8A6' }
-  if (rpi < 35) return { text: 'Moderate',  color: '#F59E0B' }
-  if (rpi < 42) return { text: 'High',      color: '#E86C2F' }
-  return           { text: 'Very High',     color: '#EF4444' }
+  const lv = rpiLevel(rpi)
+  return { text: LEVEL_META[lv].label, color: LEVEL_META[lv].color }
 }
 
 // Returns other cities ranked best→worst for this occupation
