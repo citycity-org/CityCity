@@ -19,11 +19,11 @@ const CITIES: Record<string, {
   taiNote:string; effectiveTax:number
 }> = {
   // ── Canada (CAD) ──────────────────────────────────────────────────────────────
-  vancouver:       { name:'Vancouver',     short:'YVR', province:'BC',               basePrice:1050000, medianRent:3300, tai:72, eoi:80, hai:88, eqi:90, tci:82, psi:72, edi:80, taiNote:'GST + PST ~12%',       effectiveTax:0.28 },
-  toronto:         { name:'Toronto',       short:'YYZ', province:'ON',               basePrice:980000,  medianRent:2600, tai:68, eoi:92, hai:90, eqi:75, tci:78, psi:68, edi:82, taiNote:'HST 13%',              effectiveTax:0.30 },
-  calgary:         { name:'Calgary',       short:'YYC', province:'AB',               basePrice:550000,  medianRent:1750, tai:90, eoi:65, hai:78, eqi:82, tci:48, psi:78, edi:72, taiNote:'GST 5% only',          effectiveTax:0.22 },
+  vancouver:       { name:'Vancouver',     short:'YVR', province:'BC',               basePrice:1099100, medianRent:3300, tai:72, eoi:80, hai:88, eqi:90, tci:82, psi:72, edi:80, taiNote:'GST + PST ~12%',       effectiveTax:0.28 },
+  toronto:         { name:'Toronto',       short:'YYZ', province:'ON',               basePrice:940800,  medianRent:2600, tai:68, eoi:92, hai:90, eqi:75, tci:78, psi:68, edi:82, taiNote:'HST 13%',              effectiveTax:0.30 },
+  calgary:         { name:'Calgary',       short:'YYC', province:'AB',               basePrice:572500,  medianRent:1750, tai:90, eoi:65, hai:78, eqi:82, tci:48, psi:78, edi:72, taiNote:'GST 5% only',          effectiveTax:0.22 },
   montreal:        { name:'Montréal',      short:'YUL', province:'QC',               basePrice:580000,  medianRent:1900, tai:42, eoi:72, hai:75, eqi:78, tci:72, psi:70, edi:80, taiNote:'GST + QST ~15%',       effectiveTax:0.33 },
-  ottawa:          { name:'Ottawa',        short:'YOW', province:'ON',               basePrice:650000,  medianRent:2400, tai:68, eoi:75, hai:82, eqi:80, tci:55, psi:82, edi:85, taiNote:'HST 13%',              effectiveTax:0.29 },
+  ottawa:          { name:'Ottawa',        short:'YOW', province:'ON',               basePrice:632200,  medianRent:2400, tai:68, eoi:75, hai:82, eqi:80, tci:55, psi:82, edi:85, taiNote:'HST 13%',              effectiveTax:0.29 },
   // ── United States (USD) ───────────────────────────────────────────────────────
   seattle:         { name:'Seattle',       short:'SEA', province:'Washington',  currency:'USD', basePrice:800000,  medianRent:2700, tai:95, eoi:88, hai:72, eqi:78, tci:65, psi:72, edi:82, taiNote:'No state income tax', effectiveTax:0.22 },
   'san-francisco': { name:'San Francisco', short:'SFO', province:'California',  currency:'USD', basePrice:1250000, medianRent:3500, tai:35, eoi:95, hai:38, eqi:70, tci:75, psi:55, edi:90, taiNote:'CA top rate 13.3%',  effectiveTax:0.35 },
