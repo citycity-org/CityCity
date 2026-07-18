@@ -8,14 +8,16 @@ export interface ShareTarget {
   housingType:    string
   incomeValue:    number
   cityResults: {
-    cityId:    string
-    cityName:  string
-    province:  string
-    hpiYears:  number
-    rpi:       number
-    score:     number
+    cityId:   string
+    cityName: string
+    province: string
+    hpiYears: number
+    rpi:      number
+    score:    number
   }[]
 }
+
+type ModalStep = 1 | 'loading' | 2
 
 interface Props {
   open:      boolean
@@ -23,17 +25,26 @@ interface Props {
   shareData: ShareTarget
 }
 
-const PROP_LABELS: Record<string, string> = {
+// ── Constants ──────────────────────────────────────────────────────────────────
+const PROP_SHORT: Record<string, string> = {
   '1br': '1-Bedroom Apt', '2br': '2-Bedroom Apt', '3br': '3-Bedroom Apt',
+  'townhouse': 'Townhouse', 'detached': 'Detached Home',
+}
+const PROP_LONG: Record<string, string> = {
+  '1br': '1-Bedroom Apartment', '2br': '2-Bedroom Apartment', '3br': '3-Bedroom Apartment',
   'townhouse': 'Townhouse', 'detached': 'Detached House',
 }
+const PROP_NOUN: Record<string, string> = {
+  '1br': '1-bedroom', '2br': '2-bedroom', '3br': '3-bedroom',
+  'townhouse': 'townhouse', 'detached': 'detached home',
+}
 
-function toIncomeRange(income: number): string {
-  const lo = Math.floor(income / 10000) * 10
+function toRange(v: number): string {
+  const lo = Math.floor(v / 10000) * 10
   return `$${lo}K–$${lo + 10}K`
 }
 
-function scoreColor(s: number): string {
+function scoreColor(s: number) {
   if (s >= 80) return '#14B8A6'
   if (s >= 70) return '#60A5FA'
   if (s >= 55) return '#F59E0B'
@@ -41,7 +52,7 @@ function scoreColor(s: number): string {
   return '#EF4444'
 }
 
-function scoreLabel(s: number): string {
+function scoreLabel(s: number) {
   if (s >= 80) return 'Lower Pressure'
   if (s >= 70) return 'Manageable'
   if (s >= 55) return 'Under Pressure'
@@ -49,7 +60,31 @@ function scoreLabel(s: number): string {
   return 'Severe'
 }
 
-// ── rounded rect helper ────────────────────────────────────────────────────────
+// ── Data-driven insight sentence ───────────────────────────────────────────────
+function buildInsight(
+  sorted: ShareTarget['cityResults'],
+  occName: string,
+  housingType: string,
+): string {
+  const best  = sorted[0]
+  const worst = sorted[sorted.length - 1]
+  const noun  = PROP_NOUN[housingType] ?? housingType
+
+  if (best.hpiYears > 0 && worst.hpiYears > 0) {
+    const ratio = worst.hpiYears / best.hpiYears
+    if (ratio >= 1.9)
+      return `City choice can make a ${ratio.toFixed(1)}× difference — the same income goes much further in ${best.cityName}.`
+  }
+  if (best.score >= 78)
+    return `${best.cityName} stands out as the clearest path to ${noun} ownership for ${occName}s in Canada.`
+  if (best.score < 58)
+    return `No city offers easy ${noun} access for ${occName}s — but ${best.cityName} leads by ${best.score - worst.score} points.`
+  if (best.score - worst.score >= 18)
+    return `Where you live matters more than how much you earn — ${best.cityName} leads by ${best.score - worst.score} points.`
+  return `${best.cityName} offers the best balance of income and ${noun} affordability for ${occName}s in Canada.`
+}
+
+// ── Canvas rounded rect ────────────────────────────────────────────────────────
 function rr(c: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   c.beginPath()
   c.moveTo(x + r, y)
@@ -64,35 +99,34 @@ function rr(c: CanvasRenderingContext2D, x: number, y: number, w: number, h: num
   c.closePath()
 }
 
-// ── Canvas image generator (async — loads real logo) ──────────────────────────
-async function generateImage(shareData: ShareTarget, incomeDisplay: IncomeDisplay): Promise<string> {
+// ── Card generator ─────────────────────────────────────────────────────────────
+async function generateInsightCard(
+  shareData: ShareTarget,
+  incomeDisplay: IncomeDisplay,
+): Promise<string> {
   const W = 1200, H = 630
   const cv = document.createElement('canvas')
   cv.width = W; cv.height = H
   const c = cv.getContext('2d')!
-  const P = 60
 
-  const F = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Arial, sans-serif'
+  const P    = 60
+  const TEAL = '#14B8A6'
+  const F    = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Arial, sans-serif'
 
   // ── Background ──────────────────────────────────────────────────────────────
-  const bg = c.createLinearGradient(0, 0, W, H)
-  bg.addColorStop(0,    '#0d1117')
-  bg.addColorStop(0.55, '#111827')
-  bg.addColorStop(1,    '#0e1a2e')
-  c.fillStyle = bg
+  c.fillStyle = '#0f1623'
   c.fillRect(0, 0, W, H)
 
-  // Subtle top accent strip
+  // 4px top accent gradient
   const accent = c.createLinearGradient(0, 0, W, 0)
-  accent.addColorStop(0, 'rgba(20,184,166,0.6)')
-  accent.addColorStop(0.5, 'rgba(79,142,247,0.4)')
-  accent.addColorStop(1, 'rgba(20,184,166,0.1)')
+  accent.addColorStop(0,   '#14B8A6')
+  accent.addColorStop(0.5, '#4F8EF7')
+  accent.addColorStop(1,   '#14B8A6')
   c.fillStyle = accent
-  c.fillRect(0, 0, W, 3)
+  c.fillRect(0, 0, W, 4)
 
-  // ── Header ─────────────────────────────────────────────────────────────────
-  // Try loading the real logo
-  let logoLoaded = false
+  // ── Lakive Logo (top left, prominent) ───────────────────────────────────────
+  let logoRight = P  // track where logo ends so divider can go after it
   try {
     const img = new Image()
     img.crossOrigin = 'anonymous'
@@ -100,289 +134,342 @@ async function generateImage(shareData: ShareTarget, incomeDisplay: IncomeDispla
       img.onload = () => res()
       img.onerror = () => rej()
       img.src = '/lakive-logo.png'
+      setTimeout(() => rej(), 3000)
     })
-    // Logo is light on transparent — draw it tinted teal on dark bg
-    // Draw at ~32px tall
-    const logoH = 32
-    const logoW = Math.round(img.naturalWidth / img.naturalHeight * logoH)
-    c.drawImage(img, P, 36, logoW, logoH)
-    logoLoaded = true
-
-    // Divider after logo
-    c.fillStyle = 'rgba(255,255,255,0.14)'
-    c.fillRect(P + logoW + 16, 40, 1, 20)
-
-    c.font = `600 11px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.32)'
-    c.fillText('CITY FIT ENGINE', P + logoW + 32, 56)
+    const LOGO_H = 46
+    const LOGO_W = Math.round(img.naturalWidth / img.naturalHeight * LOGO_H)
+    c.drawImage(img, P, 22, LOGO_W, LOGO_H)
+    logoRight = P + LOGO_W
   } catch {
-    // Fallback: render text logo
-    c.font = `900 24px ${F}`
-    c.fillStyle = '#14B8A6'
-    c.fillText('Lakive', P, 60)
-    const lw = c.measureText('Lakive').width
-    c.fillStyle = 'rgba(255,255,255,0.14)'
-    c.fillRect(P + lw + 14, 44, 1, 18)
-    c.font = `600 11px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.32)'
-    c.fillText('CITY FIT ENGINE', P + lw + 28, 58)
+    c.font = `900 30px ${F}`
+    c.fillStyle = TEAL
+    c.fillText('Lakive', P, 62)
+    logoRight = P + c.measureText('Lakive').width
   }
 
-  c.font = `400 11px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.20)'
+  // Thin vertical divider after logo
+  c.fillStyle = 'rgba(255,255,255,0.13)'
+  c.fillRect(logoRight + 18, 28, 1, 34)
+
+  // "INSIGHT CARD" label
+  c.font = `600 10px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.30)'
+  c.fillText('INSIGHT CARD', logoRight + 34, 50)
+
+  // ── Occupation + Housing (top right) ────────────────────────────────────────
   c.textAlign = 'right'
-  c.fillText('Data: 2026-H1', W - P, 56)
+  c.font = `700 16px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.82)'
+  c.fillText(shareData.occupationName, W - P, 38)
+
+  c.font = `400 13px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.38)'
+  let rightSub = (PROP_SHORT[shareData.housingType] ?? shareData.housingType) + ' · Canada'
+  if (incomeDisplay === 'range' && shareData.incomeValue)
+    rightSub += ' · ' + toRange(shareData.incomeValue)
+  else if (incomeDisplay === 'exact' && shareData.incomeValue)
+    rightSub += ' · $' + shareData.incomeValue.toLocaleString()
+  c.fillText(rightSub, W - P, 58)
   c.textAlign = 'left'
 
-  // ── Occupation + housing type ───────────────────────────────────────────────
-  const prop = PROP_LABELS[shareData.housingType] ?? shareData.housingType
-
-  c.font = `900 42px ${F}`
-  c.fillStyle = '#ffffff'
-  const occW = c.measureText(shareData.occupationName).width
-  c.fillText(shareData.occupationName, P, 140)
-
-  c.font = `300 26px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.30)'
-  c.fillText('  ·  ' + prop, P + occW, 140)
-
-  // Income line
-  let incomeLine = ''
-  if (incomeDisplay === 'range' && shareData.incomeValue)
-    incomeLine = `Income: ${toIncomeRange(shareData.incomeValue)}`
-  else if (incomeDisplay === 'exact' && shareData.incomeValue)
-    incomeLine = `Income: $${shareData.incomeValue.toLocaleString()}`
-
-  let titleBottom = 152
-  if (incomeLine) {
-    c.font = `400 14px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.38)'
-    c.fillText(incomeLine, P, 168)
-    titleBottom = 178
-  }
-
-  // Divider
+  // ── Divider ──────────────────────────────────────────────────────────────────
   c.fillStyle = 'rgba(255,255,255,0.07)'
-  c.fillRect(P, titleBottom + 8, W - P * 2, 1)
+  c.fillRect(P, 82, W - P * 2, 1)
 
-  // ── City rows ───────────────────────────────────────────────────────────────
-  const sorted = [...shareData.cityResults].sort((a, b) => b.score - a.score).slice(0, 5)
-  const maxScore = sorted[0]?.score ?? 99
+  // ── Hero Headline ────────────────────────────────────────────────────────────
+  const sorted    = [...shareData.cityResults].sort((a, b) => b.score - a.score).slice(0, 4)
+  const best      = sorted[0]
+  const occName   = shareData.occupationName
+  const occPlural = occName.endsWith('s') ? occName : occName + 's'
 
-  const ROWS_TOP    = titleBottom + 26
-  const ROWS_BOTTOM = H - 68
-  const ROW_H       = Math.floor((ROWS_BOTTOM - ROWS_TOP) / sorted.length)
+  const headline = `${best.cityName} ranks #1 for ${occPlural}`
 
-  // Column layout
-  const COL_RANK  = P + 13                // circle center x
-  const COL_NAME  = P + 40               // city name start
-  const COL_SCORE = W - P                // score right-aligns here
-  const SCORE_RESERVED = 110             // px reserved for score + label
-  const BAR_X     = COL_NAME + 178       // bar starts after city name
-  const BAR_W     = COL_SCORE - SCORE_RESERVED - BAR_X - 16
-  const BAR_H     = 10
+  // Auto-shrink headline font to fit
+  let hSize = 58
+  c.font = `900 ${hSize}px ${F}`
+  while (c.measureText(headline).width > W - P * 2 && hSize > 36) {
+    hSize -= 2
+    c.font = `900 ${hSize}px ${F}`
+  }
+  c.fillStyle = '#ffffff'
+  c.fillText(headline, P, 160)
+
+  // Sub-headline
+  c.font = `300 17px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.36)'
+  c.fillText((PROP_LONG[shareData.housingType] ?? shareData.housingType) + ' · 2026-H1', P, 188)
+
+  // ── Divider ──────────────────────────────────────────────────────────────────
+  c.fillStyle = 'rgba(255,255,255,0.07)'
+  c.fillRect(P, 206, W - P * 2, 1)
+
+  // ── City Rankings ────────────────────────────────────────────────────────────
+  const maxScore   = sorted[0].score
+  const N          = sorted.length
+  const ROWS_TOP   = 218
+  const ROWS_BOT   = 472
+  const ROW_H      = Math.floor((ROWS_BOT - ROWS_TOP) / N)
+
+  const RANK_CX    = P + 14              // rank circle center x
+  const NAME_X     = P + 40             // city name start
+  const SCORE_RX   = W - P              // score right-aligns here
+  const BAR_X      = NAME_X + 210       // bar starts after name column
+  const BAR_MAX_W  = SCORE_RX - 130 - BAR_X
+  const BAR_H      = 8
 
   sorted.forEach((city, i) => {
-    const mid = ROWS_TOP + i * ROW_H + Math.floor(ROW_H / 2)
+    const mid  = ROWS_TOP + i * ROW_H + Math.floor(ROW_H / 2)
     const isTop = i === 0
     const col   = scoreColor(city.score)
 
-    // Subtle row highlight for #1
+    // Subtle highlight for #1
     if (isTop) {
-      c.fillStyle = 'rgba(79,142,247,0.05)'
-      rr(c, P - 16, ROWS_TOP + i * ROW_H + 4, W - P * 2 + 32, ROW_H - 8, 10)
-      c.fill()
-      c.strokeStyle = 'rgba(79,142,247,0.12)'
-      c.lineWidth = 1
-      c.stroke()
+      c.fillStyle = 'rgba(20,184,166,0.06)'
+      c.fillRect(P - 16, ROWS_TOP + i * ROW_H + 2, W - P * 2 + 32, ROW_H - 4)
     }
 
     // Rank circle
     c.beginPath()
-    c.arc(COL_RANK, mid, 13, 0, Math.PI * 2)
-    c.fillStyle = isTop ? '#4F8EF7' : 'rgba(255,255,255,0.06)'
+    c.arc(RANK_CX, mid, 14, 0, Math.PI * 2)
+    c.fillStyle = isTop ? TEAL : 'rgba(255,255,255,0.07)'
     c.fill()
-    c.font = `700 11px ${F}`
-    c.fillStyle = isTop ? '#ffffff' : 'rgba(255,255,255,0.45)'
+    c.font    = `700 11px ${F}`
+    c.fillStyle = isTop ? '#0f1623' : 'rgba(255,255,255,0.40)'
     c.textAlign = 'center'
-    c.fillText(String(i + 1), COL_RANK, mid + 4)
+    c.fillText(String(i + 1), RANK_CX, mid + 4)
     c.textAlign = 'left'
 
-    // City name
-    c.font = `${isTop ? '700' : '500'} 18px ${F}`
-    c.fillStyle = isTop ? '#ffffff' : 'rgba(255,255,255,0.70)'
-    c.fillText(city.cityName, COL_NAME, mid - 2)
+    // City name + province
+    c.font    = `${isTop ? '700' : '500'} 19px ${F}`
+    c.fillStyle = isTop ? '#ffffff' : 'rgba(255,255,255,0.72)'
+    c.fillText(city.cityName, NAME_X, mid - 4)
 
-    // Province (below city name)
-    c.font = `400 11px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.28)'
-    c.fillText(city.province, COL_NAME, mid + 14)
+    c.font    = `400 12px ${F}`
+    c.fillStyle = 'rgba(255,255,255,0.30)'
+    c.fillText(`${city.province}  ·  ${city.hpiYears} yrs to buy`, NAME_X, mid + 13)
 
     // Bar track
     c.fillStyle = 'rgba(255,255,255,0.05)'
-    rr(c, BAR_X, mid - BAR_H / 2, BAR_W, BAR_H, BAR_H / 2)
+    rr(c, BAR_X, mid - BAR_H / 2, BAR_MAX_W, BAR_H, 4)
     c.fill()
 
     // Bar fill
-    const fill = Math.max(BAR_H, Math.round((city.score / maxScore) * BAR_W))
+    const fill = Math.max(BAR_H * 2, Math.round((city.score / maxScore) * BAR_MAX_W))
     c.fillStyle = col
-    rr(c, BAR_X, mid - BAR_H / 2, fill, BAR_H, BAR_H / 2)
+    rr(c, BAR_X, mid - BAR_H / 2, fill, BAR_H, 4)
     c.fill()
 
-    // ── Score: measure width with BIG font BEFORE switching font ──
-    c.font = `800 26px ${F}`
+    // ── Score number — measure width BEFORE changing font ──
+    c.font = `900 48px ${F}`
     const scoreStr = String(city.score)
-    const scoreW   = c.measureText(scoreStr).width   // ← captured with big font
+    const scoreW   = c.measureText(scoreStr).width   // captured with 48px font
     c.fillStyle    = col
     c.textAlign    = 'right'
-    c.fillText(scoreStr, COL_SCORE, mid + 4)
+    c.fillText(scoreStr, SCORE_RX, mid + 10)         // right-aligned
 
-    // Score label (below score number, small)
-    c.font = `400 10px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.30)'
-    c.textAlign = 'right'
-    c.fillText(scoreLabel(city.score), COL_SCORE, mid + 16)
+    // Score label — right-aligned, directly below score
+    c.font      = `400 10px ${F}`
+    c.fillStyle = 'rgba(255,255,255,0.28)'
+    c.fillText(scoreLabel(city.score), SCORE_RX, mid + 22)  // still right-aligned
 
     c.textAlign = 'left'
   })
 
-  // ── Bottom strip ────────────────────────────────────────────────────────────
+  // ── Divider ──────────────────────────────────────────────────────────────────
   c.fillStyle = 'rgba(255,255,255,0.07)'
-  c.fillRect(P, H - 52, W - P * 2, 1)
+  c.fillRect(P, 478, W - P * 2, 1)
 
-  c.font = `600 13px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.32)'
-  c.fillText('lakive.com', P, H - 22)
+  // ── AI Insight ───────────────────────────────────────────────────────────────
+  const insight = buildInsight(sorted, occName, shareData.housingType)
 
-  c.font = `400 12px ${F}`
+  // Teal left accent bar
+  c.fillStyle = TEAL
+  c.fillRect(P, 494, 3, 42)
+
+  // Insight text (word-wrap)
+  c.font      = `400 17px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.62)'
+  const maxTW   = W - P * 2 - 22
+  const words   = insight.split(' ')
+  let line = '', lineY = 513
+  words.forEach((word, wi) => {
+    const test = line ? line + ' ' + word : word
+    if (c.measureText(test).width > maxTW && line) {
+      c.fillText(line, P + 16, lineY)
+      line = word
+      lineY += 24
+    } else {
+      line = test
+    }
+    if (wi === words.length - 1) c.fillText(line, P + 16, lineY)
+  })
+
+  // ── Footer ───────────────────────────────────────────────────────────────────
+  c.fillStyle = 'rgba(255,255,255,0.07)'
+  c.fillRect(P, 586, W - P * 2, 1)
+
+  c.font      = `500 13px ${F}`
+  c.fillStyle = TEAL
+  c.fillText('From Data to Belonging.', P, 614)
+
+  c.font      = `600 14px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.60)'
   c.textAlign = 'right'
-  c.fillStyle = 'rgba(255,255,255,0.20)'
-  c.fillText('Free housing affordability analysis · No sign-up required', W - P, H - 22)
+  c.fillText('lakive.com', W - P, 614)
   c.textAlign = 'left'
 
   return cv.toDataURL('image/png')
 }
 
-// ── Component ──────────────────────────────────────────────────────────────────
+// ── Modal Component ────────────────────────────────────────────────────────────
 export default function ShareModal({ open, onClose, shareData }: Props) {
-  const [incomeDisplay, setIncomeDisplay] = useState<IncomeDisplay>('hidden')
-  const [copied,        setCopied       ] = useState(false)
-  const [generating,    setGenerating   ] = useState(false)
-  const [done,          setDone         ] = useState(false)
+  const [step,    setStep   ] = useState<ModalStep>(1)
+  const [income,  setIncome ] = useState<IncomeDisplay>('hidden')
+  const [imgUrl,  setImgUrl ] = useState<string | null>(null)
+  const [saved,   setSaved  ] = useState(false)
+  const [copied,  setCopied ] = useState(false)
 
   useEffect(() => {
-    if (open) { setIncomeDisplay('hidden'); setCopied(false); setDone(false) }
+    if (open) { setStep(1); setIncome('hidden'); setImgUrl(null); setSaved(false); setCopied(false) }
   }, [open])
 
   if (!open) return null
 
-  const sorted = [...shareData.cityResults].sort((a, b) => b.score - a.score)
-  const best   = sorted[0]
+  const sorted  = [...shareData.cityResults].sort((a, b) => b.score - a.score)
+  const best    = sorted[0]
+  const tweetText = [
+    `${best.cityName} ranks #1 for ${shareData.occupationName}s in housing fit (score: ${best.score}/99).`,
+    '',
+    sorted.slice(0, 4).map(c => `${c.score >= 80 ? '🟢' : c.score >= 60 ? '🟡' : '🔴'} ${c.cityName}: ${c.score} pts`).join('\n'),
+    '',
+    'Run your own comparison → lakive.com/calculate',
+    '#CityFit #HousingAffordability',
+  ].join('\n')
 
-  const handleDownload = async () => {
-    setGenerating(true)
-    const dataUrl = await generateImage(shareData, incomeDisplay)
-    const a = document.createElement('a')
-    a.download = `lakive-${shareData.occupationId}-city-fit.png`
-    a.href = dataUrl
-    a.click()
-    setGenerating(false)
-    setDone(true)
-    setTimeout(() => setDone(false), 2500)
+  const handleGenerate = async () => {
+    setStep('loading')
+    try {
+      const url = await generateInsightCard(shareData, income)
+      setImgUrl(url)
+      setStep(2)
+    } catch {
+      setStep(1)
+    }
   }
 
-  const tweetText = [
-    `As a ${shareData.occupationName}, ${best.cityName} scores highest (${best.score}/99) for housing affordability across ${sorted.length} cities.`,
-    '',
-    sorted.map(c => `${c.score >= 80 ? '🟢' : c.score >= 60 ? '🟡' : '🔴'} ${c.cityName}: ${c.score} pts`).join('\n'),
-    '',
-    'Full breakdown → lakive.com/calculate',
-    '#HousingAffordability #CityFit',
-  ].join('\n')
+  const handleDownload = () => {
+    if (!imgUrl) return
+    const a = document.createElement('a')
+    a.download = `lakive-${shareData.occupationId}-insight.png`
+    a.href = imgUrl
+    a.click()
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2500)
+  }
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText('https://www.lakive.com/calculate')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleShareX = () =>
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`, '_blank', 'noopener')
+
+  // Modal width: 440px in Step 1/loading, 600px in Step 2
+  const modalW = step === 2 ? 600 : 440
 
   return (
     <div
-      style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.75)', backdropFilter:'blur(6px)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
+      style={{ position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.78)', backdropFilter:'blur(8px)', display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}
     >
-      <div style={{ background:'#131b2e', border:'1px solid rgba(255,255,255,0.10)', borderRadius:20, padding:'32px 28px', maxWidth:480, width:'100%', maxHeight:'90vh', overflowY:'auto' }}>
+      <div style={{ background:'#131b2e', border:'1px solid rgba(255,255,255,0.10)', borderRadius:20, width:'100%', maxWidth:modalW, overflow:'hidden', position:'relative', transition:'max-width 0.25s ease' }}>
 
-        {/* Header */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
-          <div>
-            <div style={{ color:'#fff', fontWeight:800, fontSize:18 }}>Share this Insight</div>
-            <div style={{ color:'rgba(255,255,255,0.40)', fontSize:13, marginTop:2 }}>
-              {shareData.occupationName} · {PROP_LABELS[shareData.housingType] ?? shareData.housingType}
+        {/* ── Step 1: Settings ── */}
+        {step === 1 && (
+          <div style={{ padding:'28px 28px 24px' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
+              <div style={{ color:'#fff', fontWeight:800, fontSize:18 }}>Share Settings</div>
+              <button onClick={onClose} style={{ background:'rgba(255,255,255,0.06)', border:'none', borderRadius:8, color:'rgba(255,255,255,0.45)', fontSize:20, width:34, height:34, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', padding:0 }}>×</button>
             </div>
+
+            <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.09em', textTransform:'uppercase', marginBottom:12 }}>
+              Privacy
+            </div>
+
+            {([
+              { id: 'hidden' as IncomeDisplay, label: 'Hide my income',    sub: 'Recommended — only occupation and city shown' },
+              { id: 'range'  as IncomeDisplay, label: 'Show income range', sub: toRange(shareData.incomeValue) },
+              { id: 'exact'  as IncomeDisplay, label: 'Show exact income', sub: `$${shareData.incomeValue.toLocaleString()}` },
+            ]).map(opt => (
+              <div key={opt.id} onClick={() => setIncome(opt.id)}
+                style={{ display:'flex', alignItems:'center', gap:14, padding:'13px 16px', borderRadius:10, marginBottom:8, cursor:'pointer', background: income===opt.id?'rgba(79,142,247,0.10)':'rgba(255,255,255,0.03)', border:`1px solid ${income===opt.id?'rgba(79,142,247,0.35)':'rgba(255,255,255,0.07)'}` }}>
+                <div style={{ width:18, height:18, borderRadius:'50%', flexShrink:0, border:`2px solid ${income===opt.id?'#4F8EF7':'rgba(255,255,255,0.22)'}`, background:income===opt.id?'#4F8EF7':'transparent', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                  {income===opt.id && <div style={{ width:7, height:7, borderRadius:'50%', background:'#fff' }}/>}
+                </div>
+                <div>
+                  <div style={{ color:'#fff', fontSize:14, fontWeight:500 }}>{opt.label}</div>
+                  <div style={{ color:'rgba(255,255,255,0.35)', fontSize:12, marginTop:2 }}>{opt.sub}</div>
+                </div>
+              </div>
+            ))}
+
+            <button onClick={handleGenerate}
+              style={{ width:'100%', padding:'15px', marginTop:18, borderRadius:12, border:'none', background:'linear-gradient(135deg,#4F8EF7,#14B8A6)', color:'#fff', fontWeight:700, fontSize:15, cursor:'pointer' }}>
+              Generate Insight Card →
+            </button>
           </div>
-          <button onClick={onClose} style={{ background:'rgba(255,255,255,0.06)', border:'none', borderRadius:8, color:'rgba(255,255,255,0.50)', fontSize:20, width:34, height:34, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', padding:0 }}>×</button>
-        </div>
+        )}
 
-        {/* Preview */}
-        <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:14, padding:'16px', marginBottom:24 }}>
-          <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:10 }}>Preview</div>
-          {sorted.slice(0, 3).map((city, i) => (
-            <div key={city.cityId} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 0', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <div style={{ width:22, height:22, borderRadius:'50%', background: i===0?'#4F8EF7':'rgba(255,255,255,0.08)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:10, fontWeight:700, color:'#fff', flexShrink:0 }}>{i+1}</div>
-                <div>
-                  <div style={{ color: i===0?'#fff':'rgba(255,255,255,0.65)', fontSize:14, fontWeight: i===0?700:400 }}>{city.cityName}</div>
-                  <div style={{ color:'rgba(255,255,255,0.28)', fontSize:11 }}>{city.province}</div>
-                </div>
-              </div>
-              <div>
-                <div style={{ color: scoreColor(city.score), fontWeight:800, fontSize:18, textAlign:'right' }}>{city.score}</div>
-                <div style={{ color:'rgba(255,255,255,0.28)', fontSize:10, textAlign:'right' }}>{scoreLabel(city.score)}</div>
-              </div>
+        {/* ── Loading ── */}
+        {step === 'loading' && (
+          <div style={{ padding:'56px 28px', textAlign:'center' }}>
+            <style>{`@keyframes _spin { to { transform: rotate(360deg) } }`}</style>
+            <div style={{ width:38, height:38, border:'3px solid rgba(79,142,247,0.20)', borderTopColor:'#4F8EF7', borderRadius:'50%', animation:'_spin 0.75s linear infinite', margin:'0 auto 20px' }}/>
+            <div style={{ color:'#fff', fontWeight:600, fontSize:15, marginBottom:6 }}>Generating your Insight Card…</div>
+            <div style={{ color:'rgba(255,255,255,0.32)', fontSize:13 }}>Just a moment</div>
+          </div>
+        )}
+
+        {/* ── Step 2: Preview ── */}
+        {step === 2 && imgUrl && (
+          <>
+            {/* Image preview — full bleed top */}
+            <div style={{ position:'relative' }}>
+              <img src={imgUrl} alt="Lakive Insight Card" style={{ width:'100%', display:'block', borderRadius:'20px 20px 0 0' }} />
+              <button onClick={onClose}
+                style={{ position:'absolute', top:12, right:12, background:'rgba(0,0,0,0.50)', border:'none', borderRadius:8, color:'rgba(255,255,255,0.70)', fontSize:18, width:32, height:32, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', padding:0, backdropFilter:'blur(4px)' }}>
+                ×
+              </button>
             </div>
-          ))}
-          {sorted.length > 3 && <div style={{ color:'rgba(255,255,255,0.25)', fontSize:12, paddingTop:8 }}>+{sorted.length - 3} more cities in the image</div>}
-        </div>
 
-        {/* Income privacy */}
-        <div style={{ marginBottom:24 }}>
-          <div style={{ color:'rgba(255,255,255,0.55)', fontSize:13, fontWeight:600, marginBottom:10 }}>Income privacy</div>
-          {([
-            { id:'hidden', label:"Don't include income",              desc:'Only occupation and housing type' },
-            { id:'range',  label:`Show salary range (${toIncomeRange(shareData.incomeValue)})`, desc:'Bracket without revealing exact figure' },
-            { id:'exact',  label:`Show exact salary ($${shareData.incomeValue.toLocaleString()})`, desc:'Most context for readers' },
-          ] as { id: IncomeDisplay; label: string; desc: string }[]).map(opt => (
-            <div key={opt.id} onClick={() => setIncomeDisplay(opt.id)}
-              style={{ padding:'11px 14px', borderRadius:10, marginBottom:8, cursor:'pointer', background: incomeDisplay===opt.id?'rgba(79,142,247,0.10)':'rgba(255,255,255,0.03)', border:`1px solid ${incomeDisplay===opt.id?'rgba(79,142,247,0.35)':'rgba(255,255,255,0.08)'}` }}>
-              <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <div style={{ width:16, height:16, borderRadius:'50%', flexShrink:0, border:`2px solid ${incomeDisplay===opt.id?'#4F8EF7':'rgba(255,255,255,0.25)'}`, background: incomeDisplay===opt.id?'#4F8EF7':'transparent', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                  {incomeDisplay===opt.id && <div style={{ width:6, height:6, borderRadius:'50%', background:'#fff' }}/>}
-                </div>
-                <div>
-                  <div style={{ color:'#fff', fontSize:13, fontWeight:500 }}>{opt.label}</div>
-                  <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11, marginTop:2 }}>{opt.desc}</div>
-                </div>
-              </div>
+            {/* Action buttons */}
+            <div style={{ padding:'14px 16px 18px', display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:10 }}>
+              <button onClick={handleDownload}
+                style={{ padding:'13px 8px', borderRadius:10, border:'none', background:saved?'rgba(20,184,166,0.80)':'#4F8EF7', color:'#fff', fontWeight:700, fontSize:13, cursor:'pointer', transition:'background 0.2s' }}>
+                {saved ? '✓ Saved' : '⬇ Download'}
+              </button>
+              <button onClick={handleCopyLink}
+                style={{ padding:'13px 8px', borderRadius:10, border:'1px solid rgba(255,255,255,0.13)', background:'rgba(255,255,255,0.05)', color: copied?'#14B8A6':'rgba(255,255,255,0.80)', fontWeight:600, fontSize:13, cursor:'pointer' }}>
+                {copied ? '✓ Copied' : '🔗 Copy Link'}
+              </button>
+              <button onClick={handleShareX}
+                style={{ padding:'13px 8px', borderRadius:10, border:'1px solid rgba(255,255,255,0.13)', background:'rgba(255,255,255,0.05)', color:'rgba(255,255,255,0.80)', fontWeight:600, fontSize:13, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
+                <span style={{ fontWeight:900, fontSize:14 }}>𝕏</span> Share
+              </button>
             </div>
-          ))}
-        </div>
 
-        {/* Download */}
-        <button onClick={handleDownload} disabled={generating}
-          style={{ width:'100%', padding:'14px', borderRadius:12, border:'none', background: done?'#14B8A6':generating?'rgba(79,142,247,0.5)':'#4F8EF7', color:'#fff', fontWeight:700, fontSize:15, cursor: generating?'not-allowed':'pointer', marginBottom:10, transition:'background 0.2s' }}>
-          {done ? '✓ Image downloaded!' : generating ? 'Generating…' : '⬇ Download Share Image (PNG)'}
-        </button>
+            {/* Regenerate link */}
+            <div style={{ paddingBottom:14, textAlign:'center' }}>
+              <button onClick={() => setStep(1)}
+                style={{ background:'none', border:'none', color:'rgba(255,255,255,0.28)', fontSize:12, cursor:'pointer', textDecoration:'underline' }}>
+                ← Change settings
+              </button>
+            </div>
+          </>
+        )}
 
-        {/* Share to X */}
-        <button onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`, '_blank', 'noopener')}
-          style={{ width:'100%', padding:'12px', borderRadius:10, border:'1px solid rgba(255,255,255,0.12)', background:'rgba(255,255,255,0.04)', color:'#fff', fontWeight:600, fontSize:14, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, marginBottom:10 }}>
-          <span style={{ fontWeight:800 }}>𝕏</span> Share on X / Twitter
-        </button>
-
-        {/* Copy text */}
-        <button onClick={() => { navigator.clipboard.writeText(tweetText); setCopied(true); setTimeout(()=>setCopied(false),2000) }}
-          style={{ width:'100%', padding:'12px', borderRadius:10, border:'1px solid rgba(255,255,255,0.08)', background:'transparent', color:'rgba(255,255,255,0.55)', fontWeight:500, fontSize:13, cursor:'pointer' }}>
-          {copied ? '✓ Text copied' : 'Copy tweet text'}
-        </button>
-
-        <div style={{ color:'rgba(255,255,255,0.18)', fontSize:11, textAlign:'center', marginTop:16 }}>
-          Image generated in your browser — no data sent to any server.
-        </div>
       </div>
     </div>
   )
