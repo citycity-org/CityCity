@@ -47,7 +47,7 @@ function toRange(v: number): string {
 // ── Finer color gradient (6 bands instead of 5) ────────────────────────────────
 function scoreColor(s: number) {
   if (s >= 80) return '#14B8A6'   // teal
-  if (s >= 70) return '#60A5FA'   // blue
+  if (s >= 70) return '#4F8EF7'   // blue (brand)
   if (s >= 60) return '#F59E0B'   // amber
   if (s >= 50) return '#F97316'   // orange
   if (s >= 40) return '#EF4444'   // red-orange
@@ -175,7 +175,7 @@ async function generateInsightCard(
     await new Promise<void>((res, rej) => {
       img.onload = () => res()
       img.onerror = () => rej()
-      img.src = '/lakive-logo.png'
+      img.src = '/lakive-logo-light.png'
       setTimeout(() => rej(), 3000)
     })
     const LOGO_H = 52   // 30% larger than before
@@ -187,11 +187,16 @@ async function generateInsightCard(
     c.fillText('Lakive', P, 58)
   }
 
-  // "Insight Card" label below logo
-  c.font      = `600 11px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.28)'
+  // "INSIGHT CARD" chip below logo (social-style pill badge)
+  c.font = `700 11px ${F}`
   c.letterSpacing = '0.10em'
-  c.fillText('INSIGHT CARD', P, 84)
+  const chipTxtW = c.measureText('INSIGHT CARD').width
+  rr(c, P, 72, chipTxtW + 24, 20, 10)
+  c.strokeStyle = 'rgba(20,184,166,0.55)'
+  c.lineWidth   = 1
+  c.stroke()
+  c.fillStyle = TEAL
+  c.fillText('INSIGHT CARD', P + 12, 86)
   c.letterSpacing = '0'
 
   // ── 4-line info block (top right) ──────────────────────────────────────────
@@ -204,26 +209,26 @@ async function generateInsightCard(
 
   // Line 2: Housing type
   c.font      = `400 13px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.45)'
+  c.fillStyle = 'rgba(255,255,255,0.62)'
   c.fillText(PROP_SHORT[shareData.housingType] ?? shareData.housingType, W - P, 50)
 
   // Line 3: Country
   c.font      = `400 13px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.45)'
+  c.fillStyle = 'rgba(255,255,255,0.62)'
   c.fillText('Canada', W - P, 68)
 
   // Income line (replaces country if shown)
   if (incomeDisplay === 'range' && shareData.incomeValue) {
-    c.fillStyle = 'rgba(255,255,255,0.30)'
+    c.fillStyle = 'rgba(255,255,255,0.55)'
     c.fillText('Income: ' + toRange(shareData.incomeValue), W - P, 68)
   } else if (incomeDisplay === 'exact' && shareData.incomeValue) {
-    c.fillStyle = 'rgba(255,255,255,0.30)'
+    c.fillStyle = 'rgba(255,255,255,0.55)'
     c.fillText('Income: $' + shareData.incomeValue.toLocaleString(), W - P, 68)
   }
 
   // Line 4: Generated date
   c.font      = `400 11px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.22)'
+  c.fillStyle = 'rgba(255,255,255,0.55)'
   c.fillText('Generated ' + monthYear(), W - P, 84)
 
   c.textAlign = 'left'
@@ -250,25 +255,26 @@ async function generateInsightCard(
   c.fillText(headline, P, 162)
 
   // Sub-headline
-  c.font      = `300 16px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.34)'
+  c.font      = `400 16px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.58)'
   c.fillText((PROP_LONG[shareData.housingType] ?? shareData.housingType) + ' · 2026-H1', P, 184)
 
   // ── City zone divider ────────────────────────────────────────────────────────
   c.fillStyle = 'rgba(255,255,255,0.07)'
   c.fillRect(P, 198, W - P * 2, 1)
 
-  // ── City Rankings ────────────────────────────────────────────────────────────
-  // Layout: 4 rows × 72px = 288px (208–496)
-  const N        = sorted.length            // up to 4
-  const ROWS_TOP = 208
-  const ROW_H    = 72
+  // ── City Rankings (social-style panels) ─────────────────────────────────────
+  // Layout: 4 rows × 66px = 264px (206–470) + legend strip (478–492)
+  const ROWS_TOP = 206
+  const ROW_H    = 66
 
-  const RANK_CX  = P + 14                  // circle center
-  const NAME_X   = P + 40                  // city name left edge
-  const SCORE_RX = W - P                   // score right-aligns here
+  const RANK_CX  = P + 16                  // rank circle center
+  const NAME_X   = P + 44                  // city name left edge
+  const SCORE_RX = W - P - 12              // badge right edge
+  const BADGE_W  = 88
+  const BADGE_H  = 46
   const BAR_X    = NAME_X + 230            // bar starts after name column
-  const BAR_MAX  = SCORE_RX - 160 - BAR_X // absolute scale track width
+  const BAR_MAX  = SCORE_RX - BADGE_W - 28 - BAR_X
   const BAR_H    = 7
 
   sorted.forEach((city, i) => {
@@ -277,35 +283,38 @@ async function generateInsightCard(
     const isTop  = i === 0
     const col    = scoreColor(city.score)
 
-    // #1 row highlight
-    if (isTop) {
-      c.fillStyle = 'rgba(20,184,166,0.055)'
-      c.fillRect(P - 16, rowTop + 2, W - P * 2 + 32, ROW_H - 4)
-    }
+    // Row panel (rounded card)
+    rr(c, P - 16, rowTop + 3, W - P * 2 + 32, ROW_H - 8, 12)
+    c.fillStyle = isTop ? 'rgba(20,184,166,0.07)' : 'rgba(255,255,255,0.03)'
+    c.fill()
+    rr(c, P - 16, rowTop + 3, W - P * 2 + 32, ROW_H - 8, 12)
+    c.strokeStyle = isTop ? 'rgba(20,184,166,0.35)' : 'rgba(255,255,255,0.08)'
+    c.lineWidth   = 1
+    c.stroke()
 
     // Rank circle
     c.beginPath()
     c.arc(RANK_CX, mid, 14, 0, Math.PI * 2)
-    c.fillStyle = isTop ? TEAL : 'rgba(255,255,255,0.07)'
+    c.fillStyle = isTop ? TEAL : 'rgba(255,255,255,0.08)'
     c.fill()
     c.font      = `700 11px ${F}`
-    c.fillStyle = isTop ? '#0f1623' : 'rgba(255,255,255,0.38)'
+    c.fillStyle = isTop ? '#0f1623' : 'rgba(255,255,255,0.65)'
     c.textAlign = 'center'
     c.fillText(String(i + 1), RANK_CX, mid + 4)
     c.textAlign = 'left'
 
     // City name
     c.font      = `${isTop ? '700' : '500'} 19px ${F}`
-    c.fillStyle = isTop ? '#ffffff' : 'rgba(255,255,255,0.72)'
-    c.fillText(city.cityName, NAME_X, mid - 6)
+    c.fillStyle = isTop ? '#ffffff' : 'rgba(255,255,255,0.88)'
+    c.fillText(city.cityName, NAME_X, mid - 5)
 
     // Province · years
     c.font      = `400 12px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.28)'
-    c.fillText(`${city.province}  ·  ${city.hpiYears} yrs to buy`, NAME_X, mid + 12)
+    c.fillStyle = 'rgba(255,255,255,0.60)'
+    c.fillText(`${city.province}  ·  ${city.hpiYears} yrs to buy`, NAME_X, mid + 13)
 
     // Bar track (absolute scale: score / 99)
-    c.fillStyle = 'rgba(255,255,255,0.05)'
+    c.fillStyle = 'rgba(255,255,255,0.06)'
     rr(c, BAR_X, mid - BAR_H / 2, BAR_MAX, BAR_H, 3)
     c.fill()
 
@@ -315,71 +324,102 @@ async function generateInsightCard(
     rr(c, BAR_X, mid - BAR_H / 2, fill, BAR_H, 3)
     c.fill()
 
-    // Score number (56px) — right-aligned
-    c.font      = `900 56px ${F}`
-    const scoreStr = String(city.score)
+    // Score badge — rounded outline, social style
+    const bx = SCORE_RX - BADGE_W
+    const by = mid - BADGE_H / 2
+    rr(c, bx, by, BADGE_W, BADGE_H, 10)
+    c.fillStyle = 'rgba(255,255,255,0.02)'
+    c.fill()
+    rr(c, bx, by, BADGE_W, BADGE_H, 10)
+    c.strokeStyle = col
+    c.lineWidth   = 2
+    c.stroke()
+    c.font      = `900 30px ${F}`
     c.fillStyle = col
-    c.textAlign = 'right'
-    c.fillText(scoreStr, SCORE_RX, mid + 12)
-
-    // Score label (11px) — right-aligned below score
-    c.font      = `400 11px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.26)'
-    c.fillText(scoreLabel(city.score), SCORE_RX, mid + 26)
-
+    c.textAlign = 'center'
+    c.fillText(String(city.score), bx + BADGE_W / 2, mid + 11)
     c.textAlign = 'left'
   })
 
-  // ── Insight divider ──────────────────────────────────────────────────────────
-  c.fillStyle = 'rgba(255,255,255,0.07)'
-  c.fillRect(P, 496, W - P * 2, 1)
+  // ── Legend strip (score bands) ───────────────────────────────────────────────
+  const LEGEND = [
+    { col: '#14B8A6', txt: '80+ Lower Pressure' },
+    { col: '#4F8EF7', txt: '70+ Manageable' },
+    { col: '#F59E0B', txt: '60+ Moderate' },
+    { col: '#F97316', txt: '50+ Under Pressure' },
+    { col: '#EF4444', txt: '<50 Difficult' },
+  ]
+  let lx = P
+  const ly = 484
+  c.font = `400 11px ${F}`
+  LEGEND.forEach(item => {
+    c.beginPath()
+    c.arc(lx + 4, ly - 4, 4, 0, Math.PI * 2)
+    c.fillStyle = item.col
+    c.fill()
+    c.fillStyle = 'rgba(255,255,255,0.60)'
+    c.fillText(item.txt, lx + 14, ly)
+    lx += 14 + c.measureText(item.txt).width + 26
+  })
 
-  // ── AI Insight (research-report style) ──────────────────────────────────────
+  // ── AI Insight — rounded panel with teal accent (social style) ──────────────
   const insight = buildInsight(sorted, occName, shareData.housingType)
 
+  rr(c, P - 16, 500, W - P * 2 + 32, 60, 12)
+  c.fillStyle = 'rgba(255,255,255,0.03)'
+  c.fill()
+  rr(c, P - 16, 500, W - P * 2 + 32, 60, 12)
+  c.strokeStyle = 'rgba(255,255,255,0.08)'
+  c.lineWidth   = 1
+  c.stroke()
+
   // Teal left accent bar
+  rr(c, P - 4, 512, 4, 36, 2)
   c.fillStyle = TEAL
-  c.fillRect(P, 512, 3, 40)
+  c.fill()
 
   // Insight text with word-wrap
   c.font      = `400 17px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.65)'
-  const maxTW = W - P * 2 - 22
+  c.fillStyle = 'rgba(255,255,255,0.85)'
+  const maxTW = W - P * 2 - 40
   const words = insight.split(' ')
-  let line = '', lineY = 530
+  let line = '', lineY = 527
   words.forEach((word, wi) => {
     const test = line ? line + ' ' + word : word
     if (c.measureText(test).width > maxTW && line) {
-      c.fillText(line, P + 16, lineY)
-      line = word; lineY += 24
+      c.fillText(line, P + 14, lineY)
+      line = word; lineY += 23
     } else { line = test }
-    if (wi === words.length - 1) c.fillText(line, P + 16, lineY)
+    if (wi === words.length - 1) c.fillText(line, P + 14, lineY)
   })
 
   // ── Footer divider ───────────────────────────────────────────────────────────
   c.fillStyle = 'rgba(255,255,255,0.07)'
   c.fillRect(P, 572, W - P * 2, 1)
 
-  // ── Footer: 3-column ─────────────────────────────────────────────────────────
-  // Left: tagline  |  Center: Scenario ID  |  Right: domain
-
-  // Left — teal tagline
+  // ── Footer: tagline | scenario ID | CTA pill ────────────────────────────────
+  // Left — teal tagline (v1.1: no period)
   c.font      = `500 13px ${F}`
   c.fillStyle = TEAL
-  c.fillText('From Data to Belonging.', P, 602)
+  c.fillText('From Data to Belonging', P, 606)
 
   // Center — scenario ID
   c.font      = `400 12px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.22)'
+  c.fillStyle = 'rgba(255,255,255,0.55)'
   c.textAlign = 'center'
-  c.fillText(scenarioId(), W / 2, 602)
+  c.fillText(scenarioId(), W / 2, 606)
+  c.textAlign = 'left'
 
-  // Right — domain
-  c.font      = `600 14px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.60)'
-  c.textAlign = 'right'
-  c.fillText('lakive.com', W - P, 602)
-
+  // Right — CTA pill "lakive.com →" (social style)
+  const PILL_W = 164, PILL_H = 34
+  const pillX = W - P - PILL_W, pillY = 584
+  rr(c, pillX, pillY, PILL_W, PILL_H, 17)
+  c.fillStyle = TEAL
+  c.fill()
+  c.font      = `700 15px ${F}`
+  c.fillStyle = '#0F1623'
+  c.textAlign = 'center'
+  c.fillText('lakive.com  →', pillX + PILL_W / 2, pillY + 23)
   c.textAlign = 'left'
 
   return cv.toDataURL('image/png')
