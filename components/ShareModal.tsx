@@ -44,7 +44,7 @@ function toRange(v: number): string {
   return `$${lo}K–$${lo + 10}K`
 }
 
-// ── Finer color gradient (6 bands instead of 5) ────────────────────────────────
+// ── Score bands (v1.1: colors strictly follow bands — no exceptions for #1) ────
 function scoreColor(s: number) {
   if (s >= 80) return '#14B8A6'   // teal
   if (s >= 70) return '#4F8EF7'   // blue (brand)
@@ -130,152 +130,221 @@ function monthYear(): string {
   return new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 }
 
-// ── Card generator ─────────────────────────────────────────────────────────────
-// Layout zones (canvas 1200×630):
-//   0-4    top accent strip
-//   4-100  header  (logo stack left | 4-line info right)
-//   100    divider
-//   100-198 headline zone
-//   198    divider
-//   208-496 city rankings  (4 × 72px = 288px)
-//   496    divider
-//   504-564 AI insight
-//   568    divider
-//   576-620 footer (tagline | scenario ID | domain)
+function loadImage(src: string, timeout = 3000): Promise<HTMLImageElement> {
+  return new Promise((res, rej) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => res(img)
+    img.onerror = () => rej()
+    img.src = src
+    setTimeout(() => rej(), timeout)
+  })
+}
+
+// ── Card generator — Insight Card v3 (social style, 1536×1024) ─────────────────
+// Layout zones:
+//   0-6      top accent strip
+//   photo    rounded region top-right (860→W, 0→420), licensed city photography
+//   40-160   header: logo + tagline + INSIGHT CARD chip (left), info panel (over photo)
+//   200-400  headline (two-tone) + subheadline
+//   430-806  rankings panel: 4 rows × 90px, slider bars + score badges
+//   832      legend strip
+//   852-948  insight + feature columns panel
+//   ~996     footer: scenario ID · sources | CTA
 async function generateInsightCard(
   shareData: ShareTarget,
   incomeDisplay: IncomeDisplay,
 ): Promise<string> {
-  const W = 1200, H = 630
+  const W = 1536, H = 1024
   const cv = document.createElement('canvas')
   cv.width = W; cv.height = H
   const c = cv.getContext('2d')!
 
-  const P    = 60
+  const P    = 64
   const TEAL = '#14B8A6'
+  const BLUE = '#4F8EF7'
+  const BG   = '#0F1623'
   const F    = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Arial, sans-serif'
 
-  // ── Background ──────────────────────────────────────────────────────────────
-  c.fillStyle = '#0f1623'
-  c.fillRect(0, 0, W, H)
-
-  // 4px top accent gradient
-  const accent = c.createLinearGradient(0, 0, W, 0)
-  accent.addColorStop(0,   '#14B8A6')
-  accent.addColorStop(0.5, '#4F8EF7')
-  accent.addColorStop(1,   '#14B8A6')
-  c.fillStyle = accent
-  c.fillRect(0, 0, W, 4)
-
-  // ── Logo stack (top left) ───────────────────────────────────────────────────
-  // Logo at top, "Insight Card" label stacked below
-  try {
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    await new Promise<void>((res, rej) => {
-      img.onload = () => res()
-      img.onerror = () => rej()
-      img.src = '/lakive-logo-light.png'
-      setTimeout(() => rej(), 3000)
-    })
-    const LOGO_H = 52   // 30% larger than before
-    const LOGO_W = Math.round(img.naturalWidth / img.naturalHeight * LOGO_H)
-    c.drawImage(img, P, 16, LOGO_W, LOGO_H)
-  } catch {
-    c.font = `900 34px ${F}`
-    c.fillStyle = TEAL
-    c.fillText('Lakive', P, 58)
-  }
-
-  // "INSIGHT CARD" chip below logo (social-style pill badge)
-  c.font = `700 11px ${F}`
-  c.letterSpacing = '0.10em'
-  const chipTxtW = c.measureText('INSIGHT CARD').width
-  rr(c, P, 72, chipTxtW + 24, 20, 10)
-  c.strokeStyle = 'rgba(20,184,166,0.55)'
-  c.lineWidth   = 1
-  c.stroke()
-  c.fillStyle = TEAL
-  c.fillText('INSIGHT CARD', P + 12, 86)
-  c.letterSpacing = '0'
-
-  // ── 4-line info block (top right) ──────────────────────────────────────────
-  c.textAlign = 'right'
-
-  // Line 1: Occupation name (prominent)
-  c.font      = `700 17px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.88)'
-  c.fillText(shareData.occupationName, W - P, 30)
-
-  // Line 2: Housing type
-  c.font      = `400 13px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.62)'
-  c.fillText(PROP_SHORT[shareData.housingType] ?? shareData.housingType, W - P, 50)
-
-  // Line 3: Country
-  c.font      = `400 13px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.62)'
-  c.fillText('Canada', W - P, 68)
-
-  // Income line (replaces country if shown)
-  if (incomeDisplay === 'range' && shareData.incomeValue) {
-    c.fillStyle = 'rgba(255,255,255,0.55)'
-    c.fillText('Income: ' + toRange(shareData.incomeValue), W - P, 68)
-  } else if (incomeDisplay === 'exact' && shareData.incomeValue) {
-    c.fillStyle = 'rgba(255,255,255,0.55)'
-    c.fillText('Income: $' + shareData.incomeValue.toLocaleString(), W - P, 68)
-  }
-
-  // Line 4: Generated date
-  c.font      = `400 11px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.55)'
-  c.fillText('Generated ' + monthYear(), W - P, 84)
-
-  c.textAlign = 'left'
-
-  // ── Header divider ───────────────────────────────────────────────────────────
-  c.fillStyle = 'rgba(255,255,255,0.07)'
-  c.fillRect(P, 100, W - P * 2, 1)
-
-  // ── Hero Headline ────────────────────────────────────────────────────────────
   const sorted    = [...shareData.cityResults].sort((a, b) => b.score - a.score).slice(0, 4)
   const best      = sorted[0]
   const occName   = shareData.occupationName
   const occPlural = occName.endsWith('s') ? occName : occName + 's'
-  const headline  = `${best.cityName} ranks #1 for ${occPlural}`
 
-  // Auto-shrink to fit
-  let hSize = 58
+  // ── Background ──────────────────────────────────────────────────────────────
+  c.fillStyle = BG
+  c.fillRect(0, 0, W, H)
+
+  // ── City photo region (rounded bottom-left corner, top-right of card) ──────
+  const PX = 860, PB = 420, CR = 64
+  const photoPath = () => {
+    c.beginPath()
+    c.moveTo(PX, 0)
+    c.lineTo(W, 0)
+    c.lineTo(W, PB)
+    c.lineTo(PX + CR, PB)
+    c.quadraticCurveTo(PX, PB, PX, PB - CR)
+    c.closePath()
+  }
+
+  c.save()
+  photoPath()
+  c.clip()
+  try {
+    const photo = await loadImage(`/cities/${best.cityId}.jpg`)
+    const iw = photo.naturalWidth, ih = photo.naturalHeight
+    const dw = W - PX, dh = PB
+    const s  = Math.max(dw / iw, dh / ih)
+    const sw = dw / s, sh = dh / s
+    c.drawImage(photo, (iw - sw) / 2, (ih - sh) / 2, sw, sh, PX, 0, dw, dh)
+  } catch {
+    const g = c.createLinearGradient(PX, 0, W, PB)
+    g.addColorStop(0, '#1A2743')
+    g.addColorStop(1, '#101A2E')
+    c.fillStyle = g
+    photoPath()
+    c.fill()
+  }
+  // blend left + bottom edges into background
+  const gl = c.createLinearGradient(PX, 0, PX + 220, 0)
+  gl.addColorStop(0, 'rgba(15,22,35,0.92)')
+  gl.addColorStop(1, 'rgba(15,22,35,0)')
+  c.fillStyle = gl
+  c.fillRect(PX, 0, 220, PB)
+  const gb = c.createLinearGradient(0, PB, 0, PB - 140)
+  gb.addColorStop(0, 'rgba(15,22,35,0.85)')
+  gb.addColorStop(1, 'rgba(15,22,35,0)')
+  c.fillStyle = gb
+  c.fillRect(PX, PB - 140, W - PX, 140)
+  c.restore()
+
+  // ── Top accent strip ────────────────────────────────────────────────────────
+  const accent = c.createLinearGradient(0, 0, W, 0)
+  accent.addColorStop(0,   TEAL)
+  accent.addColorStop(0.5, BLUE)
+  accent.addColorStop(1,   TEAL)
+  c.fillStyle = accent
+  c.fillRect(0, 0, W, 6)
+
+  // ── Logo + tagline + chip ───────────────────────────────────────────────────
+  let logoW = 240
+  try {
+    const img = await loadImage('/lakive-logo-white.png')
+    const LOGO_H = 56
+    logoW = Math.round(img.naturalWidth / img.naturalHeight * LOGO_H)
+    c.drawImage(img, P, 44, logoW, LOGO_H)
+  } catch {
+    c.font = `900 44px ${F}`
+    c.fillStyle = '#ffffff'
+    c.fillText('LAKIVE', P, 88)
+  }
+
+  // Tagline (v1.1: no period) — two-tone
+  c.font = `500 20px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.88)'
+  c.fillText('From Data to ', P, 134)
+  const tg1 = c.measureText('From Data to ').width
+  c.fillStyle = TEAL
+  c.fillText('Belonging', P + tg1, 134)
+
+  // "INSIGHT CARD" chip
+  c.font = `700 14px ${F}`
+  c.letterSpacing = '0.12em'
+  const chipTxtW = c.measureText('INSIGHT CARD').width
+  const chipX = P + logoW + 36
+  rr(c, chipX, 56, chipTxtW + 40, 34, 17)
+  c.strokeStyle = 'rgba(20,184,166,0.55)'
+  c.lineWidth   = 1.5
+  c.stroke()
+  c.fillStyle = TEAL
+  c.fillText('INSIGHT CARD', chipX + 20, 78)
+  c.letterSpacing = '0'
+
+  // ── Info panel (over photo, top-right) ─────────────────────────────────────
+  const IPX = 1160, IPY = 30, IPW = W - P - IPX + 48, IPH = 130
+  rr(c, IPX, IPY, IPW, IPH, 20)
+  c.fillStyle = 'rgba(15,22,35,0.58)'
+  c.fill()
+  rr(c, IPX, IPY, IPW, IPH, 20)
+  c.strokeStyle = 'rgba(255,255,255,0.16)'
+  c.lineWidth   = 1
+  c.stroke()
+  // icon: circle + shield
+  c.beginPath()
+  c.arc(IPX + 44, IPY + 44, 24, 0, Math.PI * 2)
+  c.strokeStyle = 'rgba(20,184,166,0.7)'
+  c.lineWidth   = 1.5
+  c.stroke()
+  c.beginPath()
+  c.moveTo(IPX + 44, IPY + 32)
+  c.lineTo(IPX + 54, IPY + 37)
+  c.lineTo(IPX + 52, IPY + 50)
+  c.quadraticCurveTo(IPX + 44, IPY + 58, IPX + 36, IPY + 50)
+  c.lineTo(IPX + 34, IPY + 37)
+  c.closePath()
+  c.strokeStyle = TEAL
+  c.stroke()
+  // texts
+  const ITX = IPX + 84
+  c.font      = `700 21px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.95)'
+  c.fillText(occName, ITX, IPY + 34)
+  c.font      = `400 16px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.72)'
+  c.fillText(PROP_SHORT[shareData.housingType] ?? shareData.housingType, ITX, IPY + 60)
+  if (incomeDisplay === 'range' && shareData.incomeValue) {
+    c.fillText('Income: ' + toRange(shareData.incomeValue), ITX, IPY + 84)
+  } else if (incomeDisplay === 'exact' && shareData.incomeValue) {
+    c.fillText('Income: $' + shareData.incomeValue.toLocaleString(), ITX, IPY + 84)
+  } else {
+    c.fillText('Canada', ITX, IPY + 84)
+  }
+  c.font      = `400 13px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.55)'
+  c.fillText('Generated ' + monthYear(), ITX, IPY + 108)
+
+  // ── Headline (two lines, two-tone: "#1" in teal) ────────────────────────────
+  const line1a = `${best.cityName} ranks `
+  const line1b = '#1'
+  const line2  = `for ${occPlural}`
+  const maxHW  = PX - P - 40
+  let hSize = 72
   c.font = `900 ${hSize}px ${F}`
-  while (c.measureText(headline).width > W - P * 2 && hSize > 34) {
+  while ((c.measureText(line1a + line1b).width > maxHW || c.measureText(line2).width > maxHW) && hSize > 40) {
     hSize -= 2
     c.font = `900 ${hSize}px ${F}`
   }
+  const hy1 = 262, hy2 = 262 + Math.round(hSize * 1.16)
   c.fillStyle = '#ffffff'
-  c.fillText(headline, P, 162)
+  c.fillText(line1a, P, hy1)
+  c.fillStyle = TEAL
+  c.fillText(line1b, P + c.measureText(line1a).width, hy1)
+  c.fillStyle = '#ffffff'
+  c.fillText(line2, P, hy2)
 
-  // Sub-headline
-  c.font      = `400 16px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.58)'
-  c.fillText((PROP_LONG[shareData.housingType] ?? shareData.housingType) + ' · 2026-H1', P, 184)
+  // Subheadline
+  c.font      = `400 23px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.60)'
+  c.fillText(`${PROP_LONG[shareData.housingType] ?? shareData.housingType} Affordability  ·  2026-H1`, P, hy2 + 52)
 
-  // ── City zone divider ────────────────────────────────────────────────────────
-  c.fillStyle = 'rgba(255,255,255,0.07)'
-  c.fillRect(P, 198, W - P * 2, 1)
+  // ── Rankings panel ──────────────────────────────────────────────────────────
+  const RP_Y = 430, ROW_H = 90, RP_H = ROW_H * sorted.length + 16
+  rr(c, P, RP_Y, W - P * 2, RP_H, 24)
+  c.fillStyle = 'rgba(255,255,255,0.025)'
+  c.fill()
+  rr(c, P, RP_Y, W - P * 2, RP_H, 24)
+  c.strokeStyle = 'rgba(255,255,255,0.08)'
+  c.lineWidth   = 1
+  c.stroke()
 
-  // ── City Rankings (social-style panels) ─────────────────────────────────────
-  // Layout: 4 rows × 66px = 264px (206–470) + legend strip (478–492)
-  const ROWS_TOP = 206
-  const ROW_H    = 66
-
-  const RANK_CX  = P + 16                  // rank circle center
-  const NAME_X   = P + 44                  // city name left edge
-  const SCORE_RX = W - P - 12              // badge right edge
-  const BADGE_W  = 88
-  const BADGE_H  = 46
-  const BAR_X    = NAME_X + 230            // bar starts after name column
-  const BAR_MAX  = SCORE_RX - BADGE_W - 28 - BAR_X
-  const BAR_H    = 7
+  const ROWS_TOP = RP_Y + 8
+  const NAME_X   = P + 108
+  const BAR_X    = 560
+  const BAR_W    = 590
+  const BAR_H    = 8
+  const BADGE_W  = 180
+  const BADGE_H  = 72
+  const BADGE_X  = W - P - 24 - BADGE_W
 
   sorted.forEach((city, i) => {
     const rowTop = ROWS_TOP + i * ROW_H
@@ -283,65 +352,82 @@ async function generateInsightCard(
     const isTop  = i === 0
     const col    = scoreColor(city.score)
 
-    // Row panel (rounded card)
-    rr(c, P - 16, rowTop + 3, W - P * 2 + 32, ROW_H - 8, 12)
-    c.fillStyle = isTop ? 'rgba(20,184,166,0.07)' : 'rgba(255,255,255,0.03)'
-    c.fill()
-    rr(c, P - 16, rowTop + 3, W - P * 2 + 32, ROW_H - 8, 12)
-    c.strokeStyle = isTop ? 'rgba(20,184,166,0.35)' : 'rgba(255,255,255,0.08)'
-    c.lineWidth   = 1
-    c.stroke()
+    // separator
+    if (i > 0) {
+      c.fillStyle = 'rgba(255,255,255,0.06)'
+      c.fillRect(P + 24, rowTop, W - P * 2 - 48, 1)
+    }
 
-    // Rank circle
-    c.beginPath()
-    c.arc(RANK_CX, mid, 14, 0, Math.PI * 2)
-    c.fillStyle = isTop ? TEAL : 'rgba(255,255,255,0.08)'
+    // #1 row highlight
+    if (isTop) {
+      rr(c, P + 10, rowTop + 5, W - P * 2 - 20, ROW_H - 10, 16)
+      c.fillStyle = 'rgba(20,184,166,0.06)'
+      c.fill()
+    }
+
+    // Rank badge (rounded square)
+    rr(c, P + 28, mid - 21, 42, 42, 11)
+    c.fillStyle = isTop ? TEAL : 'rgba(255,255,255,0.07)'
     c.fill()
-    c.font      = `700 11px ${F}`
-    c.fillStyle = isTop ? '#0f1623' : 'rgba(255,255,255,0.65)'
+    c.font      = `700 19px ${F}`
+    c.fillStyle = isTop ? BG : 'rgba(255,255,255,0.70)'
     c.textAlign = 'center'
-    c.fillText(String(i + 1), RANK_CX, mid + 4)
+    c.fillText(String(i + 1), P + 49, mid + 7)
     c.textAlign = 'left'
 
     // City name
-    c.font      = `${isTop ? '700' : '500'} 19px ${F}`
-    c.fillStyle = isTop ? '#ffffff' : 'rgba(255,255,255,0.88)'
-    c.fillText(city.cityName, NAME_X, mid - 5)
+    c.font      = `${isTop ? '700' : '600'} 27px ${F}`
+    c.fillStyle = isTop ? '#ffffff' : 'rgba(255,255,255,0.90)'
+    c.fillText(city.cityName, NAME_X, mid - 4)
 
-    // Province · years
-    c.font      = `400 12px ${F}`
+    // Province (accent) · years
+    c.font      = `600 16px ${F}`
+    c.fillStyle = isTop ? TEAL : BLUE
+    c.fillText(city.province, NAME_X, mid + 24)
+    const provW = c.measureText(city.province).width
+    c.font      = `400 16px ${F}`
     c.fillStyle = 'rgba(255,255,255,0.60)'
-    c.fillText(`${city.province}  ·  ${city.hpiYears} yrs to buy`, NAME_X, mid + 13)
+    c.fillText(`  ·  ${city.hpiYears} yrs to buy`, NAME_X + provW, mid + 24)
 
-    // Bar track (absolute scale: score / 99)
-    c.fillStyle = 'rgba(255,255,255,0.06)'
-    rr(c, BAR_X, mid - BAR_H / 2, BAR_MAX, BAR_H, 3)
+    // Slider bar: track + fill + knob
+    rr(c, BAR_X, mid - BAR_H / 2, BAR_W, BAR_H, 4)
+    c.fillStyle = 'rgba(255,255,255,0.08)'
     c.fill()
-
-    // Bar fill — absolute scale (not relative to maxScore)
-    const fill = Math.max(BAR_H * 2, Math.round((city.score / 99) * BAR_MAX))
+    const fillW = Math.max(BAR_H * 2, Math.round((city.score / 99) * BAR_W))
+    rr(c, BAR_X, mid - BAR_H / 2, fillW, BAR_H, 4)
     c.fillStyle = col
-    rr(c, BAR_X, mid - BAR_H / 2, fill, BAR_H, 3)
     c.fill()
+    c.beginPath()
+    c.arc(BAR_X + fillW, mid, 11, 0, Math.PI * 2)
+    c.fillStyle = col
+    c.fill()
+    c.beginPath()
+    c.arc(BAR_X + fillW, mid, 11, 0, Math.PI * 2)
+    c.strokeStyle = BG
+    c.lineWidth   = 3
+    c.stroke()
 
-    // Score badge — rounded outline, social style
-    const bx = SCORE_RX - BADGE_W
-    const by = mid - BADGE_H / 2
-    rr(c, bx, by, BADGE_W, BADGE_H, 10)
-    c.fillStyle = 'rgba(255,255,255,0.02)'
+    // Score badge (outlined, tinted, score + label — colors strictly by band)
+    rr(c, BADGE_X, mid - BADGE_H / 2, BADGE_W, BADGE_H, 14)
+    c.save()
+    c.globalAlpha = 0.08
+    c.fillStyle = col
     c.fill()
-    rr(c, bx, by, BADGE_W, BADGE_H, 10)
+    c.restore()
+    rr(c, BADGE_X, mid - BADGE_H / 2, BADGE_W, BADGE_H, 14)
     c.strokeStyle = col
     c.lineWidth   = 2
     c.stroke()
-    c.font      = `900 30px ${F}`
-    c.fillStyle = col
     c.textAlign = 'center'
-    c.fillText(String(city.score), bx + BADGE_W / 2, mid + 11)
+    c.font      = `900 32px ${F}`
+    c.fillStyle = col
+    c.fillText(String(city.score), BADGE_X + BADGE_W / 2, mid - 2)
+    c.font      = `600 14px ${F}`
+    c.fillText(scoreLabel(city.score), BADGE_X + BADGE_W / 2, mid + 24)
     c.textAlign = 'left'
   })
 
-  // ── Legend strip (score bands) ───────────────────────────────────────────────
+  // ── Legend strip ────────────────────────────────────────────────────────────
   const LEGEND = [
     { col: '#14B8A6', txt: '80+ Lower Pressure' },
     { col: '#4F8EF7', txt: '70+ Manageable' },
@@ -349,78 +435,159 @@ async function generateInsightCard(
     { col: '#F97316', txt: '50+ Under Pressure' },
     { col: '#EF4444', txt: '<50 Difficult' },
   ]
-  let lx = P
-  const ly = 484
-  c.font = `400 11px ${F}`
+  let lx = P + 10
+  const ly = RP_Y + RP_H + 34
+  c.font = `400 15px ${F}`
   LEGEND.forEach(item => {
     c.beginPath()
-    c.arc(lx + 4, ly - 4, 4, 0, Math.PI * 2)
+    c.arc(lx + 5, ly - 5, 5, 0, Math.PI * 2)
     c.fillStyle = item.col
     c.fill()
-    c.fillStyle = 'rgba(255,255,255,0.60)'
-    c.fillText(item.txt, lx + 14, ly)
-    lx += 14 + c.measureText(item.txt).width + 26
+    c.fillStyle = 'rgba(255,255,255,0.62)'
+    c.fillText(item.txt, lx + 18, ly)
+    lx += 18 + c.measureText(item.txt).width + 34
   })
 
-  // ── AI Insight — rounded panel with teal accent (social style) ──────────────
-  const insight = buildInsight(sorted, occName, shareData.housingType)
-
-  rr(c, P - 16, 500, W - P * 2 + 32, 60, 12)
-  c.fillStyle = 'rgba(255,255,255,0.03)'
+  // ── Insight + features panel ────────────────────────────────────────────────
+  const IN_Y = ly + 20, IN_H = 98
+  rr(c, P, IN_Y, W - P * 2, IN_H, 20)
+  c.fillStyle = 'rgba(255,255,255,0.025)'
   c.fill()
-  rr(c, P - 16, 500, W - P * 2 + 32, 60, 12)
+  rr(c, P, IN_Y, W - P * 2, IN_H, 20)
   c.strokeStyle = 'rgba(255,255,255,0.08)'
   c.lineWidth   = 1
   c.stroke()
 
-  // Teal left accent bar
-  rr(c, P - 4, 512, 4, 36, 2)
+  // chart icon in circle
+  const icx = P + 52, icy = IN_Y + IN_H / 2
+  c.beginPath()
+  c.arc(icx, icy, 26, 0, Math.PI * 2)
+  c.strokeStyle = 'rgba(20,184,166,0.7)'
+  c.lineWidth   = 1.5
+  c.stroke()
   c.fillStyle = TEAL
-  c.fill()
+  c.fillRect(icx - 12, icy + 2,  6, 10)
+  c.fillRect(icx - 3,  icy - 6,  6, 18)
+  c.fillRect(icx + 6,  icy - 12, 6, 24)
 
-  // Insight text with word-wrap
-  c.font      = `400 17px ${F}`
+  // insight text (wrapped, up to 3 lines)
+  const insight = buildInsight(sorted, occName, shareData.housingType)
+  c.font      = `400 18px ${F}`
   c.fillStyle = 'rgba(255,255,255,0.85)'
-  const maxTW = W - P * 2 - 40
+  const inTX = P + 100
+  const maxTW = 660 - inTX + P
   const words = insight.split(' ')
-  let line = '', lineY = 527
+  let line = '', lineY = IN_Y + 34
   words.forEach((word, wi) => {
     const test = line ? line + ' ' + word : word
     if (c.measureText(test).width > maxTW && line) {
-      c.fillText(line, P + 14, lineY)
-      line = word; lineY += 23
+      c.fillText(line, inTX, lineY)
+      line = word; lineY += 25
     } else { line = test }
-    if (wi === words.length - 1) c.fillText(line, P + 14, lineY)
+    if (wi === words.length - 1) c.fillText(line, inTX, lineY)
   })
 
-  // ── Footer divider ───────────────────────────────────────────────────────────
-  c.fillStyle = 'rgba(255,255,255,0.07)'
-  c.fillRect(P, 572, W - P * 2, 1)
+  // vertical divider before features
+  c.fillStyle = 'rgba(255,255,255,0.08)'
+  c.fillRect(P + 700, IN_Y + 18, 1, IN_H - 36)
 
-  // ── Footer: tagline | scenario ID | CTA pill ────────────────────────────────
-  // Left — teal tagline (v1.1: no period)
-  c.font      = `500 13px ${F}`
+  // feature columns
+  const FEATURES = [
+    { t1: 'Years to Buy',     t2: 'Lower is better',   icon: 'house'  },
+    { t1: 'Data-driven',      t2: 'Career insights',   icon: 'shield' },
+    { t1: 'For Your Career,', t2: 'Family & Life',     icon: 'people' },
+  ]
+  const FW = (W - P - (P + 730)) / 3
+  FEATURES.forEach((f, i) => {
+    const fx = P + 730 + i * FW
+    const fy = IN_Y + IN_H / 2
+    // icon
+    c.strokeStyle = TEAL
+    c.lineWidth   = 2
+    if (f.icon === 'house') {
+      c.beginPath()
+      c.moveTo(fx,      fy - 2)
+      c.lineTo(fx + 13, fy - 14)
+      c.lineTo(fx + 26, fy - 2)
+      c.moveTo(fx + 4,  fy - 4)
+      c.lineTo(fx + 4,  fy + 12)
+      c.lineTo(fx + 22, fy + 12)
+      c.lineTo(fx + 22, fy - 4)
+      c.stroke()
+    } else if (f.icon === 'shield') {
+      c.beginPath()
+      c.moveTo(fx + 13, fy - 14)
+      c.lineTo(fx + 26, fy - 8)
+      c.lineTo(fx + 23, fy + 6)
+      c.quadraticCurveTo(fx + 13, fy + 15, fx + 3, fy + 6)
+      c.lineTo(fx,      fy - 8)
+      c.closePath()
+      c.stroke()
+    } else {
+      c.beginPath()
+      c.arc(fx + 8,  fy - 7, 5.5, 0, Math.PI * 2)
+      c.stroke()
+      c.beginPath()
+      c.arc(fx + 20, fy - 5, 4.5, 0, Math.PI * 2)
+      c.stroke()
+      c.beginPath()
+      c.moveTo(fx,      fy + 13)
+      c.quadraticCurveTo(fx + 8,  fy + 2, fx + 16, fy + 13)
+      c.moveTo(fx + 14, fy + 12)
+      c.quadraticCurveTo(fx + 20, fy + 4, fx + 26, fy + 12)
+      c.stroke()
+    }
+    // texts
+    c.font      = `600 16px ${F}`
+    c.fillStyle = 'rgba(255,255,255,0.90)'
+    c.fillText(f.t1, fx + 40, fy - 3)
+    c.font      = `400 14px ${F}`
+    c.fillStyle = 'rgba(255,255,255,0.60)'
+    c.fillText(f.t2, fx + 40, fy + 18)
+    // divider
+    if (i > 0) {
+      c.fillStyle = 'rgba(255,255,255,0.08)'
+      c.fillRect(fx - 20, IN_Y + 18, 1, IN_H - 36)
+    }
+  })
+
+  // ── Footer ──────────────────────────────────────────────────────────────────
+  const FY = IN_Y + IN_H + 42
+  c.font      = `600 15px ${F}`
   c.fillStyle = TEAL
-  c.fillText('From Data to Belonging', P, 606)
-
-  // Center — scenario ID
-  c.font      = `400 12px ${F}`
+  c.fillText(scenarioId(), P, FY)
+  const sidW = c.measureText(scenarioId()).width
+  c.fillStyle = 'rgba(255,255,255,0.20)'
+  c.fillRect(P + sidW + 20, FY - 14, 1, 16)
+  c.font      = `400 15px ${F}`
   c.fillStyle = 'rgba(255,255,255,0.55)'
-  c.textAlign = 'center'
-  c.fillText(scenarioId(), W / 2, 606)
-  c.textAlign = 'left'
+  c.fillText('Source: Lakive Housing Model  ·  CREA MLS HPI  ·  StatCan  ·  Provincial Data', P + sidW + 40, FY)
 
-  // Right — CTA pill "lakive.com →" (social style)
-  const PILL_W = 164, PILL_H = 34
-  const pillX = W - P - PILL_W, pillY = 584
-  rr(c, pillX, pillY, PILL_W, PILL_H, 17)
+  // right CTA: "Explore more insights at lakive.com →"
+  c.textAlign = 'right'
+  const ARROW_R = 19
+  const arrowCX = W - P - ARROW_R
+  c.font      = `700 20px ${F}`
+  c.fillStyle = TEAL
+  c.fillText('lakive.com', arrowCX - ARROW_R - 16, FY)
+  const domW = c.measureText('lakive.com').width
+  c.font      = `400 17px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.85)'
+  c.fillText('Explore more insights at ', arrowCX - ARROW_R - 16 - domW - 10, FY)
+  c.textAlign = 'left'
+  c.beginPath()
+  c.arc(arrowCX, FY - 6, ARROW_R, 0, Math.PI * 2)
   c.fillStyle = TEAL
   c.fill()
-  c.font      = `700 15px ${F}`
-  c.fillStyle = '#0F1623'
-  c.textAlign = 'center'
-  c.fillText('lakive.com  →', pillX + PILL_W / 2, pillY + 23)
-  c.textAlign = 'left'
+  c.strokeStyle = BG
+  c.lineWidth   = 2.5
+  c.beginPath()
+  c.moveTo(arrowCX - 7, FY - 6)
+  c.lineTo(arrowCX + 6, FY - 6)
+  c.moveTo(arrowCX + 1, FY - 12)
+  c.lineTo(arrowCX + 7, FY - 6)
+  c.lineTo(arrowCX + 1, FY)
+  c.stroke()
 
   return cv.toDataURL('image/png')
 }
@@ -489,7 +656,7 @@ export default function ShareModal({ open, onClose, shareData }: Props) {
     setShowShareMenu(false)
   }
 
-  const modalW = step === 2 ? 600 : 440
+  const modalW = step === 2 ? 720 : 440
 
   return (
     <div

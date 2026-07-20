@@ -10,6 +10,7 @@
 - Palette = product codebase (single source of truth):
   - Background dark `#0F1623` · Teal accent `#14B8A6` · Blue accent `#4F8EF7` · Orange highlight `#F97316`
   - Palette changes go into the codebase first, then this doc. No off-palette hex in design tools.
+  - Functional data-scale colors (score bands, annex to brand palette): 80+ `#14B8A6` · 70+ `#4F8EF7` · 60+ `#F59E0B` · 50+ `#F97316` · 40+ `#EF4444` · <40 `#DC2626`. Badge, bar, knob and label always use the band color of the score — no exceptions for rank #1.
 
 ## 2. Data Credibility
 - Every number from Lakive site / report DB / approved dataset. All surfaces show the same figures; conflicts block publication.
