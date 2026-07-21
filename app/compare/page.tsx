@@ -716,7 +716,7 @@ function ComparePageInner() {
                 {slugA ? <>
                   <div style={{ color:'rgba(255,255,255,0.32)', fontSize:11 }}>{cityA.province}</div>
                   <div style={{ color:'white', fontSize:17, fontWeight:800 }}>{cityA.name}</div>
-                  <div style={{ color: rkc(rankA), fontSize:11, fontWeight:700, marginTop:2 }}>{ready ? `National Rank #${rankA}/${totalCities} · ${pt.label}` : pt.label}</div>
+                  <div style={{ color: rkc(rankA), fontSize:11, fontWeight:700, marginTop:2 }}>{ready ? `Rank #${rankA}/${totalCities} for ${occName}s · ${pt.label}` : pt.label}</div>
                 </> : <>
                   <div style={{ color:'rgba(79,142,247,0.50)', fontSize:11 }}>City A</div>
                   <div style={{ color:'rgba(255,255,255,0.35)', fontSize:17, fontWeight:800 }}>Select City ▾</div>
@@ -750,7 +750,7 @@ function ComparePageInner() {
                 {slugB ? <>
                   <div style={{ color:'rgba(255,255,255,0.32)', fontSize:11 }}>{cityB.province}</div>
                   <div style={{ color:'white', fontSize:17, fontWeight:800 }}>{cityB.name}</div>
-                  <div style={{ color: rkc(rankB), fontSize:11, fontWeight:700, marginTop:2 }}>{ready ? `National Rank #${rankB}/${totalCities} · ${pt.label}` : pt.label}</div>
+                  <div style={{ color: rkc(rankB), fontSize:11, fontWeight:700, marginTop:2 }}>{ready ? `Rank #${rankB}/${totalCities} for ${occName}s · ${pt.label}` : pt.label}</div>
                 </> : <>
                   <div style={{ color:'rgba(20,184,166,0.50)', fontSize:11 }}>City B</div>
                   <div style={{ color:'rgba(255,255,255,0.35)', fontSize:17, fontWeight:800 }}>Select City ▾</div>

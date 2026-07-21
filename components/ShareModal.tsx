@@ -597,13 +597,14 @@ export default function ShareModal({ open, onClose, shareData }: Props) {
   const [step,          setStep         ] = useState<ModalStep>(1)
   const [income,        setIncome       ] = useState<IncomeDisplay>('hidden')
   const [imgUrl,        setImgUrl       ] = useState<string | null>(null)
+  const [shareUrl,      setShareUrl     ] = useState<string | null>(null)
   const [saved,         setSaved        ] = useState(false)
   const [copied,        setCopied       ] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
 
   useEffect(() => {
     if (open) {
-      setStep(1); setIncome('hidden'); setImgUrl(null)
+      setStep(1); setIncome('hidden'); setImgUrl(null); setShareUrl(null)
       setSaved(false); setCopied(false); setShowShareMenu(false)
     }
   }, [open])
@@ -627,8 +628,26 @@ export default function ShareModal({ open, onClose, shareData }: Props) {
   const handleGenerate = async () => {
     setStep('loading')
     try {
-      const url = await generateInsightCard(shareData, income)
+      const [url, apiRes] = await Promise.all([
+        generateInsightCard(shareData, income),
+        fetch('/api/share', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            occupation_id:   shareData.occupationId,
+            occupation_name: shareData.occupationName,
+            housing_type:    shareData.housingType,
+            income_value:    shareData.incomeValue,
+            income_display:  income,
+            city_results:    shareData.cityResults,
+          }),
+        }),
+      ])
       setImgUrl(url)
+      if (apiRes.ok) {
+        const data = await apiRes.json()
+        setShareUrl(data.url ?? null)
+      }
       setStep(2)
     } catch {
       setStep(1)
@@ -646,7 +665,7 @@ export default function ShareModal({ open, onClose, shareData }: Props) {
   }
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText('https://www.lakive.com/calculate')
+    navigator.clipboard.writeText(shareUrl ?? 'https://www.lakive.com/calculate')
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }

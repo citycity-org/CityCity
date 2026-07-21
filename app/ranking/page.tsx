@@ -448,6 +448,22 @@ function cityIndexScore(tai:number, eoi:number, hai:number, eqi:number, tci:numb
   return Math.round(eoi*0.22 + tai*0.20 + hai*0.20 + eqi*0.14 + tci*0.12 + psi*0.12)
 }
 
+// ── Adjusted score — same as Compare page (starts from FIT_MATRIX base) ───────
+function getAdjScore(base: OccFit, priceMult: number, rentMult: number): number {
+  const adjH = base.hpiYears * priceMult
+  const adjR = base.rpi * rentMult
+  let delta = 0
+  if (adjH > 10 && base.hpiYears <= 10) delta -= 5
+  if (adjH > 14 && base.hpiYears <= 14) delta -= 5
+  if (adjR > 38 && base.rpi <= 38)      delta -= 4
+  if (adjR > 45 && base.rpi <= 45)      delta -= 4
+  if (adjH < 6  && base.hpiYears >= 6)  delta += 5
+  if (adjH < 10 && base.hpiYears >= 10) delta += 5
+  if (adjR < 30 && base.rpi >= 30)      delta += 4
+  if (adjR < 38 && base.rpi >= 38)      delta += 4
+  return Math.max(10, Math.min(99, base.score + delta))
+}
+
 function getSortValue(cityId:string, occ:string, dimId:string):number {
   const fit  = FIT_MATRIX[cityId]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
   const city = CITY_BASE[cityId]
@@ -565,7 +581,7 @@ export default function RankingPage() {
       const rpi      = Math.round(fitBase.rpi * prop.rentMult)
       const score = isUnemployed
         ? cityIndexScore(city.tai, city.eoi, city.hai, city.eqi, city.tci, city.psi)
-        : computeScore(hpiYears, rpi, city.tai, city.eoi, city.hai, city.eqi, city.tci, city.psi)
+        : getAdjScore(fitBase, prop.priceMult, prop.rentMult)
       const insight = isUnemployed ? (UNEMPLOYED_INSIGHTS[id] ?? '') : getInsight(id, occ)
       return { id, city, fit:{ ...fitBase, hpiYears, rpi, score }, insight }
     })
@@ -577,8 +593,8 @@ export default function RankingPage() {
         if (eoiA !== eoiB) return eoiB - eoiA
         return b.fit.score - a.fit.score
       }
-      const vA = getSortValue(a.id, occ, sortDim)
-      const vB = getSortValue(b.id, occ, sortDim)
+      const vA = sortDim === 'score' ? a.fit.score : getSortValue(a.id, occ, sortDim)
+      const vB = sortDim === 'score' ? b.fit.score : getSortValue(b.id, occ, sortDim)
       return dim.lowerBetter ? vA-vB : vB-vA
     })
 
