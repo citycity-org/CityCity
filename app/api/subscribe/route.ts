@@ -97,9 +97,7 @@ export async function POST(req: NextRequest) {
   const emailHtmlEn = `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;max-width:480px;margin:0 auto;background:#0d1117;border-radius:20px;overflow:hidden">
       <div style="background:linear-gradient(135deg,#0d1117 0%,#1a2035 100%);padding:32px 32px 28px;border-bottom:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:20px;font-weight:300;letter-spacing:0.12em;color:white;margin-bottom:20px">
-          <span style="color:#14B8A6">LA</span>KıVE
-        </div>
+        <img src="https://www.lakive.com/lakive-logo-white.png" alt="Lakive" height="32" style="height:32px;width:auto;display:block;margin-bottom:20px" />
         <h1 style="color:white;font-size:22px;font-weight:800;margin:0 0 8px;line-height:1.3">You're subscribed ✓</h1>
         <p style="color:rgba(255,255,255,0.50);font-size:13px;margin:0">Your ${subjectCity} report is all set</p>
       </div>
@@ -131,9 +129,7 @@ export async function POST(req: NextRequest) {
   const emailHtmlZh = `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;max-width:480px;margin:0 auto;background:#0d1117;border-radius:20px;overflow:hidden">
       <div style="background:linear-gradient(135deg,#0d1117 0%,#1a2035 100%);padding:32px 32px 28px;border-bottom:1px solid rgba(255,255,255,0.07)">
-        <div style="font-size:20px;font-weight:300;letter-spacing:0.12em;color:white;margin-bottom:20px">
-          <span style="color:#14B8A6">LA</span>KıVE
-        </div>
+        <img src="https://www.lakive.com/lakive-logo-white.png" alt="Lakive" height="32" style="height:32px;width:auto;display:block;margin-bottom:20px" />
         <h1 style="color:white;font-size:22px;font-weight:800;margin:0 0 8px;line-height:1.3">订阅成功 ✓</h1>
         <p style="color:rgba(255,255,255,0.50);font-size:13px;margin:0">你的 ${subjectCity} 报告已安排好</p>
       </div>

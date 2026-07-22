@@ -104,16 +104,6 @@ export default async function SharePage({ params }: { params: Promise<{ id: stri
   return (
     <main style={{ minHeight: '100vh', background: '#0d1117', fontFamily: 'system-ui, sans-serif' }}>
 
-      {/* Nav */}
-      <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{ color: '#14B8A6', fontWeight: 800, fontSize: 17, letterSpacing: '-0.02em' }}>Lakive</span>
-        </Link>
-        <Link href="/calculate" style={{ textDecoration: 'none', color: '#4F8EF7', fontSize: 13, fontWeight: 600 }}>
-          Run your own City Fit →
-        </Link>
-      </div>
-
       <div style={{ maxWidth: 680, margin: '0 auto', padding: '40px 20px 80px' }}>
 
         {/* Header */}
@@ -150,6 +140,28 @@ export default async function SharePage({ params }: { params: Promise<{ id: stri
         {/* City cards */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 40 }}>
           {sorted.map((city, i) => <CityCard key={city.cityId} city={city} rank={i + 1} isTop={i === 0} />)}
+        </div>
+
+        {/* Confidence Layer */}
+        <div style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '20px 22px', marginBottom: 16 }}>
+          <div style={{ color: 'rgba(255,255,255,0.32)', fontSize: 10, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', marginBottom: 14 }}>
+            关于这份分析
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 24px' }}>
+            {[
+              { label: '数据版本',  value: insight.data_version },
+              { label: '模型版本',  value: `v${insight.calculation_version}` },
+              { label: '核心指标',  value: 'HPI Years · RPI' },
+              { label: '权重分布',  value: '住房压力 52% · 城市环境 48%' },
+              { label: '数据来源',  value: 'CMHC · Statistics Canada · Job Bank' },
+              { label: '免责声明',  value: '参考工具，不构成财务或移民建议' },
+            ].map(row => (
+              <div key={row.label}>
+                <div style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, marginBottom: 2 }}>{row.label}</div>
+                <div style={{ color: 'rgba(255,255,255,0.62)', fontSize: 12, fontWeight: 500 }}>{row.value}</div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* CTA */}
