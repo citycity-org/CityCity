@@ -347,7 +347,7 @@ const DIM_GROUPS = [
 ]
 
 // ── Color helpers ─────────────────────────────────────────────────────────────
-const sc = (s:number) => s>=80?'#14B8A6':s>=70?'#F59E0B':s>=55?'#F59E0B':s>=40?'#E86C2F':'#EF4444'
+const sc = (s:number) => s>=80?'#14B8A6':s>=70?'#4F8EF7':s>=55?'#F59E0B':s>=40?'#E86C2F':'#EF4444'
 const hc = (y:number) => y<=5?'#14B8A6':y<=8?'#10B981':y<=12?'#F59E0B':y<=18?'#E86C2F':'#EF4444'
 const rc = (r:number) => r<=25?'#14B8A6':r<=30?'#10B981':r<=38?'#F59E0B':r<=50?'#E86C2F':'#EF4444'
 const dc = (v:number) => v>=80?'#14B8A6':v>=65?'#60A5FA':'#F59E0B'

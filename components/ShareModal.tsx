@@ -44,21 +44,20 @@ function toRange(v: number): string {
   return `$${lo}K–$${lo + 10}K`
 }
 
-// ── Score bands (v1.1: colors strictly follow bands — no exceptions for #1) ────
+// ── Score bands (v1.2: 5-band unified system) ─────────────────────────────────
+// L1 ≥80 Lower Pressure · L2 ≥70 Manageable · L3 ≥55 Under Pressure · L4 ≥40 Difficult · L5 <40 Severe
 function scoreColor(s: number) {
-  if (s >= 80) return '#14B8A6'   // teal
-  if (s >= 70) return '#4F8EF7'   // blue (brand)
-  if (s >= 60) return '#F59E0B'   // amber
-  if (s >= 50) return '#F97316'   // orange
-  if (s >= 40) return '#EF4444'   // red-orange
-  return '#DC2626'                // deep red
+  if (s >= 80) return '#14B8A6'   // teal  — L1 Lower Pressure
+  if (s >= 70) return '#4F8EF7'   // blue  — L2 Manageable
+  if (s >= 55) return '#F59E0B'   // amber — L3 Under Pressure
+  if (s >= 40) return '#E86C2F'   // orange-red — L4 Difficult
+  return '#EF4444'                // red   — L5 Severe
 }
 
 function scoreLabel(s: number) {
   if (s >= 80) return 'Lower Pressure'
   if (s >= 70) return 'Manageable'
-  if (s >= 60) return 'Moderate'
-  if (s >= 50) return 'Under Pressure'
+  if (s >= 55) return 'Under Pressure'
   if (s >= 40) return 'Difficult'
   return 'Severe'
 }
@@ -95,9 +94,9 @@ function buildInsight(
     return `${best.cityName} leads by ${best.score - worst.score} points — city selection has more impact on housing fit than salary variation.`
   }
 
-  // Tight cluster
+  // Tight cluster — use actual data to explain WHY the top city leads
   if (best.score - worst.score <= 10) {
-    return `Affordability pressure is consistent across all cities — ${best.cityName} leads narrowly by ${best.score - worst.score} points.`
+    return `${best.cityName} offers the strongest overall fit for ${occName}s, combining a ${best.hpiYears}-year home-price ratio with a ${best.rpi}% gross rent burden.`
   }
 
   return `${best.cityName} offers the strongest ${noun} affordability scenario for ${occName}s, at ${best.hpiYears} years of income to buy.`
@@ -325,7 +324,7 @@ async function generateInsightCard(
   // Subheadline
   c.font      = `400 23px ${F}`
   c.fillStyle = 'rgba(255,255,255,0.60)'
-  c.fillText(`${PROP_LONG[shareData.housingType] ?? shareData.housingType} Affordability  ·  2026-H1`, P, hy2 + 52)
+  c.fillText(`${shareData.occupationName} City Fit  ·  ${PROP_LONG[shareData.housingType] ?? shareData.housingType}  ·  2026-H1`, P, hy2 + 52)
 
   // ── Rankings panel ──────────────────────────────────────────────────────────
   const RP_Y = 430, ROW_H = 90, RP_H = ROW_H * sorted.length + 16
@@ -387,7 +386,7 @@ async function generateInsightCard(
     const provW = c.measureText(city.province).width
     c.font      = `400 16px ${F}`
     c.fillStyle = 'rgba(255,255,255,0.60)'
-    c.fillText(`  ·  ${city.hpiYears} yrs to buy`, NAME_X + provW, mid + 24)
+    c.fillText(`  ·  HPI Years · ${city.hpiYears}×`, NAME_X + provW, mid + 24)
 
     // Slider bar: track + fill + knob
     rr(c, BAR_X, mid - BAR_H / 2, BAR_W, BAR_H, 4)
@@ -431,9 +430,9 @@ async function generateInsightCard(
   const LEGEND = [
     { col: '#14B8A6', txt: '80+ Lower Pressure' },
     { col: '#4F8EF7', txt: '70+ Manageable' },
-    { col: '#F59E0B', txt: '60+ Moderate' },
-    { col: '#F97316', txt: '50+ Under Pressure' },
-    { col: '#EF4444', txt: '<50 Difficult' },
+    { col: '#F59E0B', txt: '55+ Under Pressure' },
+    { col: '#E86C2F', txt: '40+ Difficult' },
+    { col: '#EF4444', txt: '<40 Severe' },
   ]
   let lx = P + 10
   const ly = RP_Y + RP_H + 34
@@ -561,7 +560,7 @@ async function generateInsightCard(
   c.fillRect(P + sidW + 20, FY - 14, 1, 16)
   c.font      = `400 15px ${F}`
   c.fillStyle = 'rgba(255,255,255,0.55)'
-  c.fillText('Source: Lakive Housing Model  ·  CREA MLS HPI  ·  StatCan  ·  Provincial Data', P + sidW + 40, FY)
+  c.fillText('CMHC  ·  Statistics Canada  ·  Job Bank Canada  ·  Provincial Tax Data', P + sidW + 40, FY)
 
   // right CTA: "Explore more insights at lakive.com →"
   c.textAlign = 'right'

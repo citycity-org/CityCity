@@ -11,7 +11,7 @@ const CURRENT_DATA    = '2026-H1'
 // ── Score → color ──────────────────────────────────────────────────────────────
 function sc(s: number) {
   if (s >= 80) return '#14B8A6'
-  if (s >= 70) return '#60A5FA'
+  if (s >= 70) return '#4F8EF7'
   if (s >= 55) return '#F59E0B'
   if (s >= 40) return '#E86C2F'
   return '#EF4444'

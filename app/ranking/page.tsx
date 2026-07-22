@@ -422,7 +422,7 @@ function getRankingTitle(regionLabel:string, occName:string, sortId:string):stri
 }
 
 // ── Color helpers ─────────────────────────────────────────────────────────────
-const sc = (s:number) => s>=80?'#14B8A6':s>=70?'#F59E0B':s>=55?'#F59E0B':s>=40?'#E86C2F':'#EF4444'
+const sc = (s:number) => s>=80?'#14B8A6':s>=70?'#4F8EF7':s>=55?'#F59E0B':s>=40?'#E86C2F':'#EF4444'
 const hc = (y:number) => y<6?'#14B8A6':y<10?'#F59E0B':y<14?'#E86C2F':'#EF4444'
 const rc = (r:number) => r<30?'#14B8A6':r<38?'#F59E0B':r<45?'#E86C2F':'#EF4444'
 const dc = (v:number) => v>=80?'#14B8A6':v>=65?'#60A5FA':'#F59E0B'

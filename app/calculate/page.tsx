@@ -82,7 +82,7 @@ const OCC_GROUPS = [
 const ALL_OCCS = OCC_GROUPS.flatMap(g => g.occs)
 
 // ── Color helpers ──────────────────────────────────────────────────────────────
-const sc = (s:number) => s>=80?'#14B8A6':s>=70?'#60A5FA':s>=55?'#F59E0B':s>=40?'#E86C2F':'#EF4444'
+const sc = (s:number) => s>=80?'#14B8A6':s>=70?'#4F8EF7':s>=55?'#F59E0B':s>=40?'#E86C2F':'#EF4444'
 const hc = (y:number) => y<=5?'#14B8A6':y<=8?'#10B981':y<=12?'#F59E0B':y<=18?'#E86C2F':'#EF4444'
 const rc = (r:number) => r<=25?'#14B8A6':r<=30?'#10B981':r<=38?'#F59E0B':r<=50?'#E86C2F':'#EF4444'
 const dc = (v:number) => v>=80?'#14B8A6':v>=65?'#60A5FA':'#F59E0B'
@@ -542,12 +542,12 @@ export default function CalculatePage() {
           {/* 4 Core cards */}
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:20 }}>
             {(intent === 'rent' ? [
-              { label:'City Fit Score',    value:String(results.score),                         color:sc(results.score),          sub:results.score>=80?'Strong Fit':results.score>=65?'Good':results.score>=50?'Under Pressure':'High Pressure' },
+              { label:'City Fit Score',    value:String(results.score),                         color:sc(results.score),          sub:results.score>=80?'Lower Pressure':results.score>=70?'Manageable':results.score>=55?'Under Pressure':results.score>=40?'Difficult':'Severe' },
               { label:'Rent / Income',     value:`${results.rpi}%`,                             color:rc(results.rpi),            sub:rl(results.rpi) },
               { label:'Monthly Disposable',value:`$${results.monthlyRentDisp.toLocaleString()}`,color:results.monthlyRentDisp>1200?'#14B8A6':results.monthlyRentDisp>600?'#F59E0B':'#EF4444', sub:`After-tax $${results.monthlyNet.toLocaleString()} − rent` },
               { label:'Years to Buy',      value:`${results.hpiYears} yrs income`,              color:hc(results.hpiYears),       sub:hl(results.hpiYears)+' · Reference only' },
             ] : [
-              { label:'City Fit Score',    value:String(results.score),                         color:sc(results.score),          sub:results.score>=80?'Strong Fit':results.score>=65?'Good':results.score>=50?'Under Pressure':'High Pressure' },
+              { label:'City Fit Score',    value:String(results.score),                         color:sc(results.score),          sub:results.score>=80?'Lower Pressure':results.score>=70?'Manageable':results.score>=55?'Under Pressure':results.score>=40?'Difficult':'Severe' },
               { label:'Years to Buy',      value:`${results.hpiYears} yrs income`,              color:hc(results.hpiYears),       sub:hl(results.hpiYears) },
               { label:'Est. Mortgage',     value:`$${results.monthlyMortgage.toLocaleString()}`, color:results.monthlyBuyDisp>0?'#F59E0B':'#EF4444', sub:`5.5% · 25 yr · 20% down` },
               { label:'Down Payment Savings', value:`${results.downYears} yrs`,                 color:results.downYears<6?'#14B8A6':results.downYears<10?'#F59E0B':'#E86C2F', sub:'At 30% savings rate' },
