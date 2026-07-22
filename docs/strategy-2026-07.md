@@ -3,9 +3,46 @@
 
 ---
 
-## 核心重新定位
+## 核心定位（2026-07-21 最终确认）
 
-Lakive 不是"移民城市选择工具"，也不只是"职业城市匹配平台"。
+**Lakive 是 Decision Intelligence Platform（决策智能平台）。**
+
+不是房地产网站。不是移民工具。不是城市排行榜。
+
+### 竞争对手在回答的问题
+> **"Which house should I buy?"（我该买哪套房？）**
+
+Zoocasa、HouseSigma、Zolo、Realtor.ca——所有平台的数据、产品和商业模式，最终都服务于房屋交易。这是资金密集、网络效应极强、MLS 授权门槛极高的赛道。
+
+### Lakive 在回答的问题
+> **"Which city fits my career, my family, and my life?（哪座城市真正适合我的职业、家庭和生活？）"**
+
+这是一个更上游的决策。用户甚至还没有开始看房。他首先需要知道：
+
+- 我应该留在 Vancouver 吗？
+- 我应该搬去 Calgary 吗？
+- Edmonton 是否更适合 Electrician？
+- Software Engineer 在 Ottawa 会不会比 Toronto 更容易实现买房目标？
+- 对于一个有两个孩子的家庭，未来五年的住房压力会怎样变化？
+
+这些问题，没有任何现有平台在认真回答。
+
+### 核心决策模型（目标形态）
+
+**Occupation（职业）× City（城市）× Housing（住房）× Income（收入）× Family（家庭）× Time（时间）**
+
+当用户打开 Lakive，他不是为了找一套房，而是为了回答：
+> **"下一步，我应该在哪里生活，才能拥有更好的未来？"**
+
+### "From Data to Belonging" 的战略含义
+
+这不仅仅是品牌口号，而是 Lakive 与整个加拿大 PropTech 行业最大的差异化战略。
+
+数据是手段，归属感是目的。Lakive 帮助人们用数据做出人生决策——不是交易决策。
+
+---
+
+## 核心重新定位（原始记录，2026-07-09）
 
 **准确定位：人才资本的全球配置决策平台**
 
@@ -116,6 +153,45 @@ Lakive 需要同时建立：
 - 远程工作者模式的 UI/UX 设计
 - 20年财富路径模拟器的建模逻辑
 - 第一批 B2G 目标：哪个省政府最有可能成为早期合作伙伴
+
+---
+
+## 数据模型 v2.0 — Growth 维度体系
+**记录日期：2026-07-21 | 来源：Zoocasa 报告分析**
+
+### 核心洞察
+
+Zoocasa 等平台（Zolo、HouseSigma）帮助用户理解城市在发生什么。
+**Lakive 要帮助用户理解这些变化将如何影响自己的未来。**
+
+Growth 不应只是一个统计数字，而应成为与 Housing、Jobs、Income、Community 并列的核心指标维度，可持续更新，并与现有的 HPI Years、RPI 和五级住房压力体系融合，最终回答：
+
+> **"这座城市在成长，但它是否正在变得更适合像我这样的职业和家庭？"**
+
+这也让每一份外部报告（Zoocasa、CMHC、Statistics Canada）都能成为 Lakive 产出原创洞察和更新模型的输入，而不是终点。
+
+### Growth 指标拆解（候选子维度）
+
+| 子维度 | 含义 | 数据来源 |
+|--------|------|---------|
+| Population Growth | 城市人口增速 | Statistics Canada CMA 数据 |
+| Employment Growth | 职位净增量 / 失业率变化 | Job Bank、Labour Force Survey |
+| Income Growth | 中位家庭收入年增速 | Statistics Canada |
+| Housing Supply Growth | 新建住宅开工量 ÷ 人口增量 | CMHC |
+| Business Growth | 新注册企业数 / 企业存活率 | Statistics Canada |
+
+### 与现有模型的融合方向
+
+- 现有模型（v1.0）：静态截面 — 今天这里对我的职业可不可负担？
+- v2.0 目标：加入方向性 — 这里的住房压力在变轻还是变重？
+- 最终形态：截面分 × 成长方向 = 综合城市配适度评分
+
+### 实现时机
+
+**不在当前阶段实现。** 等条件满足后启动：
+1. 现有核心功能闭环完成（沉默期结束）
+2. 多伦多报告发布、城市覆盖扩展至二线城市
+3. 数据管道建立（CMHC API 或年度手动更新机制）
 
 ---
 
