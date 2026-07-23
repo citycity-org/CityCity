@@ -140,16 +140,16 @@ function loadImage(src: string, timeout = 3000): Promise<HTMLImageElement> {
   })
 }
 
-// ── Card generator — Insight Card v3 (social style, 1536×1024) ─────────────────
+// ── Card generator — Insight Card v4 (1536×1024) ─────────────────────────────
 // Layout zones:
 //   0-6      top accent strip
-//   photo    rounded region top-right (860→W, 0→420), licensed city photography
-//   40-160   header: logo + tagline + INSIGHT CARD chip (left), info panel (over photo)
-//   200-400  headline (two-tone) + subheadline
-//   430-806  rankings panel: 4 rows × 90px, slider bars + score badges
-//   832      legend strip
-//   852-948  insight + feature columns panel
-//   ~996     footer: scenario ID · sources | CTA
+//   photo    RIGHT COLUMN full-height (940→W, 0→H) — city photography + info card overlay
+//   40-150   header: logo + tagline + INSIGHT CARD chip (left column)
+//   210-400  headline (two-tone) + subheadline (left column)
+//   430-806  rankings panel: 4 rows × 90px (left column only)
+//   840      legend strip (left column)
+//   860-948  insight panel — one clean sentence, no feature columns
+//   ~990     footer: scenario ID · sources | photo: lakive.com watermark
 async function generateInsightCard(
   shareData: ShareTarget,
   incomeDisplay: IncomeDisplay,
@@ -174,8 +174,8 @@ async function generateInsightCard(
   c.fillStyle = BG
   c.fillRect(0, 0, W, H)
 
-  // ── City photo region (rounded bottom-left corner, top-right of card) ──────
-  const PX = 860, PB = 420, CR = 64
+  // ── City photo region (right column, full height) ──────────────────────────
+  const PX = 940, PB = H, CR = 28
   const photoPath = () => {
     c.beginPath()
     c.moveTo(PX, 0)
@@ -229,7 +229,7 @@ async function generateInsightCard(
   let logoW = 240
   try {
     const img = await loadImage('/lakive-logo-white.png')
-    const LOGO_H = 56
+    const LOGO_H = 52  // 8% smaller than original 56
     logoW = Math.round(img.naturalWidth / img.naturalHeight * LOGO_H)
     c.drawImage(img, P, 44, logoW, LOGO_H)
   } catch {
@@ -259,48 +259,49 @@ async function generateInsightCard(
   c.fillText('INSIGHT CARD', chipX + 20, 78)
   c.letterSpacing = '0'
 
-  // ── Info panel (over photo, top-right) ─────────────────────────────────────
-  const IPX = 1160, IPY = 30, IPW = W - P - IPX + 48, IPH = 130
-  rr(c, IPX, IPY, IPW, IPH, 20)
-  c.fillStyle = 'rgba(15,22,35,0.58)'
+  // ── Info panel (photo column overlay, prominent) ─────────────────────────────
+  const IPX = PX + 28, IPY = 36, IPW = W - P - IPX, IPH = 162
+  rr(c, IPX, IPY, IPW, IPH, 18)
+  c.fillStyle = 'rgba(10,16,28,0.66)'
   c.fill()
-  rr(c, IPX, IPY, IPW, IPH, 20)
-  c.strokeStyle = 'rgba(255,255,255,0.16)'
+  rr(c, IPX, IPY, IPW, IPH, 18)
+  c.strokeStyle = 'rgba(255,255,255,0.13)'
   c.lineWidth   = 1
   c.stroke()
   // icon: circle + shield
   c.beginPath()
-  c.arc(IPX + 44, IPY + 44, 24, 0, Math.PI * 2)
-  c.strokeStyle = 'rgba(20,184,166,0.7)'
+  c.arc(IPX + 48, IPY + 54, 26, 0, Math.PI * 2)
+  c.strokeStyle = 'rgba(20,184,166,0.65)'
   c.lineWidth   = 1.5
   c.stroke()
   c.beginPath()
-  c.moveTo(IPX + 44, IPY + 32)
-  c.lineTo(IPX + 54, IPY + 37)
-  c.lineTo(IPX + 52, IPY + 50)
-  c.quadraticCurveTo(IPX + 44, IPY + 58, IPX + 36, IPY + 50)
-  c.lineTo(IPX + 34, IPY + 37)
+  c.moveTo(IPX + 48, IPY + 40)
+  c.lineTo(IPX + 60, IPY + 46)
+  c.lineTo(IPX + 58, IPY + 60)
+  c.quadraticCurveTo(IPX + 48, IPY + 70, IPX + 38, IPY + 60)
+  c.lineTo(IPX + 36, IPY + 46)
   c.closePath()
   c.strokeStyle = TEAL
+  c.lineWidth   = 1.5
   c.stroke()
   // texts
-  const ITX = IPX + 84
-  c.font      = `700 21px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.95)'
-  c.fillText(occName, ITX, IPY + 34)
+  const ITX = IPX + 92
+  c.font      = `700 22px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.96)'
+  c.fillText(occName, ITX, IPY + 42)
   c.font      = `400 16px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.72)'
-  c.fillText(PROP_SHORT[shareData.housingType] ?? shareData.housingType, ITX, IPY + 60)
+  c.fillStyle = 'rgba(255,255,255,0.68)'
+  c.fillText(PROP_SHORT[shareData.housingType] ?? shareData.housingType, ITX, IPY + 68)
   if (incomeDisplay === 'range' && shareData.incomeValue) {
-    c.fillText('Income: ' + toRange(shareData.incomeValue), ITX, IPY + 84)
+    c.fillText('Income: ' + toRange(shareData.incomeValue), ITX, IPY + 94)
   } else if (incomeDisplay === 'exact' && shareData.incomeValue) {
-    c.fillText('Income: $' + shareData.incomeValue.toLocaleString(), ITX, IPY + 84)
+    c.fillText('Income: $' + shareData.incomeValue.toLocaleString(), ITX, IPY + 94)
   } else {
-    c.fillText('Canada', ITX, IPY + 84)
+    c.fillText('Canada', ITX, IPY + 94)
   }
   c.font      = `400 13px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.55)'
-  c.fillText('Generated ' + monthYear(), ITX, IPY + 108)
+  c.fillStyle = 'rgba(255,255,255,0.40)'
+  c.fillText('Generated ' + monthYear(), ITX, IPY + 128)
 
   // ── Headline (two lines, two-tone: "#1" in teal) ────────────────────────────
   const line1a = `${best.cityName} ranks `
@@ -326,24 +327,25 @@ async function generateInsightCard(
   c.fillStyle = 'rgba(255,255,255,0.60)'
   c.fillText(`${shareData.occupationName} City Fit  ·  ${PROP_LONG[shareData.housingType] ?? shareData.housingType}  ·  2026-H1`, P, hy2 + 52)
 
-  // ── Rankings panel ──────────────────────────────────────────────────────────
+  // ── Rankings panel (left column only) ──────────────────────────────────────
   const RP_Y = 430, ROW_H = 90, RP_H = ROW_H * sorted.length + 16
-  rr(c, P, RP_Y, W - P * 2, RP_H, 24)
+  const RP_W = PX - P - 16   // left-column panel width (940 - 64 - 16 = 860)
+  rr(c, P, RP_Y, RP_W, RP_H, 24)
   c.fillStyle = 'rgba(255,255,255,0.025)'
   c.fill()
-  rr(c, P, RP_Y, W - P * 2, RP_H, 24)
+  rr(c, P, RP_Y, RP_W, RP_H, 24)
   c.strokeStyle = 'rgba(255,255,255,0.08)'
   c.lineWidth   = 1
   c.stroke()
 
   const ROWS_TOP = RP_Y + 8
-  const NAME_X   = P + 108
-  const BAR_X    = 560
-  const BAR_W    = 590
+  const NAME_X   = P + 108   // = 172
+  const BAR_X    = 432        // start earlier (was 560)
+  const BAR_W    = 300        // shorter (was 590)
   const BAR_H    = 8
-  const BADGE_W  = 180
+  const BADGE_W  = 150        // was 180
   const BADGE_H  = 72
-  const BADGE_X  = W - P - 24 - BADGE_W
+  const BADGE_X  = P + RP_W - BADGE_W - 10  // = 764
 
   sorted.forEach((city, i) => {
     const rowTop = ROWS_TOP + i * ROW_H
@@ -354,12 +356,12 @@ async function generateInsightCard(
     // separator
     if (i > 0) {
       c.fillStyle = 'rgba(255,255,255,0.06)'
-      c.fillRect(P + 24, rowTop, W - P * 2 - 48, 1)
+      c.fillRect(P + 24, rowTop, RP_W - 48, 1)
     }
 
     // #1 row highlight
     if (isTop) {
-      rr(c, P + 10, rowTop + 5, W - P * 2 - 20, ROW_H - 10, 16)
+      rr(c, P + 10, rowTop + 5, RP_W - 20, ROW_H - 10, 16)
       c.fillStyle = 'rgba(20,184,166,0.06)'
       c.fill()
     }
@@ -447,12 +449,12 @@ async function generateInsightCard(
     lx += 18 + c.measureText(item.txt).width + 34
   })
 
-  // ── Insight + features panel ────────────────────────────────────────────────
-  const IN_Y = ly + 20, IN_H = 98
-  rr(c, P, IN_Y, W - P * 2, IN_H, 20)
+  // ── Insight panel (left column, text only — no feature columns) ────────────
+  const IN_Y = ly + 20, IN_H = 90
+  rr(c, P, IN_Y, RP_W, IN_H, 20)
   c.fillStyle = 'rgba(255,255,255,0.025)'
   c.fill()
-  rr(c, P, IN_Y, W - P * 2, IN_H, 20)
+  rr(c, P, IN_Y, RP_W, IN_H, 20)
   c.strokeStyle = 'rgba(255,255,255,0.08)'
   c.lineWidth   = 1
   c.stroke()
@@ -469,12 +471,12 @@ async function generateInsightCard(
   c.fillRect(icx - 3,  icy - 6,  6, 18)
   c.fillRect(icx + 6,  icy - 12, 6, 24)
 
-  // insight text (wrapped, up to 3 lines)
+  // insight text — full left-column width, no features
   const insight = buildInsight(sorted, occName, shareData.housingType)
   c.font      = `400 18px ${F}`
   c.fillStyle = 'rgba(255,255,255,0.85)'
-  const inTX = P + 100
-  const maxTW = 660 - inTX + P
+  const inTX  = P + 100
+  const maxTW = RP_W - 116  // wide: ~744px
   const words = insight.split(' ')
   let line = '', lineY = IN_Y + 34
   words.forEach((word, wi) => {
@@ -486,107 +488,24 @@ async function generateInsightCard(
     if (wi === words.length - 1) c.fillText(line, inTX, lineY)
   })
 
-  // vertical divider before features
-  c.fillStyle = 'rgba(255,255,255,0.08)'
-  c.fillRect(P + 700, IN_Y + 18, 1, IN_H - 36)
-
-  // feature columns
-  const FEATURES = [
-    { t1: 'Years to Buy',     t2: 'Lower is better',   icon: 'house'  },
-    { t1: 'Data-driven',      t2: 'Career insights',   icon: 'shield' },
-    { t1: 'For Your Career,', t2: 'Family & Life',     icon: 'people' },
-  ]
-  const FW = (W - P - (P + 730)) / 3
-  FEATURES.forEach((f, i) => {
-    const fx = P + 730 + i * FW
-    const fy = IN_Y + IN_H / 2
-    // icon
-    c.strokeStyle = TEAL
-    c.lineWidth   = 2
-    if (f.icon === 'house') {
-      c.beginPath()
-      c.moveTo(fx,      fy - 2)
-      c.lineTo(fx + 13, fy - 14)
-      c.lineTo(fx + 26, fy - 2)
-      c.moveTo(fx + 4,  fy - 4)
-      c.lineTo(fx + 4,  fy + 12)
-      c.lineTo(fx + 22, fy + 12)
-      c.lineTo(fx + 22, fy - 4)
-      c.stroke()
-    } else if (f.icon === 'shield') {
-      c.beginPath()
-      c.moveTo(fx + 13, fy - 14)
-      c.lineTo(fx + 26, fy - 8)
-      c.lineTo(fx + 23, fy + 6)
-      c.quadraticCurveTo(fx + 13, fy + 15, fx + 3, fy + 6)
-      c.lineTo(fx,      fy - 8)
-      c.closePath()
-      c.stroke()
-    } else {
-      c.beginPath()
-      c.arc(fx + 8,  fy - 7, 5.5, 0, Math.PI * 2)
-      c.stroke()
-      c.beginPath()
-      c.arc(fx + 20, fy - 5, 4.5, 0, Math.PI * 2)
-      c.stroke()
-      c.beginPath()
-      c.moveTo(fx,      fy + 13)
-      c.quadraticCurveTo(fx + 8,  fy + 2, fx + 16, fy + 13)
-      c.moveTo(fx + 14, fy + 12)
-      c.quadraticCurveTo(fx + 20, fy + 4, fx + 26, fy + 12)
-      c.stroke()
-    }
-    // texts
-    c.font      = `600 16px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.90)'
-    c.fillText(f.t1, fx + 40, fy - 3)
-    c.font      = `400 14px ${F}`
-    c.fillStyle = 'rgba(255,255,255,0.60)'
-    c.fillText(f.t2, fx + 40, fy + 18)
-    // divider
-    if (i > 0) {
-      c.fillStyle = 'rgba(255,255,255,0.08)'
-      c.fillRect(fx - 20, IN_Y + 18, 1, IN_H - 36)
-    }
-  })
-
-  // ── Footer ──────────────────────────────────────────────────────────────────
-  const FY = IN_Y + IN_H + 42
-  c.font      = `600 15px ${F}`
+  // ── Footer (left column) ────────────────────────────────────────────────────
+  const FY = IN_Y + IN_H + 44
+  c.font      = `600 14px ${F}`
   c.fillStyle = TEAL
   c.fillText(scenarioId(), P, FY)
   const sidW = c.measureText(scenarioId()).width
-  c.fillStyle = 'rgba(255,255,255,0.20)'
-  c.fillRect(P + sidW + 20, FY - 14, 1, 16)
-  c.font      = `400 15px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.55)'
-  c.fillText('CMHC  ·  Statistics Canada  ·  Job Bank Canada  ·  Provincial Tax Data', P + sidW + 40, FY)
+  c.fillStyle = 'rgba(255,255,255,0.15)'
+  c.fillRect(P + sidW + 16, FY - 12, 1, 14)
+  c.font      = `400 14px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.42)'
+  c.fillText('CMHC · Statistics Canada · Job Bank · Provincial Tax Data', P + sidW + 32, FY)
 
-  // right CTA: "Explore more insights at lakive.com →"
+  // lakive.com watermark on photo (bottom-right corner)
   c.textAlign = 'right'
-  const ARROW_R = 19
-  const arrowCX = W - P - ARROW_R
-  c.font      = `700 20px ${F}`
-  c.fillStyle = TEAL
-  c.fillText('lakive.com', arrowCX - ARROW_R - 16, FY)
-  const domW = c.measureText('lakive.com').width
-  c.font      = `400 17px ${F}`
-  c.fillStyle = 'rgba(255,255,255,0.85)'
-  c.fillText('Explore more insights at ', arrowCX - ARROW_R - 16 - domW - 10, FY)
+  c.font      = `600 17px ${F}`
+  c.fillStyle = 'rgba(255,255,255,0.50)'
+  c.fillText('lakive.com', W - P, H - 38)
   c.textAlign = 'left'
-  c.beginPath()
-  c.arc(arrowCX, FY - 6, ARROW_R, 0, Math.PI * 2)
-  c.fillStyle = TEAL
-  c.fill()
-  c.strokeStyle = BG
-  c.lineWidth   = 2.5
-  c.beginPath()
-  c.moveTo(arrowCX - 7, FY - 6)
-  c.lineTo(arrowCX + 6, FY - 6)
-  c.moveTo(arrowCX + 1, FY - 12)
-  c.lineTo(arrowCX + 7, FY - 6)
-  c.lineTo(arrowCX + 1, FY)
-  c.stroke()
 
   return cv.toDataURL('image/png')
 }
