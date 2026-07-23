@@ -403,14 +403,6 @@ export default function Home() {
       else closePanel()
     }
 
-    function onWheel(e: WheelEvent) {
-      e.preventDefault()
-      const factor = e.deltaY < 0 ? 1.12 : 0.89
-      const newScale = Math.max(minScaleRef.current, Math.min(maxScaleRef.current, projection.scale() * factor))
-      projection.scale(newScale); scaleRef.current = newScale
-      setZoomLevel(Math.round((newScale - minScaleRef.current) / (maxScaleRef.current - minScaleRef.current) * 100))
-    }
-
     const activeTouches = new Map<number, [number, number]>()
     function onTouchStart(e: TouchEvent) {
       for (const t of Array.from(e.changedTouches)) {
@@ -443,7 +435,6 @@ export default function Home() {
     canvas.addEventListener('pointerdown', onPointerDown)
     canvas.addEventListener('pointermove', onPointerMove)
     canvas.addEventListener('pointerup',   onPointerUp)
-    canvas.addEventListener('wheel', onWheel, { passive: false })
     canvas.addEventListener('touchstart', onTouchStart, { passive: false })
     canvas.addEventListener('touchmove',  onTouchMove,  { passive: false })
     canvas.addEventListener('touchend',   onTouchEnd)
@@ -453,7 +444,6 @@ export default function Home() {
       canvas.removeEventListener('pointerdown', onPointerDown)
       canvas.removeEventListener('pointermove', onPointerMove)
       canvas.removeEventListener('pointerup',   onPointerUp)
-      canvas.removeEventListener('wheel', onWheel)
       canvas.removeEventListener('touchstart', onTouchStart)
       canvas.removeEventListener('touchmove',  onTouchMove)
       canvas.removeEventListener('touchend',   onTouchEnd)
