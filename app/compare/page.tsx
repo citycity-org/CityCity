@@ -17,18 +17,12 @@ const PROP_TYPES = [
 
 // ── Scenario-adjusted score ───────────────────────────────────────────────────
 function getAdjScore(base: OccFit, priceMult: number, rentMult: number): number {
+  const hT = (y:number) => y<6?92:y<8?82:y<10?70:y<12?58:y<16?45:y<22?28:y<30?16:8
+  const rT = (r:number) => r<25?90:r<30?82:r<35?72:r<40?60:r<45?48:r<60?30:r<80?16:8
   const adjH = base.hpiYears * priceMult
   const adjR = base.rpi * rentMult
-  let delta = 0
-  if (adjH > 10 && base.hpiYears <= 10) delta -= 5
-  if (adjH > 14 && base.hpiYears <= 14) delta -= 5
-  if (adjR > 38 && base.rpi <= 38)      delta -= 4
-  if (adjR > 45 && base.rpi <= 45)      delta -= 4
-  if (adjH < 6  && base.hpiYears >= 6)  delta += 5
-  if (adjH < 10 && base.hpiYears >= 10) delta += 5
-  if (adjR < 30 && base.rpi >= 30)      delta += 4
-  if (adjR < 38 && base.rpi >= 38)      delta += 4
-  return Math.max(10, Math.min(99, base.score + delta))
+  const housingDelta = (hT(adjH) - hT(base.hpiYears)) * 0.55 + (rT(adjR) - rT(base.rpi)) * 0.45
+  return Math.max(10, Math.min(99, base.score + Math.round(housingDelta * 0.52)))
 }
 
 // ── City data ─────────────────────────────────────────────────────────────────

@@ -96,7 +96,7 @@ function buildInsight(
 
   // Tight cluster — use actual data to explain WHY the top city leads
   if (best.score - worst.score <= 10) {
-    return `${best.cityName} offers the strongest overall fit for ${occName}s, combining a ${best.hpiYears}-year home-price ratio with a ${best.rpi}% gross rent burden.`
+    return `${best.cityName} offers the strongest ${noun} fit for ${occName}s, combining a ${best.hpiYears}-year home-price ratio with a ${best.rpi}% gross rent burden.`
   }
 
   return `${best.cityName} offers the strongest ${noun} affordability scenario for ${occName}s, at ${best.hpiYears} years of income to buy.`
@@ -533,7 +533,7 @@ export default function ShareModal({ open, onClose, shareData }: Props) {
   const best   = sorted[0]
 
   const tweetText = [
-    `${best.cityName} ranks #1 for ${shareData.occupationName}s in housing fit (score: ${best.score}/99).`,
+    `${best.cityName} ranks #1 for ${shareData.occupationName}s in ${PROP_NOUN[shareData.housingType] ?? shareData.housingType} affordability (score: ${best.score}/99).`,
     '',
     sorted.slice(0, 4).map(city =>
       `${city.score >= 80 ? '🟢' : city.score >= 60 ? '🟡' : '🔴'} ${city.cityName}: ${city.score} pts`

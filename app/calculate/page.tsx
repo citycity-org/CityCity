@@ -91,8 +91,8 @@ const rl = (r:number) => r<=25?'L1 Lower Pressure':r<=30?'L2 Manageable':r<=38?'
 
 // ── Score computation ──────────────────────────────────────────────────────────
 function computeScore(hpiYears:number, rpi:number, tai:number, eoi:number, hai:number, eqi:number, tci:number, psi:number): number {
-  const hpiScore = hpiYears<6?92:hpiYears<8?82:hpiYears<10?70:hpiYears<12?58:hpiYears<16?45:30
-  const rpiScore = rpi<25?90:rpi<30?82:rpi<35?72:rpi<40?60:rpi<45?48:35
+  const hpiScore = hpiYears<6?92:hpiYears<8?82:hpiYears<10?70:hpiYears<12?58:hpiYears<16?45:hpiYears<22?28:hpiYears<30?16:8
+  const rpiScore = rpi<25?90:rpi<30?82:rpi<35?72:rpi<40?60:rpi<45?48:rpi<60?30:rpi<80?16:8
   const housingScore = hpiScore * 0.55 + rpiScore * 0.45
   const cityScore    = eoi*0.22 + tai*0.20 + hai*0.20 + eqi*0.14 + tci*0.12 + psi*0.12
   return Math.max(10, Math.min(99, Math.round(housingScore * 0.52 + cityScore * 0.48)))
