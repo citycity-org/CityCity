@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import NavBar from "./NavBar";
 import Footer from "./components/Footer";
@@ -13,6 +13,15 @@ export const metadata: Metadata = {
   verification: {
     google: "4W1tuUk8yHbfrkan5AZ5lY82-YOiPua5NHl3rWU3ha4",
   },
+};
+
+// 显式声明 viewport，并锁定站点为浅色配色，
+// 避免手机系统深色模式改写表单控件/滚动条等 UA 默认样式
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  colorScheme: "light",
 };
 
 export default function RootLayout({

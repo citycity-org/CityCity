@@ -32,11 +32,11 @@ const NAV = [
 
 export default function Footer() {
   return (
-    <footer style={{ background: '#070d1f', borderTop: '1px solid rgba(255,255,255,0.07)', padding: '64px 32px 40px' }}>
+    <footer className="lk-footer" style={{ background: '#070d1f', borderTop: '1px solid rgba(255,255,255,0.07)', padding: '64px 32px 40px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
 
-        {/* Top row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 48, marginBottom: 56 }}>
+        {/* Top row — 网格断点见 globals.css .lk-footer-grid */}
+        <div className="lk-footer-grid">
 
           {/* Brand */}
           <div>

@@ -689,10 +689,32 @@ function ComparePageInner() {
         .drop-item:hover { background:rgba(255,255,255,0.06); }
         .dim-row:hover { background:rgba(255,255,255,0.04) !important; }
         @media (max-width:700px) { .col2 { grid-template-columns:1fr !important; } }
+
+        /* ── 移动端适配 ── */
+        @media (max-width:640px) {
+          .cmp-hero { padding:24px 16px 28px !important; }
+
+          /* 城市选择器改为竖排 */
+          .cmp-selectors  { flex-direction:column !important; align-items:stretch !important; gap:10px !important; }
+          /* 竖排后 flex-basis 会变成"高度"，必须复位，否则卡片下方出现大片空白 */
+          .cmp-selectors > * { flex:0 0 auto !important; }
+          .cmp-vs         { text-align:center; }
+          .cmp-dot        { display:none !important; }
+          .cmp-occ        { flex-shrink:1 !important; }
+          .cmp-occ button { width:100%; justify-content:center; }
+
+          /* Housing Scenario 改为竖排，按钮组等分铺满 */
+          .cmp-housing       { flex-direction:column !important; align-items:stretch !important; gap:10px !important; }
+          .cmp-housing-btns  { margin-left:0 !important; }
+          .cmp-prop-row1     { display:grid !important; grid-template-columns:repeat(3,1fr) !important; }
+          .cmp-prop-row2     { display:grid !important; grid-template-columns:repeat(2,1fr) !important; }
+          .cmp-housing-btns button { padding:8px 4px !important; font-size:12px !important; }
+          .cmp-housing-note  { white-space:normal !important; }
+        }
       `}</style>
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
-      <div style={{ background:'linear-gradient(160deg,#0d1117 0%,#151827 70%,#1a2035 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'32px 32px 40px' }}>
+      <div className="cmp-hero" style={{ background:'linear-gradient(160deg,#0d1117 0%,#151827 70%,#1a2035 100%)', borderBottom:'1px solid rgba(255,255,255,0.06)', padding:'32px 32px 40px' }}>
         <div style={{ maxWidth:1100, margin:'0 auto' }}>
           <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:28 }}>
             <a href="/" style={{ color:'rgba(255,255,255,0.50)', fontSize:12, textDecoration:'none' }}>Home</a>
@@ -701,7 +723,7 @@ function ComparePageInner() {
           </div>
 
           {/* ── Selectors row ── */}
-          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:20, flexWrap:'wrap' }}>
+          <div className="cmp-selectors" style={{ display:'flex', alignItems:'center', gap:12, marginBottom:20, flexWrap:'wrap' }}>
 
             {/* City A */}
             <div style={{ position:'relative', flex:'1 1 160px' }}>
@@ -735,7 +757,7 @@ function ComparePageInner() {
               )}
             </div>
 
-            <div style={{ color:'rgba(255,255,255,0.50)', fontSize:18, fontWeight:300, flexShrink:0 }}>vs</div>
+            <div className="cmp-vs" style={{ color:'rgba(255,255,255,0.50)', fontSize:18, fontWeight:300, flexShrink:0 }}>vs</div>
 
             {/* City B */}
             <div style={{ position:'relative', flex:'1 1 160px' }}>
@@ -769,10 +791,10 @@ function ComparePageInner() {
               )}
             </div>
 
-            <div style={{ color:'rgba(255,255,255,0.38)', fontSize:13, flexShrink:0 }}>·</div>
+            <div className="cmp-dot" style={{ color:'rgba(255,255,255,0.38)', fontSize:13, flexShrink:0 }}>·</div>
 
             {/* Occupation */}
-            <div style={{ position:'relative', flexShrink:0 }}>
+            <div className="cmp-occ" style={{ position:'relative', flexShrink:0 }}>
               <button onClick={() => { setDropO(!dropO); setDropA(false); setDropB(false) }}
                 style={{ padding:'12px 16px', borderRadius:14, background:'rgba(255,255,255,0.05)', border:`1px solid ${occ ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.28)'}`, cursor:'pointer', display:'flex', alignItems:'center', gap:8, whiteSpace:'nowrap' }}>
                 <span style={{ color:'rgba(255,255,255,0.35)', fontSize:11 }}>Occupation</span>
@@ -795,13 +817,13 @@ function ComparePageInner() {
           </div>
 
           {/* ── Housing type toggle ── */}
-          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:28, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:14 }}>
+          <div className="cmp-housing" style={{ display:'flex', alignItems:'center', gap:12, marginBottom:28, padding:'12px 16px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:14 }}>
             <div>
               <div style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.06em' }}>Housing Scenario</div>
               <div style={{ color:'rgba(255,255,255,0.42)', fontSize:11, marginTop:2 }}>Affects fit score, rent & housing pressure</div>
             </div>
-            <div style={{ display:'flex', flexDirection:'column', gap:3, marginLeft:'auto' }}>
-              <div style={{ display:'flex', gap:3, background:'rgba(255,255,255,0.05)', borderRadius:10, padding:3 }}>
+            <div className="cmp-housing-btns" style={{ display:'flex', flexDirection:'column', gap:3, marginLeft:'auto' }}>
+              <div className="cmp-prop-row1" style={{ display:'flex', gap:3, background:'rgba(255,255,255,0.05)', borderRadius:10, padding:3 }}>
                 {PROP_TYPES.slice(0,3).map(p => (
                   <button key={p.id} onClick={() => setPropType(p.id)}
                     style={{ padding:'6px 14px', borderRadius:7, fontSize:13, fontWeight:p.id===propType?700:500, cursor:'pointer', border:'none', background:p.id===propType?'rgba(255,255,255,0.11)':'transparent', color:p.id===propType?'white':'rgba(255,255,255,0.32)', transition:'all 0.15s', whiteSpace:'nowrap' }}>
@@ -809,7 +831,7 @@ function ComparePageInner() {
                   </button>
                 ))}
               </div>
-              <div style={{ display:'flex', gap:3 }}>
+              <div className="cmp-prop-row2" style={{ display:'flex', gap:3 }}>
                 {PROP_TYPES.slice(3).map(p => (
                   <button key={p.id} onClick={() => setPropType(p.id)}
                     style={{ flex:1, padding:'5px 10px', borderRadius:7, fontSize:12, fontWeight:p.id===propType?700:500, cursor:'pointer', border:`1px solid ${p.id===propType?'rgba(255,255,255,0.20)':'rgba(255,255,255,0.08)'}`, background:p.id===propType?'rgba(255,255,255,0.10)':'rgba(255,255,255,0.02)', color:p.id===propType?'white':'rgba(255,255,255,0.32)', transition:'all 0.15s', whiteSpace:'nowrap' }}>
@@ -818,7 +840,7 @@ function ComparePageInner() {
                 ))}
               </div>
             </div>
-            <div style={{ color:'rgba(255,255,255,0.48)', fontSize:11, whiteSpace:'nowrap' }}>
+            <div className="cmp-housing-note" style={{ color:'rgba(255,255,255,0.48)', fontSize:11, whiteSpace:'nowrap' }}>
               Current: {pt.label} · {
                 propType==='1br'?'Solo / Couple':
                 propType==='2br'?'Small Family':
