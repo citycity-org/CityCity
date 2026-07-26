@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { MarketPulse } from '@/components/MarketPulse'
 
 declare global {
   interface Window { d3: any; topojson: any }
@@ -758,7 +759,7 @@ export default function Home() {
             <div className="w-1 h-6 rounded-full" style={{ background: '#FDE047' }} />
             <h2 className="text-xl font-bold text-white">Popular Comparisons</h2>
           </div>
-          <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.50)', paddingLeft: '16px' }}>
+          <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.30)', paddingLeft: '16px' }}>
             Your career shapes your city experience — measured in years to own a home
           </p>
 
@@ -821,6 +822,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── SECTION 4: Market Pulse (compact) ────────────────────────────── */}
+      <MarketPulse compact />
 
     </div>
   )
