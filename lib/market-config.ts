@@ -93,7 +93,7 @@ export const US_CONFIG: CountryConfig = {
   housingNote: 'Sales activity subdued vs 2021–2022 peak. Inventory gradually improving.',
   lastReviewed: '2026-07-25',
   updatedAt: '2026-07-25 10:30 PDT',
-  sources: ['Federal Reserve', 'U.S. Bureau of Labor Statistics'],
+  sources: ['Federal Reserve', 'U.S. Bureau of Labor Statistics', 'FHFA', 'Freddie Mac'],
 }
 
 // ── Lakive analysis templates ────────────────────────────────────────────────

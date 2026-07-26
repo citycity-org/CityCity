@@ -56,14 +56,26 @@ const CITIES: City[] = [
   { id: 'saopaulo',  name: 'São Paulo',   nameEn: 'São Paulo',   lat: -23.55, lng: -46.63,  active: false },
 ]
 
-// ── Static data: City Insights ───────────────────────────────────────────────
-const INSIGHTS = [
+// ── Bi-weekly rotation helper ─────────────────────────────────────────────────
+// Changes every 14 days automatically. No manual work needed.
+// To force a specific set: override BIWEEK_OFFSET (0 = set A, 1 = set B)
+const BIWEEK_MS = 14 * 24 * 60 * 60 * 1000
+function getBiweeklySet<T>(pool: T[], size: number): T[] {
+  const biweek = Math.floor(Date.now() / BIWEEK_MS)
+  const numSets = Math.floor(pool.length / size)
+  const setIndex = biweek % numSets
+  return pool.slice(setIndex * size, setIndex * size + size)
+}
+
+// ── City Insights pool (6 items → 2 sets of 3, rotates every 2 weeks) ────────
+const INSIGHTS_POOL = [
+  // ── Set A ────────────────────────────────────────────────────────────────────
   {
     id: 1,
     tag: 'Housing',
     tagColor: '#EF4444',
     stat: '3.3x',
-    title: 'Electricians buy homes 3x faster in Calgary than Vancouver',
+    title: 'Electricians buy homes 3.3x faster in Calgary than Vancouver',
     detail: 'Calgary: 3.9 income years vs Vancouver: 13.0 income years (2BR condo)',
     href: '/compare?cities=calgary,vancouver&occupation=electrician',
   },
@@ -71,24 +83,53 @@ const INSIGHTS = [
     id: 2,
     tag: 'Tax',
     tagColor: '#10B981',
-    stat: '$22,000',
+    stat: '$22K',
     title: 'Engineers save $22K/yr in taxes by moving to Alberta',
     detail: 'At $120K salary, Alberta has no PST and only 5% GST — the lowest tax burden in Canada',
     href: '/city/calgary',
   },
   {
     id: 3,
-    tag: 'Income',
+    tag: 'Housing',
     tagColor: '#F59E0B',
     stat: '#2',
     title: 'Toronto software engineers face the 2nd highest housing pressure in Canada',
     detail: 'Highest salaries nationally, but price-to-income ratio second only to Vancouver',
     href: '/city/toronto',
   },
+  // ── Set B ────────────────────────────────────────────────────────────────────
+  {
+    id: 4,
+    tag: 'Housing',
+    tagColor: '#EF4444',
+    stat: '2.8x',
+    title: 'Nurses reach homeownership 2.8x faster in Calgary than Vancouver',
+    detail: 'Calgary: 4.5 income years vs Vancouver: 12.8 income years (2BR condo)',
+    href: '/compare?cities=calgary,vancouver&occupation=nurse',
+  },
+  {
+    id: 5,
+    tag: 'Affordability',
+    tagColor: '#10B981',
+    stat: '2×',
+    title: 'Ottawa teachers achieve homeownership twice as fast as Vancouver teachers',
+    detail: 'Ottawa: 7.0 income years vs Vancouver: 14.0 income years — same profession, very different outcomes',
+    href: '/compare?cities=ottawa,vancouver&occupation=teacher',
+  },
+  {
+    id: 6,
+    tag: 'Value',
+    tagColor: '#8B5CF6',
+    stat: '5.2 yrs',
+    title: 'Montréal offers tech workers Canada\'s best salary-to-housing balance',
+    detail: 'Software engineers reach homeownership in 5.2 income years — lower than Toronto (9.2) and Vancouver (9.5)',
+    href: '/city/montreal',
+  },
 ]
 
-// ── Static data: Popular Comparisons ────────────────────────────────────────
-const HOT_COMPARISONS = [
+// ── Popular Comparisons pool (6 items → 2 sets of 3, rotates every 2 weeks) ──
+const HOT_COMPARISONS_POOL = [
+  // ── Set A ────────────────────────────────────────────────────────────────────
   {
     occupation: 'Electrician',
     cityA: { name: 'Vancouver', id: 'vancouver', years: 13.0, color: '#EF4444' },
@@ -104,7 +145,27 @@ const HOT_COMPARISONS = [
     cityA: { name: 'Vancouver', id: 'vancouver', years: 9.5, color: '#F59E0B' },
     cityB: { name: 'Calgary',   id: 'calgary',   years: 5.2, color: '#10B981' },
   },
+  // ── Set B ────────────────────────────────────────────────────────────────────
+  {
+    occupation: 'Secondary School Teacher',
+    cityA: { name: 'Vancouver', id: 'vancouver', years: 14.0, color: '#EF4444' },
+    cityB: { name: 'Calgary',   id: 'calgary',   years: 5.8,  color: '#10B981' },
+  },
+  {
+    occupation: 'Pharmacist',
+    cityA: { name: 'Toronto',  id: 'toronto',  years: 9.4, color: '#F59E0B' },
+    cityB: { name: 'Montréal', id: 'montreal', years: 5.5, color: '#10B981' },
+  },
+  {
+    occupation: 'Accountant',
+    cityA: { name: 'Toronto', id: 'toronto', years: 13.8, color: '#EF4444' },
+    cityB: { name: 'Ottawa',  id: 'ottawa',  years: 7.8,  color: '#F59E0B' },
+  },
 ]
+
+// Active sets (auto-rotated every 2 weeks)
+const INSIGHTS      = getBiweeklySet(INSIGHTS_POOL, 3)
+const HOT_COMPARISONS = getBiweeklySet(HOT_COMPARISONS_POOL, 3)
 
 // ── Occupations for hero selector ────────────────────────────────────────────
 const OCCUPATIONS = [
