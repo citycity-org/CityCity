@@ -743,12 +743,16 @@ function ComparePageInner() {
                 <div className="drop-menu">
                   <div className="drop-menu-inner">
                     {Object.entries(CITY_BASE).filter(([k])=>k!==slugB).map(([k,c]) => {
-                      const s = getAdjScore(FIT_MATRIX[k]?.[occ] ?? {score:50,hpiYears:10,rpi:40,eoi:'Mid'}, pt.priceMult, pt.rentMult)
+                      const fit = occ ? FIT_MATRIX[k]?.[occ] : undefined
+                      const s   = fit ? getAdjScore(fit, pt.priceMult, pt.rentMult) : null
                       return (
                         <button key={k} className="drop-item" onClick={() => { setSlugA(k); closeDrops() }}
                           style={{ width:'100%', padding:'11px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', background:k===slugA?'rgba(79,142,247,0.08)':'transparent', border:'none' }}>
                           <span style={{ color:'rgba(255,255,255,0.8)', fontSize:14, fontWeight:k===slugA?700:400 }}>{c.name}</span>
-                          <span style={{ color:sc(s), fontSize:13, fontWeight:700, fontFamily:'monospace' }}>{s}</span>
+                          {s !== null
+                            ? <span style={{ color:sc(s), fontSize:13, fontWeight:700, fontFamily:'monospace' }}>{s}</span>
+                            : <span style={{ color:'rgba(255,255,255,0.20)', fontSize:13, fontFamily:'monospace' }}>--</span>
+                          }
                         </button>
                       )
                     })}
@@ -777,12 +781,16 @@ function ComparePageInner() {
                 <div className="drop-menu">
                   <div className="drop-menu-inner">
                     {Object.entries(CITY_BASE).filter(([k])=>k!==slugA).map(([k,c]) => {
-                      const s = getAdjScore(FIT_MATRIX[k]?.[occ] ?? {score:50,hpiYears:10,rpi:40,eoi:'Mid'}, pt.priceMult, pt.rentMult)
+                      const fit = occ ? FIT_MATRIX[k]?.[occ] : undefined
+                      const s   = fit ? getAdjScore(fit, pt.priceMult, pt.rentMult) : null
                       return (
                         <button key={k} className="drop-item" onClick={() => { setSlugB(k); closeDrops() }}
                           style={{ width:'100%', padding:'11px 16px', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', background:k===slugB?'rgba(20,184,166,0.08)':'transparent', border:'none' }}>
                           <span style={{ color:'rgba(255,255,255,0.8)', fontSize:14, fontWeight:k===slugB?700:400 }}>{c.name}</span>
-                          <span style={{ color:sc(s), fontSize:13, fontWeight:700, fontFamily:'monospace' }}>{s}</span>
+                          {s !== null
+                            ? <span style={{ color:sc(s), fontSize:13, fontWeight:700, fontFamily:'monospace' }}>{s}</span>
+                            : <span style={{ color:'rgba(255,255,255,0.20)', fontSize:13, fontFamily:'monospace' }}>--</span>
+                          }
                         </button>
                       )
                     })}
