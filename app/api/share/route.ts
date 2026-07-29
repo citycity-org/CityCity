@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createHash }                from 'crypto'
 import { nanoid }                    from 'nanoid'
 import { createServerClient }        from '@/lib/supabase-server'
+import { rateLimit, getClientIp }    from '@/lib/rate-limit'
 import type { CreateSharePayload, SharedInsight, SharedCityResult } from '@/lib/types/share'
 
 const CALC_VERSION = '1.0'
@@ -77,6 +78,23 @@ function detectCountryScope(cityResults: SharedCityResult[]) {
 // ── POST /api/share ────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 10 shares per IP per minute
+  const ip = getClientIp(req)
+  const rl = rateLimit(ip, 'share', { limit: 10, window: 60 })
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After':      String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+          'X-RateLimit-Limit': '10',
+          'X-RateLimit-Remaining': '0',
+        },
+      },
+    )
+  }
+
   let payload: CreateSharePayload
 
   try {

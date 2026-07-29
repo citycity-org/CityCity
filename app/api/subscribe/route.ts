@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit, getClientIp }   from '@/lib/rate-limit'
 
 const CITY_NAMES_EN: Record<string, string> = {
   vancouver: 'Vancouver', toronto: 'Toronto', calgary: 'Calgary',
@@ -40,6 +41,23 @@ const PT_NAMES_ZH: Record<string, string> = {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 subscribe attempts per IP per 10 minutes
+  const ip = getClientIp(req)
+  const rl = rateLimit(ip, 'subscribe', { limit: 5, window: 600 })
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After':           String(Math.ceil((rl.resetAt - Date.now()) / 1000)),
+          'X-RateLimit-Limit':     '5',
+          'X-RateLimit-Remaining': '0',
+        },
+      },
+    )
+  }
+
   const { email, city, occ, propType, frequency, lang = 'en' } = await req.json()
 
   if (!email || !city || !frequency) {
