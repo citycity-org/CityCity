@@ -50,18 +50,16 @@ const TOPICS = [
   {
     icon: '💰', label: 'Rent vs Own',
     desc: 'When does renting make more sense than buying? A city-by-city breakdown.',
-    links: [],
-    available: false,
+    links: [
+      { label: 'Software Engineer in Vancouver', href: '/guide/rent-vs-own' },
+      { label: 'Nurse: Calgary vs Toronto',      href: '/guide/rent-vs-own' },
+      { label: 'Electrician breakeven analysis', href: '/guide/rent-vs-own' },
+    ],
+    available: true,
   },
   {
     icon: '🎓', label: 'Education & Licensing',
     desc: 'Foreign credentials, bridging programs, and what it takes to practice your profession in Canada.',
-    links: [],
-    available: false,
-  },
-  {
-    icon: '🌏', label: 'Newcomer Guide',
-    desc: 'Landing in Canada as a skilled worker — what to expect in each city.',
     links: [],
     available: false,
   },
