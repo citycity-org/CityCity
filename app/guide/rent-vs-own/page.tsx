@@ -5,13 +5,14 @@ import { LakiveLogo } from '../../components/LakiveLogo'
 import { OCCUPATIONS, CITIES } from '../_data'
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-const MORTGAGE_RATE  = 0.045   // 4.5% annual fixed
-const AMORTIZATION   = 25      // years
-const DOWN_PCT       = 0.20    // 20% down payment
-const HOME_APPR      = 0.03    // 3% annual home appreciation
-const RENT_INCREASE  = 0.03    // 3% annual rent increase
-const INV_RETURN     = 0.06    // 6% annual investment return (down payment alternative)
-const RENTER_INS     = 20      // $/month renters insurance
+const MORTGAGE_RATE     = 0.045   // 4.5% annual fixed
+const AMORTIZATION      = 25      // years
+const DOWN_PCT          = 0.20    // 20% down payment
+const HOME_APPR         = 0.035   // 3.5% annual home appreciation (Canadian long-run avg)
+const RENT_INCREASE     = 0.03    // 3% annual rent increase
+const INV_RETURN        = 0.055   // 5.5% annual investment return (balanced portfolio)
+const RENTER_INS        = 20      // $/month renters insurance
+const TRANSACTION_COST  = 0.025   // 2.5% of home price (land transfer tax + legal + inspection)
 
 // Municipal property tax rates (annual % of assessed home value)
 const PROP_TAX: Record<string, number> = {
@@ -76,10 +77,13 @@ function computeRentOwn(occSlug: string, citySlug: string): RentOwnResult | null
   const monthlyRent        = city.avgRent2BR + RENTER_INS
 
   // ── Year-by-year net worth simulation ─────────────────────────────────────
+  // Buying incurs upfront transaction costs (land transfer tax, legal, inspection)
+  const txCost = homePrice * TRANSACTION_COST  // permanent owner disadvantage at start
+
   let homeValue          = homePrice
   let mortgageBalance    = mortgage
   let downPaymentAccount = downPayment   // renter invests down payment
-  let savingsAccount     = 0             // renter invests monthly savings
+  let savingsAccount     = 0             // renter invests monthly savings (or pays extra rent)
   let currentRent        = monthlyRent
   let breakevenYears: number | null = null
   const yearlySnapshots: { year: number; ownerNW: number; renterNW: number }[] = []
@@ -90,11 +94,13 @@ function computeRentOwn(occSlug: string, citySlug: string): RentOwnResult | null
     const annualInterest  = mortgageBalance * MORTGAGE_RATE
     const annualPrincipal = Math.min(mortgageBalance, monthlyMortgage * 12 - annualInterest)
     mortgageBalance = Math.max(0, mortgageBalance - annualPrincipal)
-    const ownerNW = homeValue - mortgageBalance
+    // Deduct transaction costs from owner's effective equity (permanent sunk cost)
+    const ownerNW = homeValue - mortgageBalance - txCost
 
-    // Renter: down payment grows, monthly savings invested
+    // Renter: down payment grows; positive gap = renter saves the difference,
+    // negative gap (when rent exceeds ownership cost) = renter pays the extra
     downPaymentAccount *= (1 + INV_RETURN)
-    const yearlyGap = Math.max(0, (monthlyOwning - currentRent) * 12)
+    const yearlyGap = (monthlyOwning - currentRent) * 12   // can be negative
     savingsAccount  = (savingsAccount + yearlyGap) * (1 + INV_RETURN)
     const renterNW  = downPaymentAccount + savingsAccount
 
@@ -343,7 +349,7 @@ export default function RentVsOwnPage() {
               </div>
 
               <div style={{ marginTop: 12, fontSize: 11, color: 'rgba(255,255,255,0.28)' }}>
-                Brighter bar = higher net worth that year. Assumptions: 3% home appreciation, 3% annual rent increase, 6% investment return.
+                Brighter bar = higher net worth that year. Assumptions: 3.5% home appreciation, 3% annual rent increase, 5.5% investment return, 2.5% transaction costs at purchase.
               </div>
             </div>
 
@@ -435,10 +441,11 @@ export default function RentVsOwnPage() {
               { label: 'Mortgage rate',      value: '4.5% fixed' },
               { label: 'Amortization',        value: '25 years' },
               { label: 'Down payment',        value: '20%' },
-              { label: 'Home appreciation',   value: '3%/yr' },
+              { label: 'Home appreciation',   value: '3.5%/yr' },
               { label: 'Annual rent increase', value: '3%/yr' },
-              { label: 'Investment return',   value: '6%/yr' },
+              { label: 'Investment return',   value: '5.5%/yr' },
               { label: 'Maintenance',         value: '1%/yr of home value' },
+              { label: 'Transaction costs',   value: '2.5% of home price' },
               { label: 'Property',            value: '2-bedroom condo/home' },
             ].map(a => (
               <div key={a.label} style={{ minWidth: 160 }}>
@@ -448,7 +455,7 @@ export default function RentVsOwnPage() {
             ))}
           </div>
           <div style={{ marginTop: 12, fontSize: 11, color: 'rgba(255,255,255,0.22)', lineHeight: 1.6 }}>
-            Home prices are based on median benchmark prices for each city (H1 2026). This model is a simplified financial comparison and does not account for individual tax situations, closing costs, condo fees, or market timing. It is for educational purposes only and not financial advice.
+            Home prices are based on median benchmark prices for each city (H1 2026). Transaction costs include land transfer tax, legal fees, and inspection (~2.5% of purchase price). This model is a simplified financial comparison and does not account for individual tax situations, condo fees, or market timing. It is for educational purposes only and not financial advice.
           </div>
         </div>
 
