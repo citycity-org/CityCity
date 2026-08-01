@@ -59,9 +59,13 @@ const TOPICS = [
   },
   {
     icon: '🎓', label: 'Education & Licensing',
-    desc: 'Foreign credentials, bridging programs, and what it takes to practice your profession in Canada.',
-    links: [],
-    available: false,
+    desc: 'Official regulatory bodies by occupation and province. Where to go to get licensed in Canada.',
+    links: [
+      { label: 'Healthcare licensing bodies', href: '/guide/education-licensing' },
+      { label: 'Trades & Red Seal program',   href: '/guide/education-licensing' },
+      { label: 'Foreign credential (ECA)',     href: '/guide/education-licensing' },
+    ],
+    available: true,
   },
 ]
 

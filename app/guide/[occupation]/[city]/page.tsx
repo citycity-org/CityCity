@@ -243,7 +243,7 @@ export default async function GuidePage(
         {/* Key stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
           {[
-            { label: 'Years to Own', value: formatYears(hpi), sub: '2BR condo', color: hpiLbl.color },
+            { label: 'Years to Own', value: formatYears(hpi), sub: 'Home price ÷ gross salary', color: hpiLbl.color },
             { label: 'Rent Burden',  value: `${rpi}%`,        sub: 'of gross income', color: rpiLbl.color },
             { label: 'Avg Salary',   value: salaryDisplay, sub: `annual gross · ${currency}`, color: 'rgba(255,255,255,0.55)' },
             { label: 'Avg Rent 2BR', value: `$${(cty.avgRent2BR).toLocaleString()}`, sub: `per month · ${currency}`, color: 'rgba(255,255,255,0.55)' },
@@ -302,7 +302,7 @@ export default async function GuidePage(
               </tbody>
             </table>
             <div className="px-4 py-2 text-[11px]" style={{ color: 'rgba(255,255,255,0.20)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-              Years to own a 2BR home · Rent burden = annual rent ÷ gross salary · Sources: {isUS ? 'Zillow, BLS, Indeed US' : 'CREA, CMHC, StatCan, Indeed CA'} (2025–2026)
+              Years to Own = benchmark home price ÷ gross annual salary (price-to-income ratio; not a literal savings timeline) · Rent burden = annual rent ÷ gross salary · Sources: {isUS ? 'Zillow, BLS, Indeed US' : 'CREA, CMHC, StatCan, Indeed CA'} (2025–2026)
             </div>
           </div>
         </section>

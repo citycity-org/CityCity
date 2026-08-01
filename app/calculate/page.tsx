@@ -545,10 +545,10 @@ export default function CalculatePage() {
               { label:'City Fit Score',    value:String(results.score),                         color:sc(results.score),          sub:results.score>=80?'Lower Pressure':results.score>=70?'Manageable':results.score>=55?'Under Pressure':results.score>=40?'Difficult':'Severe' },
               { label:'Rent / Income',     value:`${results.rpi}%`,                             color:rc(results.rpi),            sub:rl(results.rpi) },
               { label:'Monthly Disposable',value:`$${results.monthlyRentDisp.toLocaleString()}`,color:results.monthlyRentDisp>1200?'#14B8A6':results.monthlyRentDisp>600?'#F59E0B':'#EF4444', sub:`After-tax $${results.monthlyNet.toLocaleString()} − rent` },
-              { label:'Years to Buy',      value:`${results.hpiYears} yrs income`,              color:hc(results.hpiYears),       sub:hl(results.hpiYears)+' · Reference only' },
+              { label:'Years to Own',      value:`${results.hpiYears} yrs income`,              color:hc(results.hpiYears),       sub:'Home price ÷ gross salary · Reference only' },
             ] : [
               { label:'City Fit Score',    value:String(results.score),                         color:sc(results.score),          sub:results.score>=80?'Lower Pressure':results.score>=70?'Manageable':results.score>=55?'Under Pressure':results.score>=40?'Difficult':'Severe' },
-              { label:'Years to Buy',      value:`${results.hpiYears} yrs income`,              color:hc(results.hpiYears),       sub:hl(results.hpiYears) },
+              { label:'Years to Own',      value:`${results.hpiYears} yrs income`,              color:hc(results.hpiYears),       sub:'Home price ÷ gross salary' },
               { label:'Est. Mortgage',     value:`$${results.monthlyMortgage.toLocaleString()}`, color:results.monthlyBuyDisp>0?'#F59E0B':'#EF4444', sub:`5.5% · 25 yr · 20% down` },
               { label:'Down Payment Savings', value:`${results.downYears} yrs`,                 color:results.downYears<6?'#14B8A6':results.downYears<10?'#F59E0B':'#E86C2F', sub:'At 30% savings rate' },
             ]).map(card => (
