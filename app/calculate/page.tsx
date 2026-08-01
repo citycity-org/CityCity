@@ -642,6 +642,36 @@ export default function CalculatePage() {
             </a>
           </div>
 
+          {/* ── Explore more ─────────────────────────────────────────────────── */}
+          <div style={{ display:'flex', gap:8, marginBottom:20, flexWrap:'wrap' }}>
+            <a href="/guide/rent-vs-own"
+              style={{ display:'flex', alignItems:'center', gap:6, padding:'10px 14px', borderRadius:10, background:'rgba(20,184,166,0.07)', border:'1px solid rgba(20,184,166,0.20)', textDecoration:'none', flex:'1 1 auto' }}>
+              <span style={{ fontSize:15 }}>🏠</span>
+              <div>
+                <div style={{ color:'#14B8A6', fontSize:12, fontWeight:700 }}>Rent vs Own</div>
+                <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11 }}>Breakeven by city & occupation →</div>
+              </div>
+            </a>
+            {occId && (
+              <a href={`/guide/${occId}/${cityId}`}
+                style={{ display:'flex', alignItems:'center', gap:6, padding:'10px 14px', borderRadius:10, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', textDecoration:'none', flex:'1 1 auto' }}>
+                <span style={{ fontSize:15 }}>📊</span>
+                <div>
+                  <div style={{ color:'rgba(255,255,255,0.70)', fontSize:12, fontWeight:700 }}>Full City Guide</div>
+                  <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11 }}>{occName} in {cityName} →</div>
+                </div>
+              </a>
+            )}
+            <a href="/guide/education-licensing"
+              style={{ display:'flex', alignItems:'center', gap:6, padding:'10px 14px', borderRadius:10, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', textDecoration:'none', flex:'1 1 auto' }}>
+              <span style={{ fontSize:15 }}>🎓</span>
+              <div>
+                <div style={{ color:'rgba(255,255,255,0.70)', fontSize:12, fontWeight:700 }}>Licensing Index</div>
+                <div style={{ color:'rgba(255,255,255,0.35)', fontSize:11 }}>Regulatory bodies by province →</div>
+              </div>
+            </a>
+          </div>
+
           {/* ── Same income, different city ──────────────────────────────────── */}
           <div style={{ marginBottom:20 }}>
             <div style={{ marginBottom:14 }}>
