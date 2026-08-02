@@ -393,7 +393,13 @@ export default function CanadaCitiesReport2026() {
               <strong>The affordability–opportunity gap is occupation-specific and widening.</strong> Calgary and Ottawa occupy the top-left sweet spot — strong fit, accessible housing. Toronto and Vancouver cluster bottom-right: exceptional opportunity depth, but a price most workers cannot sustain. Montréal breaks the pattern: affordable like Calgary, but with structurally lower employment breadth.
             </p>
           </div>
-          <div style={{marginTop:12,display:'flex',justifyContent:'flex-end'}}>
+          <div style={{marginTop:12,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
+            <a href="/reports/pdf/Lakive_Canada_Cities_on_the_Rise_2026.pdf" download
+              style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:13,fontWeight:700,
+                color:'#374151',textDecoration:'none',background:'#f3f4f6',
+                border:'1px solid #e5e7eb',borderRadius:8,padding:'6px 14px'}}>
+              ↓ Download PDF
+            </a>
             <Link href="/ranking" style={{fontSize:13,fontWeight:700,color:'#4F8EF7',textDecoration:'none'}}>
               See full occupation ranking across all cities →
             </Link>

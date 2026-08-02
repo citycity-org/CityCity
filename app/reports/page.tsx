@@ -150,6 +150,9 @@ export default function ReportsPage() {
                   <Link href="/reports/canada-cities-on-the-rise-2026" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 22px', borderRadius: 12, background: 'linear-gradient(135deg,#EF4444,#E86C2F)', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
                     Read report →
                   </Link>
+                  <a href="/reports/pdf/Lakive_Canada_Cities_on_the_Rise_2026.pdf" download style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 12, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                    ↓ PDF
+                  </a>
                 </div>
               </div>
             </div>
