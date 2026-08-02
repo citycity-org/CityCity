@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -392,6 +393,11 @@ export default function CanadaCitiesReport2026() {
               <strong>The affordability–opportunity gap is occupation-specific and widening.</strong> Calgary and Ottawa occupy the top-left sweet spot — strong fit, accessible housing. Toronto and Vancouver cluster bottom-right: exceptional opportunity depth, but a price most workers cannot sustain. Montréal breaks the pattern: affordable like Calgary, but with structurally lower employment breadth.
             </p>
           </div>
+          <div style={{marginTop:12,display:'flex',justifyContent:'flex-end'}}>
+            <Link href="/ranking" style={{fontSize:13,fontWeight:700,color:'#4F8EF7',textDecoration:'none'}}>
+              See full occupation ranking across all cities →
+            </Link>
+          </div>
         </div>
 
         {/* LAKIVE INSIGHTS */}
@@ -463,7 +469,16 @@ export default function CanadaCitiesReport2026() {
               </table>
             </div>
           </div>
-          <p style={{fontSize:11.5,color:'#9ca3af',marginTop:8}}>
+          <div style={{marginTop:14,display:'flex',gap:10,alignItems:'center',flexWrap:'wrap'}}>
+            <span style={{fontSize:12,color:'#6b7280'}}>Your occupation not listed?</span>
+            <Link href="/ranking" style={{fontSize:13,fontWeight:700,color:'#4F8EF7',textDecoration:'none',background:'#eff6ff',padding:'5px 14px',borderRadius:20}}>
+              Browse full occupation ranking →
+            </Link>
+            <Link href="/calculate" style={{fontSize:13,fontWeight:700,color:'#059669',textDecoration:'none',background:'#ecfdf5',padding:'5px 14px',borderRadius:20}}>
+              Calculate my personal city fit →
+            </Link>
+          </div>
+          <p style={{fontSize:11.5,color:'#9ca3af',marginTop:10}}>
             High = strong demand, multiple employers competing. Mid = steady demand, moderate competition. Low = oversupply or structural barriers.
           </p>
         </div>
@@ -547,6 +562,32 @@ export default function CanadaCitiesReport2026() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        {/* EXPLORE CTA */}
+        <div style={{margin:'44px 0',background:'linear-gradient(135deg,#f8faff,#f0fdf4)',border:'1px solid #e5e7eb',borderRadius:16,padding:'32px 28px'}}>
+          <div style={{textAlign:'center',marginBottom:24}}>
+            <h2 style={{fontSize:20,fontWeight:800,color:'#111827',margin:'0 0 6px'}}>Explore the Data Yourself</h2>
+            <p style={{fontSize:14,color:'#6b7280',margin:0}}>The report tells the story. The tools let you run the numbers for your own situation.</p>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:12}}>
+            {[
+              {href:'/calculate',emoji:'🧮',label:'Calculate My City Fit',sub:'Enter your occupation, income & city',color:'#4F8EF7',bg:'#eff6ff',border:'#bfdbfe'},
+              {href:'/compare',emoji:'⚖️',label:'Compare Two Cities',sub:'Side-by-side across all metrics',color:'#059669',bg:'#ecfdf5',border:'#6ee7b7'},
+              {href:'/ranking',emoji:'🏆',label:'Full Occupation Ranking',sub:'All 20 occupations across 5 cities',color:'#d97706',bg:'#fffbeb',border:'#fde68a'},
+              {href:'/guide/rent-vs-own',emoji:'🏠',label:'Rent vs Own',sub:'Year-by-year breakeven by city',color:'#7c3aed',bg:'#f5f3ff',border:'#c4b5fd'},
+            ].map(({href,emoji,label,sub,color,bg,border})=>(
+              <Link key={href} href={href} style={{
+                display:'block',textDecoration:'none',
+                background:bg,border:`1px solid ${border}`,borderRadius:12,padding:'16px 16px',
+                transition:'transform 0.15s',
+              }}>
+                <div style={{fontSize:22,marginBottom:8}}>{emoji}</div>
+                <div style={{fontSize:13.5,fontWeight:700,color,marginBottom:4}}>{label}</div>
+                <div style={{fontSize:12,color:'#6b7280',lineHeight:1.5}}>{sub}</div>
+              </Link>
+            ))}
           </div>
         </div>
 

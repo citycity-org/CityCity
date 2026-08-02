@@ -488,25 +488,36 @@ export default function VancouverReportPage() {
         </section>
 
         {/* ── Footer CTAs ───────────────────────────────────────────── */}
-        <section style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '36px 0 64px' }}>
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-            <div>
-              <div style={{ color: 'rgba(255,255,255,0.30)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' as const, marginBottom: 12 }}>Explore the data behind this report</div>
-              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                <Link href="/guide/registered-nurse/vancouver" style={{ padding: '9px 18px', borderRadius: 10, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
-                  Explore Nurses in Vancouver →
-                </Link>
-                <Link href="/compare?a=vancouver&b=calgary" style={{ padding: '9px 18px', borderRadius: 10, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
-                  Compare Vancouver and Calgary →
-                </Link>
-              </div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <Link href="/subscribe" style={{ display: 'inline-block', padding: '12px 24px', borderRadius: 12, background: 'linear-gradient(135deg,#4F8EF7,#5B5CF0)', color: 'white', fontSize: 14, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' as const }}>
-                Subscribe to future reports →
+        <section style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '40px 0 64px' }}>
+          <div style={{ color: 'rgba(255,255,255,0.30)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' as const, marginBottom: 20 }}>
+            Explore the data behind this report
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 12, marginBottom: 24 }}>
+            {([
+              { href: '/calculate', emoji: '🧮', label: 'Calculate My City Fit', sub: 'Your occupation + income + city', color: '#4F8EF7' },
+              { href: '/compare?a=vancouver&b=calgary', emoji: '⚖️', label: 'Vancouver vs Calgary', sub: 'Side-by-side all metrics', color: '#14B8A6' },
+              { href: '/ranking', emoji: '🏆', label: 'Full Occupation Ranking', sub: 'All occupations across cities', color: '#F59E0B' },
+              { href: '/guide/rent-vs-own', emoji: '🏠', label: 'Rent vs Own', sub: 'Breakeven year by city', color: '#A78BFA' },
+              { href: '/guide/registered-nurse/vancouver', emoji: '🏥', label: 'Nurses in Vancouver', sub: 'Full city guide', color: '#EF4444' },
+            ] as const).map(({ href, emoji, label, sub, color }) => (
+              <Link key={href} href={href} style={{
+                display: 'block', textDecoration: 'none',
+                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+                borderRadius: 12, padding: '14px 16px',
+              }}>
+                <div style={{ fontSize: 20, marginBottom: 7 }}>{emoji}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color, marginBottom: 3 }}>{label}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.38)', lineHeight: 1.5 }}>{sub}</div>
               </Link>
-              <div style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11, marginTop: 8 }}>New occupation and city reports, delivered periodically. No spam.</div>
-            </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <Link href="/reports/canada-cities-on-the-rise-2026" style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.45)', textDecoration: 'none' }}>
+              ← Read: Canada Cities on the Rise 2026
+            </Link>
+            <Link href="/subscribe" style={{ display: 'inline-block', padding: '11px 24px', borderRadius: 12, background: 'linear-gradient(135deg,#4F8EF7,#5B5CF0)', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+              Subscribe to future reports →
+            </Link>
           </div>
         </section>
 
