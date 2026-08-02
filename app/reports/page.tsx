@@ -117,10 +117,46 @@ export default function ReportsPage() {
 
       <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 24px' }}>
 
-        {/* ── Featured Report ───────────────────────────────────────────── */}
+        {/* ── Latest Report ─────────────────────────────────────────────── */}
         <section style={{ padding: '56px 0 0' }}>
           <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 20 }}>
-            Featured Report
+            Latest Report
+          </div>
+
+          <div style={{ background: 'linear-gradient(135deg,rgba(239,68,68,0.08),rgba(20,184,166,0.05))', border: '1px solid rgba(239,68,68,0.22)', borderRadius: 24, overflow: 'hidden', marginBottom: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 0 }}>
+              <div style={{ width: 5, background: 'linear-gradient(to bottom,#EF4444,#14B8A6)', borderRadius: '4px 0 0 4px' }} />
+              <div style={{ padding: '36px 36px 32px' }}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+                  <Tag label="National Report" color="#EF4444" bg="rgba(239,68,68,0.10)" />
+                  <Tag label="5 Cities" color="#93C5FD" bg="rgba(79,142,247,0.10)" />
+                  <Tag label="20 Occupations" color="#93C5FD" bg="rgba(79,142,247,0.10)" />
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', marginLeft: 4 }}>July 2026</span>
+                </div>
+                <h2 style={{ fontSize: 'clamp(18px,3vw,26px)', fontWeight: 900, lineHeight: 1.25, margin: '0 0 14px', letterSpacing: '-0.01em' }}>
+                  Canada&apos;s Cities on the Rise 2026 —<br />
+                  Beyond Job Growth: Where Can You Actually Build a Life?
+                </h2>
+                <p style={{ color: 'rgba(255,255,255,0.50)', fontSize: 14, lineHeight: 1.75, maxWidth: 600, margin: '0 0 28px' }}>
+                  A Lakive national report analyzing Vancouver, Toronto, Calgary, Montréal, and Ottawa across
+                  Employment Opportunity Index, housing affordability, and City Fit Score — broken down by
+                  occupation. Which city is actually rising for which workers, and why that matters for anyone
+                  planning a career move in 2026.
+                </p>
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 20, background: 'rgba(20,184,166,0.10)', border: '1px solid rgba(20,184,166,0.25)', color: '#14B8A6', fontSize: 12, fontWeight: 700 }}>
+                    ✓ Published July 2026
+                  </span>
+                  <Link href="/reports/canada-cities-on-the-rise-2026" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 22px', borderRadius: 12, background: 'linear-gradient(135deg,#EF4444,#E86C2F)', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+                    Read report →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 20, marginTop: 40 }}>
+            Also Published
           </div>
 
           <div style={{ background: 'linear-gradient(135deg,rgba(79,142,247,0.08),rgba(91,92,240,0.05))', border: '1px solid rgba(79,142,247,0.22)', borderRadius: 24, overflow: 'hidden' }}>
