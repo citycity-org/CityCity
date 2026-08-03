@@ -766,7 +766,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 2: City Insights ──────────────────────────────────────── */}
+      {/* ── SECTION 2: City Pulse ────────────────────────────────────────── */}
+      <MarketPulse compact />
+
+      {/* ── SECTION 3: City Insights ──────────────────────────────────────── */}
       <section style={{ background: '#070d1f', padding: '64px 24px' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>
 
@@ -884,7 +887,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 4: Reports ───────────────────────────────────────────── */}
+      {/* ── SECTION 5: Reports ───────────────────────────────────────────── */}
       <section style={{ background: '#070d1f', padding: '64px 24px' }}>
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
@@ -944,9 +947,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ── SECTION 5: Market Pulse (compact) ────────────────────────────── */}
-      <MarketPulse compact />
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <footer style={{ background: '#020611', borderTop: '1px solid rgba(255,255,255,0.07)', padding: '48px 24px 32px' }}>

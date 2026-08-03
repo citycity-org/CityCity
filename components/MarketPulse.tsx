@@ -312,7 +312,7 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 4, height: 24, borderRadius: 2, background: '#14B8A6' }} />
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: 0 }}>Market Pulse</h2>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: 0 }}>City Pulse</h2>
               <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.30)' }}>Macro indicators</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -402,7 +402,7 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ width: 4, height: 24, borderRadius: 2, background: '#14B8A6' }} />
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: '#fff', margin: 0 }}>Market Pulse</h1>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: '#fff', margin: 0 }}>City Pulse</h1>
             <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.30)' }}>Macro indicators</span>
           </div>
           <CountrySwitcher />
