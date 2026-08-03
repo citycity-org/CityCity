@@ -1,11 +1,15 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import {
   CA_CONFIG, US_CONFIG,
   rateInsight, cpiInsight, unemploymentInsight,
   type CountryConfig,
 } from '@/lib/market-config'
+
+// ── City news types ───────────────────────────────────────────────────────────
+interface NewsItem  { title: string; link: string; date: string }
+interface CityNews  { city: string; color: string; items: NewsItem[] }
 
 // ── BoC Valet API ─────────────────────────────────────────────────────────────
 const BOC_API = 'https://www.bankofcanada.ca/valet/observations/V39079/json?recent=1'
@@ -295,9 +299,37 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
   const [loading, setLoading]         = useState(true)
   const [selectedCode, setSelected]   = useState<string>('CA')
 
+  // City news state
+  const [news, setNews]               = useState<CityNews[]>([])
+  const [newsCity, setNewsCity]       = useState(0)   // which city we're showing
+  const [newsVisible, setNewsVisible] = useState(true) // for fade transition
+  const newsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   useEffect(() => {
     fetchBoCRate().then(r => { setBocRate(r); setLoading(false) })
   }, [])
+
+  // Fetch city news once on mount
+  useEffect(() => {
+    fetch('/api/city-news')
+      .then(r => r.ok ? r.json() : [])
+      .then((data: CityNews[]) => { if (data.length) setNews(data) })
+      .catch(() => {})
+  }, [])
+
+  // Rotate city every 8s with a fade transition
+  useEffect(() => {
+    if (news.length < 2) return
+    const tick = () => {
+      setNewsVisible(false)
+      newsTimer.current = setTimeout(() => {
+        setNewsCity(i => (i + 1) % news.length)
+        setNewsVisible(true)
+      }, 400) // 400ms fade-out before switching
+    }
+    const id = setInterval(tick, 8000)
+    return () => { clearInterval(id); if (newsTimer.current) clearTimeout(newsTimer.current) }
+  }, [news])
 
   const liveRate = loading ? undefined : bocRate
   const active = COUNTRIES.find(c => c.code === selectedCode) ?? COUNTRIES[0]
@@ -360,6 +392,119 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
 
           {/* Source footer — country-specific */}
           <SourceFooter updatedAt={active.config.updatedAt} sources={active.config.sources} />
+
+          {/* ── City News Strip ─────────────────────────────────── */}
+          {news.length > 0 && (() => {
+            const current = news[newsCity]
+            return (
+              <div style={{
+                marginTop: 14,
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderRadius: 12,
+                overflow: 'hidden',
+              }}>
+                {/* Strip header */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '10px 16px',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  background: 'rgba(255,255,255,0.01)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{
+                      width: 7, height: 7, borderRadius: '50%', background: '#EF4444',
+                      display: 'inline-block', animation: 'boc-pulse 1.5s infinite', flexShrink: 0,
+                    }} />
+                    <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
+                      City News
+                    </span>
+                    <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.04em' }}>
+                      Career · Housing · Prices · Business
+                    </span>
+                  </div>
+                  {/* City dot nav */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    {news.map((c, i) => (
+                      <button
+                        key={c.city}
+                        onClick={() => { setNewsVisible(false); setTimeout(() => { setNewsCity(i); setNewsVisible(true) }, 200) }}
+                        title={c.city}
+                        style={{
+                          width: i === newsCity ? 16 : 7,
+                          height: 7,
+                          borderRadius: 4,
+                          background: i === newsCity ? c.color : 'rgba(255,255,255,0.18)',
+                          border: 'none', cursor: 'pointer', padding: 0,
+                          transition: 'all 0.3s ease',
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Headlines — fade on city change */}
+                <div style={{
+                  padding: '12px 16px',
+                  opacity: newsVisible ? 1 : 0,
+                  transition: 'opacity 0.4s ease',
+                }}>
+                  {/* City badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                    <span style={{
+                      width: 8, height: 8, borderRadius: '50%',
+                      background: current.color, display: 'inline-block', flexShrink: 0,
+                    }} />
+                    <span style={{ fontSize: 12, fontWeight: 700, color: current.color }}>
+                      {current.city}
+                    </span>
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.22)' }}>
+                      via CBC News
+                    </span>
+                  </div>
+
+                  {/* Up to 3 headlines */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    {current.items.slice(0, 3).map((item, j) => (
+                      <a
+                        key={j}
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'flex', alignItems: 'flex-start', gap: 8,
+                          textDecoration: 'none',
+                          padding: '7px 10px',
+                          borderRadius: 8,
+                          background: 'rgba(255,255,255,0.025)',
+                          border: `1px solid rgba(255,255,255,0.06)`,
+                          transition: 'background 0.2s',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+                      >
+                        <span style={{
+                          width: 3, height: 3, borderRadius: '50%', background: current.color,
+                          flexShrink: 0, marginTop: 6,
+                        }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', lineHeight: 1.4, display: 'block' }}>
+                            {item.title}
+                          </span>
+                          {item.date && (
+                            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.28)', marginTop: 2, display: 'block' }}>
+                              {item.date}
+                            </span>
+                          )}
+                        </div>
+                        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', flexShrink: 0, marginTop: 2 }}>↗</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
         </div>
       </section>
     )
