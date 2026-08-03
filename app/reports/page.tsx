@@ -224,27 +224,62 @@ export default function ReportsPage() {
 
         {/* Coming Soon reports hidden until ready to publish */}
 
-        {/* ── Methodology ───────────────────────────────────────────────── */}
+        {/* ── Data Sources ──────────────────────────────────────────────── */}
         <section style={{ padding: '56px 0 0' }}>
-          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: '36px 40px', display: 'grid', gridTemplateColumns: '1fr auto', gap: 32, alignItems: 'center', flexWrap: 'wrap' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-                <span style={{ fontSize: 20 }}>🔬</span>
-                <span style={{ color: 'white', fontSize: 16, fontWeight: 800 }}>Built on Transparent Methodology</span>
-              </div>
-              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.8, margin: '0 0 12px' }}>
-                Lakive reports combine public data sources, occupation-level income benchmarks, after-tax income
-                estimates, housing affordability metrics, rent pressure, job-market signals, and structured
-                resident experience data where available.
-              </p>
-              <p style={{ color: 'rgba(255,255,255,0.38)', fontSize: 13, lineHeight: 1.8, margin: 0 }}>
-                Cities, employers, or institutions <strong style={{ color: 'rgba(255,255,255,0.65)' }}>cannot</strong> buy better scores, suppress unfavorable findings,
-                or influence Lakive&apos;s methodology.
-              </p>
+          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: '36px 40px' }}>
+
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+              <span style={{ fontSize: 20 }}>🔬</span>
+              <span style={{ color: 'white', fontSize: 16, fontWeight: 800 }}>Data Sources &amp; Independence</span>
             </div>
-            <Link href="/guide" style={{ flexShrink: 0, padding: '10px 20px', borderRadius: 12, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' as const }}>
-              View data →
-            </Link>
+            <p style={{ color: 'rgba(255,255,255,0.40)', fontSize: 13, lineHeight: 1.8, margin: '0 0 28px', maxWidth: 680 }}>
+              Lakive reports are built on public government data. No city, employer, or institution can{' '}
+              <strong style={{ color: 'rgba(255,255,255,0.65)' }}>buy better scores</strong>, suppress unfavorable findings, or influence our analysis.
+            </p>
+
+            {/* Source regions */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 16 }}>
+
+              {/* Canada */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '20px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <span style={{ fontSize: 16 }}>🇨🇦</span>
+                  <span style={{ color: 'rgba(255,255,255,0.70)', fontSize: 13, fontWeight: 700 }}>Canada</span>
+                </div>
+                {[
+                  ['Statistics Canada', 'Labour Force Survey, income & housing data'],
+                  ["Canada's Job Bank", 'Occupation demand & vacancy signals'],
+                  ['CMHC', 'Housing starts, rental & ownership affordability'],
+                  ['CRA / Provincial tax tables', 'After-tax income estimates by province'],
+                ].map(([source, desc]) => (
+                  <div key={source} style={{ marginBottom: 10 }}>
+                    <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 12, fontWeight: 700 }}>{source}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.32)', fontSize: 11, lineHeight: 1.5 }}>{desc}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* United States */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '20px 22px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <span style={{ fontSize: 16 }}>🇺🇸</span>
+                  <span style={{ color: 'rgba(255,255,255,0.70)', fontSize: 13, fontWeight: 700 }}>United States</span>
+                </div>
+                {[
+                  ['Bureau of Labor Statistics (BLS)', 'Occupation wages, employment projections'],
+                  ['U.S. Census Bureau / ACS', 'Income, housing cost & demographic data'],
+                  ['HUD', 'Fair market rents & housing affordability benchmarks'],
+                  ['IRS / State tax schedules', 'Federal & state after-tax income estimates'],
+                ].map(([source, desc]) => (
+                  <div key={source} style={{ marginBottom: 10 }}>
+                    <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 12, fontWeight: 700 }}>{source}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.32)', fontSize: 11, lineHeight: 1.5 }}>{desc}</div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
           </div>
         </section>
 
