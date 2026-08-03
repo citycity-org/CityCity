@@ -222,44 +222,7 @@ export default function ReportsPage() {
           </div>
         </section>
 
-        {/* ── Coming Soon reports ───────────────────────────────────────── */}
-        <section style={{ padding: '56px 0 0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Upcoming Reports
-            </div>
-            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>2026 pipeline</span>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 16 }}>
-            {COMING_SOON.map((r, i) => (
-              <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 18, padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: r.categoryColor, background: `${r.categoryColor}15`, padding: '3px 10px', borderRadius: 20 }}>
-                    {r.category}
-                  </span>
-                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', fontWeight: 600 }}>{r.quarter}</span>
-                </div>
-
-                <div>
-                  <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: 14, fontWeight: 800, lineHeight: 1.35, marginBottom: 6 }}>{r.title}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.42)', fontSize: 12, lineHeight: 1.6 }}>{r.subtitle}</div>
-                </div>
-
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 'auto' }}>
-                  {r.tags.map(t => <Tag key={t} label={t} />)}
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 4, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <span style={{ fontSize: 12 }}>🔔</span>
-                  <Link href="/subscribe" style={{ color: 'rgba(255,255,255,0.40)', fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
-                    Get notified
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Coming Soon reports hidden until ready to publish */}
 
         {/* ── Methodology ───────────────────────────────────────────────── */}
         <section style={{ padding: '56px 0 0' }}>

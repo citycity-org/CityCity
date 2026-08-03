@@ -8,12 +8,11 @@ export default function NavBar() {
   const [open, setOpen] = useState(false)
 
   const links = [
+    { href: '/calculate',  label: 'Calculate'  },
     { href: '/ranking',    label: 'Rankings'   },
     { href: '/compare',    label: 'Compare'    },
-    { href: '/guide',      label: 'Guides'     },
-    { href: '/calculate',  label: 'Calculate'  },
     { href: '/reports',    label: 'Reports'    },
-    { href: '/newsletter', label: 'Newsletter' },
+    { href: '/guide',      label: 'Guides'     },
   ]
 
   const isActive = (href: string) => {
@@ -73,13 +72,20 @@ export default function NavBar() {
           ))}
         </div>
 
-        {/* 桌面端：Contact */}
-        <a href="/contact" className="lk-desktop-only" style={{
-          padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-          background: 'rgba(79,142,247,0.15)', color: '#93C5FD',
-          border: '1px solid rgba(79,142,247,0.25)', textDecoration: 'none',
-          alignItems: 'center', flexShrink: 0, whiteSpace: 'nowrap',
-        }}>Contact</a>
+        {/* 桌面端：右侧按钮组 */}
+        <div className="lk-desktop-only" style={{ alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <a href="/newsletter" style={{
+            padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+            background: 'linear-gradient(135deg,#4F8EF7,#5B5CF0)', color: 'white',
+            textDecoration: 'none', whiteSpace: 'nowrap',
+          }}>Newsletter →</a>
+          <a href="/contact" style={{
+            padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+            background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.55)',
+            border: '1px solid rgba(255,255,255,0.10)', textDecoration: 'none',
+            whiteSpace: 'nowrap',
+          }}>Contact</a>
+        </div>
 
         {/* 移动端：汉堡按钮 */}
         <button
@@ -141,11 +147,17 @@ export default function NavBar() {
                 fontSize: 15,
               }}>{label}</a>
             ))}
-            <a href="/contact" style={{
+            <a href="/newsletter" style={{
               display: 'block', textAlign: 'center', marginTop: 8,
+              padding: '13px 16px', borderRadius: 8, fontSize: 15, fontWeight: 700,
+              background: 'linear-gradient(135deg,#4F8EF7,#5B5CF0)', color: 'white',
+              textDecoration: 'none',
+            }}>Newsletter →</a>
+            <a href="/contact" style={{
+              display: 'block', textAlign: 'center', marginTop: 6,
               padding: '13px 16px', borderRadius: 8, fontSize: 15, fontWeight: 600,
-              background: 'rgba(79,142,247,0.15)', color: '#93C5FD',
-              border: '1px solid rgba(79,142,247,0.25)', textDecoration: 'none',
+              background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.65)',
+              border: '1px solid rgba(255,255,255,0.10)', textDecoration: 'none',
             }}>Contact</a>
           </div>
         </>

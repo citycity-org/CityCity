@@ -884,8 +884,139 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SECTION 4: Market Pulse (compact) ────────────────────────────── */}
+      {/* ── SECTION 4: Reports ───────────────────────────────────────────── */}
+      <section style={{ background: '#070d1f', padding: '64px 24px' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>
+                Latest from Lakive Research
+              </div>
+              <h2 className="text-xl font-bold text-white">Published Reports</h2>
+            </div>
+            <a href="/reports" style={{ padding: '8px 18px', borderRadius: 10, fontSize: 13, fontWeight: 600, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.55)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+              All reports →
+            </a>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 16 }}>
+            {/* Canada Cities */}
+            <a href="/reports/canada-cities-on-the-rise-2026" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg,rgba(239,68,68,0.08),rgba(20,184,166,0.05))', border: '1px solid rgba(239,68,68,0.22)', borderRadius: 20, overflow: 'hidden', transition: 'border-color 0.2s' }}>
+              <div style={{ height: 4, background: 'linear-gradient(to right,#EF4444,#14B8A6)' }} />
+              <div style={{ padding: '24px 26px', flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#EF4444', background: 'rgba(239,68,68,0.12)', padding: '3px 10px', borderRadius: 20 }}>National Report</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>July 2026</span>
+                </div>
+                <div style={{ color: 'white', fontSize: 16, fontWeight: 800, lineHeight: 1.3 }}>
+                  Canada&apos;s Cities on the Rise 2026
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, flex: 1 }}>
+                  5 cities · 20 occupations · Beyond job growth: where can you actually build a life?
+                </div>
+                <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444' }}>Read report →</span>
+                  <a href="/reports/pdf/Lakive_Canada_Cities_on_the_Rise_2026.pdf" download onClick={e => e.stopPropagation()} style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>↓ PDF</a>
+                </div>
+              </div>
+            </a>
+
+            {/* Vancouver */}
+            <a href="/reports/vancouver-livability-worker-affordability-2026" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg,rgba(79,142,247,0.08),rgba(91,92,240,0.05))', border: '1px solid rgba(79,142,247,0.22)', borderRadius: 20, overflow: 'hidden', transition: 'border-color 0.2s' }}>
+              <div style={{ height: 4, background: 'linear-gradient(to right,#4F8EF7,#5B5CF0)' }} />
+              <div style={{ padding: '24px 26px', flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#14B8A6', background: 'rgba(20,184,166,0.12)', padding: '3px 10px', borderRadius: 20 }}>Issue Brief</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>H1 2026</span>
+                </div>
+                <div style={{ color: 'white', fontSize: 16, fontWeight: 800, lineHeight: 1.3 }}>
+                  Vancouver: Top-10 Livable — But Can Workers Afford to Stay?
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, flex: 1 }}>
+                  When the EIU ranks Vancouver #9 in the world, what does that mean for a nurse on $95K?
+                </div>
+                <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#4F8EF7' }}>Read report →</span>
+                  <a href="/reports/pdf/Lakive_Vancouver_Worker_Affordability_Issue_Brief_H1_2026.pdf" download onClick={e => e.stopPropagation()} style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>↓ PDF</a>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 5: Market Pulse (compact) ────────────────────────────── */}
       <MarketPulse compact />
+
+      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
+      <footer style={{ background: '#020611', borderTop: '1px solid rgba(255,255,255,0.07)', padding: '48px 24px 32px' }}>
+        <div style={{ maxWidth: 1060, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 40, marginBottom: 48 }}>
+
+            {/* Brand */}
+            <div>
+              <div style={{ color: 'white', fontSize: 18, fontWeight: 900, letterSpacing: '-0.03em', marginBottom: 8 }}>LAKIVE</div>
+              <div style={{ color: 'rgba(255,255,255,0.28)', fontSize: 12, lineHeight: 1.6, marginBottom: 20 }}>
+                From data to belonging.<br />
+                City intelligence for your next chapter.
+              </div>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <a href="https://twitter.com/lakiveofficial" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, textDecoration: 'none' }}>X / Twitter</a>
+                <a href="https://instagram.com/lakiveofficial" target="_blank" rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, textDecoration: 'none' }}>Instagram</a>
+              </div>
+            </div>
+
+            {/* Tools */}
+            <div>
+              <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 16 }}>Tools</div>
+              {[
+                ['Calculate My Fit', '/calculate'],
+                ['City Rankings', '/ranking'],
+                ['Compare Cities', '/compare'],
+                ['City Guides', '/guide'],
+              ].map(([label, href]) => (
+                <a key={href} href={href} style={{ display: 'block', color: 'rgba(255,255,255,0.40)', fontSize: 13, textDecoration: 'none', marginBottom: 10, lineHeight: 1 }}>{label}</a>
+              ))}
+            </div>
+
+            {/* Reports */}
+            <div>
+              <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 16 }}>Reports</div>
+              {[
+                ["Canada's Cities on the Rise 2026", '/reports/canada-cities-on-the-rise-2026'],
+                ['Vancouver Livability 2026', '/reports/vancouver-livability-worker-affordability-2026'],
+                ['All Reports', '/reports'],
+              ].map(([label, href]) => (
+                <a key={href} href={href} style={{ display: 'block', color: 'rgba(255,255,255,0.40)', fontSize: 13, textDecoration: 'none', marginBottom: 10, lineHeight: 1.4 }}>{label}</a>
+              ))}
+            </div>
+
+            {/* Company */}
+            <div>
+              <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 16 }}>Company</div>
+              {[
+                ['About', '/about'],
+                ['Newsletter', '/newsletter'],
+                ['Contact', '/contact'],
+                ['Privacy Policy', '/privacy'],
+                ['Terms of Use', '/terms'],
+              ].map(([label, href]) => (
+                <a key={href} href={href} style={{ display: 'block', color: 'rgba(255,255,255,0.40)', fontSize: 13, textDecoration: 'none', marginBottom: 10, lineHeight: 1 }}>{label}</a>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom bar */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <div style={{ color: 'rgba(255,255,255,0.22)', fontSize: 12 }}>
+              © 2026 Lakive Research. All rights reserved.
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.22)', fontSize: 12 }}>
+              hello@lakive.com
+            </div>
+          </div>
+        </div>
+      </footer>
 
     </div>
   )
