@@ -888,60 +888,79 @@ export default function Home() {
       </section>
 
       {/* ── SECTION 5: Reports ───────────────────────────────────────────── */}
-      <section style={{ background: '#070d1f', padding: '64px 24px' }}>
-        <div style={{ maxWidth: 860, margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32, flexWrap: 'wrap', gap: 12 }}>
-            <div>
-              <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>
-                Latest from Lakive Research
-              </div>
+      <section style={{ background: '#04091a', padding: '64px 24px' }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+          <div className="flex items-center gap-3 mb-8" style={{ justifyContent: 'space-between' }}>
+            <div className="flex items-center gap-3">
+              <div className="w-1 h-6 rounded-full" style={{ background: '#14B8A6' }} />
               <h2 className="text-xl font-bold text-white">Published Reports</h2>
+              <span className="text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>Lakive Research</span>
             </div>
-            <a href="/reports" style={{ padding: '8px 18px', borderRadius: 10, fontSize: 13, fontWeight: 600, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.55)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+            <a href="/reports" style={{ padding: '7px 16px', borderRadius: 10, fontSize: 13, fontWeight: 600, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.45)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
               All reports →
             </a>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 16 }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Canada Cities */}
-            <a href="/reports/canada-cities-on-the-rise-2026" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg,rgba(239,68,68,0.08),rgba(20,184,166,0.05))', border: '1px solid rgba(239,68,68,0.22)', borderRadius: 20, overflow: 'hidden', transition: 'border-color 0.2s' }}>
-              <div style={{ height: 4, background: 'linear-gradient(to right,#EF4444,#14B8A6)' }} />
-              <div style={{ padding: '24px 26px', flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#EF4444', background: 'rgba(239,68,68,0.12)', padding: '3px 10px', borderRadius: 20 }}>National Report</span>
-                  <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>July 2026</span>
-                </div>
-                <div style={{ color: 'white', fontSize: 16, fontWeight: 800, lineHeight: 1.3 }}>
-                  Canada&apos;s Cities on the Rise 2026
-                </div>
-                <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, flex: 1 }}>
-                  5 cities · 20 occupations · Beyond job growth: where can you actually build a life?
-                </div>
-                <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#EF4444' }}>Read report →</span>
-                  <a href="/reports/pdf/Lakive_Canada_Cities_on_the_Rise_2026.pdf" download onClick={e => e.stopPropagation()} style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>↓ PDF</a>
-                </div>
+            <a href="/reports/canada-cities-on-the-rise-2026"
+              className="group block rounded-2xl p-5 transition-all hover:-translate-y-0.5"
+              style={{ textDecoration: 'none', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="inline-flex items-center gap-1.5 mb-4 px-2.5 py-1 rounded-full text-xs font-semibold"
+                style={{ background: 'rgba(239,68,68,0.12)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.25)' }}>
+                National Report
+              </div>
+              <div className="text-sm font-semibold mb-2 text-white leading-snug">
+                Canada&apos;s Cities on the Rise 2026
+              </div>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.50)' }}>
+                5 cities · 20 occupations · Beyond job growth: where can you actually build a life?
+              </p>
+              <div className="flex items-center gap-3 mt-auto">
+                <span className="text-xs font-semibold" style={{ color: '#EF4444' }}>Read report →</span>
+                <a href="/reports/pdf/Lakive_Canada_Cities_on_the_Rise_2026.pdf" download onClick={e => e.stopPropagation()}
+                  className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.30)', textDecoration: 'none' }}>↓ PDF</a>
               </div>
             </a>
 
             {/* Vancouver */}
-            <a href="/reports/vancouver-livability-worker-affordability-2026" style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg,rgba(79,142,247,0.08),rgba(91,92,240,0.05))', border: '1px solid rgba(79,142,247,0.22)', borderRadius: 20, overflow: 'hidden', transition: 'border-color 0.2s' }}>
-              <div style={{ height: 4, background: 'linear-gradient(to right,#4F8EF7,#5B5CF0)' }} />
-              <div style={{ padding: '24px 26px', flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: '#14B8A6', background: 'rgba(20,184,166,0.12)', padding: '3px 10px', borderRadius: 20 }}>Issue Brief</span>
-                  <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>H1 2026</span>
-                </div>
-                <div style={{ color: 'white', fontSize: 16, fontWeight: 800, lineHeight: 1.3 }}>
-                  Vancouver: Top-10 Livable — But Can Workers Afford to Stay?
-                </div>
-                <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7, flex: 1 }}>
-                  When the EIU ranks Vancouver #9 in the world, what does that mean for a nurse on $95K?
-                </div>
-                <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#4F8EF7' }}>Read report →</span>
-                  <a href="/reports/pdf/Lakive_Vancouver_Worker_Affordability_Issue_Brief_H1_2026.pdf" download onClick={e => e.stopPropagation()} style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.35)', textDecoration: 'none' }}>↓ PDF</a>
-                </div>
+            <a href="/reports/vancouver-livability-worker-affordability-2026"
+              className="group block rounded-2xl p-5 transition-all hover:-translate-y-0.5"
+              style={{ textDecoration: 'none', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div className="inline-flex items-center gap-1.5 mb-4 px-2.5 py-1 rounded-full text-xs font-semibold"
+                style={{ background: 'rgba(20,184,166,0.12)', color: '#14B8A6', border: '1px solid rgba(20,184,166,0.25)' }}>
+                Issue Brief
+              </div>
+              <div className="text-sm font-semibold mb-2 text-white leading-snug">
+                Vancouver: Top-10 Livable — But Can Workers Afford to Stay?
+              </div>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.50)' }}>
+                When the EIU ranks Vancouver #9 in the world, what does that mean for a nurse on $95K?
+              </p>
+              <div className="flex items-center gap-3 mt-auto">
+                <span className="text-xs font-semibold" style={{ color: '#4F8EF7' }}>Read report →</span>
+                <a href="/reports/pdf/Lakive_Vancouver_Worker_Affordability_Issue_Brief_H1_2026.pdf" download onClick={e => e.stopPropagation()}
+                  className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.30)', textDecoration: 'none' }}>↓ PDF</a>
+              </div>
+            </a>
+
+            {/* Newsletter CTA card */}
+            <a href="/newsletter"
+              className="group block rounded-2xl p-5 transition-all hover:-translate-y-0.5"
+              style={{ textDecoration: 'none', background: 'rgba(79,142,247,0.06)', border: '1px solid rgba(79,142,247,0.18)' }}>
+              <div className="inline-flex items-center gap-1.5 mb-4 px-2.5 py-1 rounded-full text-xs font-semibold"
+                style={{ background: 'rgba(79,142,247,0.12)', color: '#93C5FD', border: '1px solid rgba(79,142,247,0.25)' }}>
+                Coming Next
+              </div>
+              <div className="text-sm font-semibold mb-2 text-white leading-snug">
+                More reports in Q3 & Q4 2026
+              </div>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.50)' }}>
+                Newcomer&apos;s Guide, Remote Worker Arbitrage, Calgary&apos;s Tax Advantage — subscribe to get notified.
+              </p>
+              <div className="flex items-center gap-1 text-xs font-semibold transition-all group-hover:gap-2"
+                style={{ color: '#93C5FD' }}>
+                Subscribe free →
               </div>
             </a>
           </div>
