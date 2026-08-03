@@ -1,36 +1,34 @@
 import { NextResponse } from 'next/server'
 
-// CBC News RSS feeds by city — free, public broadcaster, reliable
+// Google News RSS — searches return pre-filtered relevant headlines
+// Query includes housing/jobs/economy keywords so we skip keyword filtering
 const CITY_FEEDS = [
-  { city: 'Calgary',   color: '#EF4444', feed: 'https://www.cbc.ca/cmlink/rss-canada-calgary' },
-  { city: 'Ottawa',    color: '#4F8EF7', feed: 'https://www.cbc.ca/cmlink/rss-canada-ottawa' },
-  { city: 'Toronto',   color: '#F59E0B', feed: 'https://www.cbc.ca/cmlink/rss-canada-toronto' },
-  { city: 'Vancouver', color: '#E86C2F', feed: 'https://www.cbc.ca/cmlink/rss-canada-british-columbia' },
-  { city: 'Montréal',  color: '#14B8A6', feed: 'https://www.cbc.ca/cmlink/rss-canada-montreal' },
+  {
+    city:  'Calgary',
+    color: '#EF4444',
+    feed:  'https://news.google.com/rss/search?q=Calgary+housing+jobs+economy+rent+business&hl=en-CA&gl=CA&ceid=CA:en',
+  },
+  {
+    city:  'Ottawa',
+    color: '#4F8EF7',
+    feed:  'https://news.google.com/rss/search?q=Ottawa+housing+jobs+economy+rent+business&hl=en-CA&gl=CA&ceid=CA:en',
+  },
+  {
+    city:  'Toronto',
+    color: '#F59E0B',
+    feed:  'https://news.google.com/rss/search?q=Toronto+housing+jobs+economy+rent+business&hl=en-CA&gl=CA&ceid=CA:en',
+  },
+  {
+    city:  'Vancouver',
+    color: '#E86C2F',
+    feed:  'https://news.google.com/rss/search?q=Vancouver+housing+jobs+economy+rent+business&hl=en-CA&gl=CA&ceid=CA:en',
+  },
+  {
+    city:  'Montréal',
+    color: '#14B8A6',
+    feed:  'https://news.google.com/rss/search?q=Montreal+housing+jobs+economy+rent+business&hl=en-CA&gl=CA&ceid=CA:en',
+  },
 ]
-
-// Keywords relevant to career, housing, cost of living, business
-const RELEVANT_KEYWORDS = [
-  // Housing & real estate
-  'housing', 'rent', 'rental', 'mortgage', 'home price', 'real estate', 'condo',
-  'apartment', 'affordable', 'affordability', 'eviction', 'landlord', 'tenant',
-  // Jobs & career
-  'job', 'jobs', 'hiring', 'layoff', 'salary', 'wage', 'wages', 'employment',
-  'unemployment', 'worker', 'workers', 'workforce', 'career', 'occupation',
-  'nurse', 'doctor', 'engineer', 'teacher', 'trades', 'electrician',
-  // Cost of living & economy
-  'inflation', 'cost of living', 'grocery', 'groceries', 'price', 'prices',
-  'economy', 'economic', 'interest rate', 'bank of canada', 'recession',
-  'gdp', 'income', 'tax', 'budget',
-  // Business
-  'business', 'company', 'startup', 'investment', 'developer', 'office',
-  'tech', 'technology', 'industry', 'sector',
-]
-
-function isRelevant(title: string): boolean {
-  const lower = title.toLowerCase()
-  return RELEVANT_KEYWORDS.some(kw => lower.includes(kw))
-}
 
 export interface NewsItem {
   title: string
@@ -44,38 +42,43 @@ export interface CityNews {
   items: NewsItem[]
 }
 
-function parseRSS(xml: string, scanLimit = 30): NewsItem[] {
-  const all: NewsItem[] = []
+function parseRSS(xml: string, limit = 4): NewsItem[] {
+  const items: NewsItem[] = []
   const itemRegex = /<item>([\s\S]*?)<\/item>/g
   let match
-  let scanned = 0
-  while ((match = itemRegex.exec(xml)) !== null && scanned < scanLimit) {
-    scanned++
+
+  while ((match = itemRegex.exec(xml)) !== null && items.length < limit) {
     const block = match[1]
+
     const title =
       block.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/)?.[1] ??
       block.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? ''
+
+    // Google News wraps the real link in <link> after a blank line
     const link =
-      block.match(/<link>([\s\S]*?)<\/link>/)?.[1] ??
+      block.match(/<link>([\s\S]*?)<\/link>/)?.[1]?.trim() ??
       block.match(/<link\s[^>]*href="([^"]+)"/)?.[1] ?? ''
-    const date = block.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ?? ''
+
+    const date = block.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1]?.trim() ?? ''
+
     const clean = title
       .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
       .replace(/&#39;/g, "'").replace(/&quot;/g, '"').trim()
-    if (clean) all.push({ title: clean, link: link.trim(), date: date.trim() })
+
+    if (clean && link) items.push({ title: clean, link, date })
   }
-  // Filter to relevant news first; fallback to top 3 if nothing matches
-  const filtered = all.filter(i => isRelevant(i.title))
-  return (filtered.length >= 2 ? filtered : all).slice(0, 4)
+
+  return items
 }
 
 function relativeTime(dateStr: string): string {
+  if (!dateStr) return ''
   try {
     const ms = Date.now() - new Date(dateStr).getTime()
-    const m = Math.floor(ms / 60000)
-    if (m < 60) return `${m}m ago`
-    const h = Math.floor(m / 60)
-    if (h < 24) return `${h}h ago`
+    const m  = Math.floor(ms / 60000)
+    if (m < 60)  return `${m}m ago`
+    const h  = Math.floor(m / 60)
+    if (h < 24)  return `${h}h ago`
     return `${Math.floor(h / 24)}d ago`
   } catch {
     return ''
@@ -87,20 +90,30 @@ export async function GET() {
     CITY_FEEDS.map(async ({ city, color, feed }) => {
       const res = await fetch(feed, {
         next: { revalidate: 1800 },
-        headers: { 'User-Agent': 'Lakive/1.0 (city intelligence platform)' },
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Lakive/1.0; +https://lakive.com)',
+          'Accept': 'application/rss+xml, application/xml, text/xml, */*',
+        },
       })
-      if (!res.ok) throw new Error(`RSS fetch failed for ${city}: ${res.status}`)
+      if (!res.ok) throw new Error(`RSS ${city}: ${res.status}`)
       const xml   = await res.text()
-      const raw   = parseRSS(xml, 30)
+      const raw   = parseRSS(xml, 4)
       const items = raw.map(item => ({ ...item, date: relativeTime(item.date) }))
+      if (!items.length) throw new Error(`No items for ${city}`)
       return { city, color, items } as CityNews
     })
   )
 
   const news: CityNews[] = results
-    .filter(r => r.status === 'fulfilled')
-    .map(r => (r as PromiseFulfilledResult<CityNews>).value)
-    .filter(c => c.items.length > 0)
+    .filter((r): r is PromiseFulfilledResult<CityNews> => r.status === 'fulfilled')
+    .map(r => r.value)
+
+  // Log failures server-side (visible in Vercel logs)
+  results.forEach((r, i) => {
+    if (r.status === 'rejected') {
+      console.warn(`[city-news] ${CITY_FEEDS[i].city} failed:`, r.reason)
+    }
+  })
 
   return NextResponse.json(news, {
     headers: { 'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600' },
