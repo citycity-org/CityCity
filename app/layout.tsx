@@ -4,7 +4,7 @@ import NavBar from "./NavBar";
 import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
-  title: "Lakive | Compare Cities by Cost of Living, Housing & Career Opportunities",
+  title: "Lakive — From Data to Belonging",
   description: "Compare cities by cost of living, career opportunities, housing affordability and quality of life. Make smarter relocation decisions with Lakive's data-driven city intelligence platform.",
   icons: {
     icon: "/lakive-icon.svg",
