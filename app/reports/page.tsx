@@ -123,6 +123,45 @@ export default function ReportsPage() {
             Latest Report
           </div>
 
+          {/* Monthly Report July 2026 */}
+          <div style={{ background: 'linear-gradient(135deg,rgba(20,184,166,0.10),rgba(79,142,247,0.05))', border: '1px solid rgba(20,184,166,0.28)', borderRadius: 24, overflow: 'hidden', marginBottom: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 0 }}>
+              <div style={{ width: 5, background: 'linear-gradient(to bottom,#14B8A6,#4F8EF7)', borderRadius: '4px 0 0 4px' }} />
+              <div style={{ padding: '36px 36px 32px' }}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+                  <Tag label="Monthly Report" color="#14B8A6" bg="rgba(20,184,166,0.12)" />
+                  <Tag label="5 Cities" color="#93C5FD" bg="rgba(79,142,247,0.10)" />
+                  <Tag label="Housing · Jobs · Economy" color="#93C5FD" bg="rgba(79,142,247,0.10)" />
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', marginLeft: 4 }}>August 2026</span>
+                </div>
+                <h2 style={{ fontSize: 'clamp(18px,3vw,26px)', fontWeight: 900, lineHeight: 1.25, margin: '0 0 14px', letterSpacing: '-0.01em' }}>
+                  Canada&apos;s Rental Market Continues to Stabilize —<br />
+                  Housing, Jobs and the Economy at a Glance
+                </h2>
+                <p style={{ color: 'rgba(255,255,255,0.50)', fontSize: 14, lineHeight: 1.75, maxWidth: 600, margin: '0 0 28px' }}>
+                  July 2026 monthly report covering national rental trends (21st consecutive YoY decline · CAD $2,033),
+                  employment snapshot (unemployment 6.5% · +18,000 jobs), BoC rate hold at 2.25%, and Lakive city
+                  scores with HPI, RPI and EOI data for Calgary, Ottawa, Toronto, Vancouver and Montréal.
+                </p>
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 20, background: 'rgba(20,184,166,0.10)', border: '1px solid rgba(20,184,166,0.25)', color: '#14B8A6', fontSize: 12, fontWeight: 700 }}>
+                    ✓ Published August 5, 2026
+                  </span>
+                  <Link href="/reports/monthly-report-july-2026" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 22px', borderRadius: 12, background: 'linear-gradient(135deg,#14B8A6,#4F8EF7)', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+                    Read report →
+                  </Link>
+                  <a href="/reports/pdf/Lakive_Monthly_Report_July_2026_v2.pdf" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 12, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                    ↓ PDF
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 20, marginTop: 40 }}>
+            Also Published
+          </div>
+
           <div style={{ background: 'linear-gradient(135deg,rgba(239,68,68,0.08),rgba(20,184,166,0.05))', border: '1px solid rgba(239,68,68,0.22)', borderRadius: 24, overflow: 'hidden', marginBottom: 20 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 0 }}>
               <div style={{ width: 5, background: 'linear-gradient(to bottom,#EF4444,#14B8A6)', borderRadius: '4px 0 0 4px' }} />
@@ -158,9 +197,6 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 20, marginTop: 40 }}>
-            Also Published
-          </div>
 
           <div style={{ background: 'linear-gradient(135deg,rgba(79,142,247,0.08),rgba(91,92,240,0.05))', border: '1px solid rgba(79,142,247,0.22)', borderRadius: 24, overflow: 'hidden' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 0 }}>
