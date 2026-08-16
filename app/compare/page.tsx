@@ -358,9 +358,9 @@ function eoiBlend(cityEoi:number, fitEoi:EoiVal):string {
 }
 
 // ── Dim value / display (propType-aware) ──────────────────────────────────────
-function getDimValue(slug:string, occ:string, key:string, priceMult=1, rentMult=1):number {
-  const fit = FIT_MATRIX[slug]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
-  const city = CITY_BASE[slug]
+function getDimValue(fm: typeof FIT_MATRIX, cb: typeof CITY_BASE, slug:string, occ:string, key:string, priceMult=1, rentMult=1):number {
+  const fit = fm[slug]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
+  const city = cb[slug]
   if (!city) return 0
   switch(key) {
     case 'score':    return getAdjScore(fit, priceMult, rentMult)
@@ -377,9 +377,9 @@ function getDimValue(slug:string, occ:string, key:string, priceMult=1, rentMult=
   }
 }
 
-function getDimDisplay(slug:string, occ:string, key:string, priceMult=1, rentMult=1):string {
-  const fit = FIT_MATRIX[slug]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
-  const city = CITY_BASE[slug]
+function getDimDisplay(fm: typeof FIT_MATRIX, cb: typeof CITY_BASE, slug:string, occ:string, key:string, priceMult=1, rentMult=1):string {
+  const fit = fm[slug]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
+  const city = cb[slug]
   if (!city) return '-'
   switch(key) {
     case 'score':    return String(getAdjScore(fit, priceMult, rentMult))
@@ -397,9 +397,7 @@ function getDimDisplay(slug:string, occ:string, key:string, priceMult=1, rentMul
 }
 
 // ── Verdict logic (propType-aware) ────────────────────────────────────────────
-function getVerdictLayers(winSlug:string, loseSlug:string, occ:string, wFit:OccFit, lFit:OccFit) {
-  const wCity   = CITY_BASE[winSlug]
-  const lCity   = CITY_BASE[loseSlug]
+function getVerdictLayers(winSlug:string, loseSlug:string, occ:string, wFit:OccFit, lFit:OccFit, wCity: typeof CITY_BASE[string], lCity: typeof CITY_BASE[string]) {
   const occName = OCC_NAME[occ] ?? occ
 
   const hpiAdv  = lFit.hpiYears - wFit.hpiYears
@@ -449,8 +447,7 @@ function getVerdictLayers(winSlug:string, loseSlug:string, occ:string, wFit:OccF
   }
 }
 
-function getWhyWins(winSlug:string, loseSlug:string, occ:string, wFit:OccFit, lFit:OccFit):string[] {
-  const wCity = CITY_BASE[winSlug], lCity = CITY_BASE[loseSlug]
+function getWhyWins(winSlug:string, loseSlug:string, occ:string, wFit:OccFit, lFit:OccFit, wCity: typeof CITY_BASE[string], lCity: typeof CITY_BASE[string]):string[] {
   const reasons: string[] = []
   if (wFit.hpiYears < lFit.hpiYears - 1)
     reasons.push(`Price/income ${wFit.hpiYears} vs ${lFit.hpiYears} yrs — ${(lFit.hpiYears - wFit.hpiYears).toFixed(1)} years less to buy`)
@@ -503,8 +500,7 @@ function getScoreDrivers(winAdj:OccFit, loseAdj:OccFit, winCity:typeof CITY_BASE
   ].filter(Boolean).sort((a:any,b:any) => b.contrib - a.contrib).slice(0,4) as { label:string; contrib:number; detail:string }[]
 }
 
-function getWhyStill(loseSlug:string, winSlug:string, occ:string, lFit:OccFit, wFit:OccFit):string[] {
-  const lCity = CITY_BASE[loseSlug], wCity = CITY_BASE[winSlug]
+function getWhyStill(loseSlug:string, winSlug:string, occ:string, lFit:OccFit, wFit:OccFit, lCity: typeof CITY_BASE[string], wCity: typeof CITY_BASE[string]):string[] {
   const reasons: string[] = []
   if (lCity.eoi > wCity.eoi + 5)
     reasons.push(`Larger job market overall (city EOI ${lCity.eoi} vs ${wCity.eoi})`)
@@ -522,8 +518,7 @@ function getWhyStill(loseSlug:string, winSlug:string, occ:string, lFit:OccFit, w
   return reasons.slice(0,3)
 }
 
-function getSuitableFor(winSlug:string, loseSlug:string, occ:string, wFit:OccFit, lFit:OccFit) {
-  const wCity = CITY_BASE[winSlug], lCity = CITY_BASE[loseSlug]
+function getSuitableFor(winSlug:string, loseSlug:string, occ:string, wFit:OccFit, lFit:OccFit, wCity: typeof CITY_BASE[string], lCity: typeof CITY_BASE[string]) {
   const occName = OCC_NAME[occ] ?? occ
   const hpiDiff = +(lFit.hpiYears - wFit.hpiYears).toFixed(1)
   const rpiDiff = lFit.rpi - wFit.rpi
@@ -610,7 +605,22 @@ function ComparePageInner() {
   const occParam = searchParams.get('occupation') ?? ''
   const housingParam = searchParams.get('housing') ?? '2br'
 
-  const [slugA,    setSlugA   ] = useState(() => cities[0] && CITY_BASE[cities[0]] ? cities[0] : '')
+  // Dynamic data from Supabase (falls back to hardcoded constants)
+  const [fitMatrix, setFitMatrix] = useState<typeof FIT_MATRIX>(FIT_MATRIX)
+  const [cityBase,  setCityBase ] = useState<typeof CITY_BASE>(CITY_BASE)
+
+  useEffect(() => {
+    fetch('/api/city-scores')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d) return
+        if (d.fitMatrix)   setFitMatrix(d.fitMatrix)
+        if (d.cityIndices) setCityBase(d.cityIndices as typeof CITY_BASE)
+      })
+      .catch(() => { /* silently use hardcoded fallback */ })
+  }, [])
+
+  const [slugA,    setSlugA   ] = useState(() => cities[0] && CITY_BASE[cities[0]] ? cities[0] : '') // init from static; re-validates when cityBase loads
   const [slugB,    setSlugB   ] = useState(() => cities[1] && CITY_BASE[cities[1]] ? cities[1] : '')
   const [occ,      setOcc     ] = useState(() => occParam && OCCUPATIONS.find(x=>x.id===occParam) ? occParam : '')
   const [propType, setPropType] = useState(() => PROP_TYPES.find(p=>p.id===housingParam) ? housingParam : '2br')
@@ -623,10 +633,10 @@ function ComparePageInner() {
   const occName = OCC_NAME[occ] ?? ''
   const ready   = !!slugA && !!slugB && !!occ
 
-  const cityA   = CITY_BASE[slugA] ?? CITY_BASE['vancouver']
-  const cityB   = CITY_BASE[slugB] ?? CITY_BASE['calgary']
-  const fitA    = FIT_MATRIX[slugA]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
-  const fitB    = FIT_MATRIX[slugB]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
+  const cityA   = cityBase[slugA]  ?? cityBase['vancouver']
+  const cityB   = cityBase[slugB]  ?? cityBase['calgary']
+  const fitA    = fitMatrix[slugA]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
+  const fitB    = fitMatrix[slugB]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
 
   // Adjusted fit values
   const adjA = {
@@ -647,7 +657,7 @@ function ComparePageInner() {
   const adjRentB  = Math.round(cityB.medianRent * pt.rentMult)
 
   // Rank both cities across all 5
-  const rankList    = occ ? ALL_CITY_IDS.filter(id => FIT_MATRIX[id]?.[occ]).map(id => ({ id, score: getAdjScore(FIT_MATRIX[id][occ], pt.priceMult, pt.rentMult) })).sort((a,b) => b.score - a.score) : []
+  const rankList    = occ ? ALL_CITY_IDS.filter(id => fitMatrix[id]?.[occ]).map(id => ({ id, score: getAdjScore(fitMatrix[id][occ], pt.priceMult, pt.rentMult) })).sort((a,b) => b.score - a.score) : []
   const rankA       = rankList.findIndex(c => c.id === slugA) + 1
   const rankB       = rankList.findIndex(c => c.id === slugB) + 1
   const totalCities = rankList.length
@@ -664,17 +674,17 @@ function ComparePageInner() {
   const loseAdj  = aWins ? adjB : adjA
   const scoreDiff = Math.abs(adjA.score - adjB.score)
 
-  const verdict    = ready ? getVerdictLayers(winSlug, loseSlug, occ, winAdj, loseAdj) : { primary:'', secondary:'', choiceQ:'' }
-  const suitable   = ready ? getSuitableFor(winSlug, loseSlug, occ, winAdj, loseAdj)   : { winReasons:[] as string[], loseReasons:[] as string[] }
-  const whyWins    = ready ? getWhyWins(winSlug, loseSlug, occ, winAdj, loseAdj)        : []
-  const whyStill   = ready ? getWhyStill(loseSlug, winSlug, occ, loseAdj, winAdj)       : []
+  const verdict    = ready ? getVerdictLayers(winSlug, loseSlug, occ, winAdj, loseAdj, winner, loser) : { primary:'', secondary:'', choiceQ:'' }
+  const suitable   = ready ? getSuitableFor(winSlug, loseSlug, occ, winAdj, loseAdj, winner, loser)   : { winReasons:[] as string[], loseReasons:[] as string[] }
+  const whyWins    = ready ? getWhyWins(winSlug, loseSlug, occ, winAdj, loseAdj, winner, loser)        : []
+  const whyStill   = ready ? getWhyStill(loseSlug, winSlug, occ, loseAdj, winAdj, loser, winner)       : []
 
   const dimRows = DIMS.map(d => {
-    const vA   = getDimValue(slugA, occ, d.key, pt.priceMult, pt.rentMult)
-    const vB   = getDimValue(slugB, occ, d.key, pt.priceMult, pt.rentMult)
+    const vA   = getDimValue(fitMatrix, cityBase, slugA, occ, d.key, pt.priceMult, pt.rentMult)
+    const vB   = getDimValue(fitMatrix, cityBase, slugB, occ, d.key, pt.priceMult, pt.rentMult)
     const aW   = d.lowerBetter ? vA < vB : vA > vB
     const tie  = vA === vB
-    return { ...d, vA, vB, dispA: getDimDisplay(slugA, occ, d.key, pt.priceMult, pt.rentMult), dispB: getDimDisplay(slugB, occ, d.key, pt.priceMult, pt.rentMult), aWins: tie ? null : aW }
+    return { ...d, vA, vB, dispA: getDimDisplay(fitMatrix, cityBase, slugA, occ, d.key, pt.priceMult, pt.rentMult), dispB: getDimDisplay(fitMatrix, cityBase, slugB, occ, d.key, pt.priceMult, pt.rentMult), aWins: tie ? null : aW }
   })
 
   const closeDrops = () => { setDropA(false); setDropB(false); setDropO(false) }
@@ -742,8 +752,8 @@ function ComparePageInner() {
               {dropA && (
                 <div className="drop-menu">
                   <div className="drop-menu-inner">
-                    {Object.entries(CITY_BASE).filter(([k])=>k!==slugB).map(([k,c]) => {
-                      const fit = occ ? FIT_MATRIX[k]?.[occ] : undefined
+                    {Object.entries(cityBase).filter(([k])=>k!==slugB).map(([k,c]) => {
+                      const fit = occ ? fitMatrix[k]?.[occ] : undefined
                       const s   = fit ? getAdjScore(fit, pt.priceMult, pt.rentMult) : null
                       return (
                         <button key={k} className="drop-item" onClick={() => { setSlugA(k); closeDrops() }}
@@ -780,8 +790,8 @@ function ComparePageInner() {
               {dropB && (
                 <div className="drop-menu">
                   <div className="drop-menu-inner">
-                    {Object.entries(CITY_BASE).filter(([k])=>k!==slugA).map(([k,c]) => {
-                      const fit = occ ? FIT_MATRIX[k]?.[occ] : undefined
+                    {Object.entries(cityBase).filter(([k])=>k!==slugA).map(([k,c]) => {
+                      const fit = occ ? fitMatrix[k]?.[occ] : undefined
                       const s   = fit ? getAdjScore(fit, pt.priceMult, pt.rentMult) : null
                       return (
                         <button key={k} className="drop-item" onClick={() => { setSlugB(k); closeDrops() }}

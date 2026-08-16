@@ -342,13 +342,13 @@ export default function RentVsOwnPage() {
                           <div style={{ flex: 1, background: ownerAhead ? '#14B8A6' : 'rgba(20,184,166,0.4)', borderRadius: '3px 3px 0 0', height: `${ownerH}%`, minHeight: 2, transition: 'height 0.3s' }} />
                           <div style={{ flex: 1, background: !ownerAhead ? '#4F8EF7' : 'rgba(79,142,247,0.4)', borderRadius: '3px 3px 0 0', height: `${renterH}%`, minHeight: 2, transition: 'height 0.3s' }} />
                         </div>
-                        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.30)', whiteSpace: 'nowrap' }}>Yr {s.year}</div>
+                        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', whiteSpace: 'nowrap' }}>Yr {s.year}</div>
                       </div>
                     )
                   })}
               </div>
 
-              <div style={{ marginTop: 12, fontSize: 11, color: 'rgba(255,255,255,0.28)' }}>
+              <div style={{ marginTop: 12, fontSize: 12, color: 'rgba(255,255,255,0.50)' }}>
                 Brighter bar = higher net worth that year. Assumptions: 3.5% home appreciation, 3% annual rent increase, 5.5% investment return, 2.5% transaction costs at purchase.
               </div>
             </div>
@@ -449,12 +449,12 @@ export default function RentVsOwnPage() {
               { label: 'Property',            value: '2-bedroom condo/home' },
             ].map(a => (
               <div key={a.label} style={{ minWidth: 160 }}>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)' }}>{a.label}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>{a.label}</div>
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>{a.value}</div>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: 12, fontSize: 11, color: 'rgba(255,255,255,0.22)', lineHeight: 1.6 }}>
+          <div style={{ marginTop: 12, fontSize: 12, color: 'rgba(255,255,255,0.40)', lineHeight: 1.6 }}>
             Home prices are based on median benchmark prices for each city (H1 2026). Transaction costs include land transfer tax, legal fees, and inspection (~2.5% of purchase price). This model is a simplified financial comparison and does not account for individual tax situations, condo fees, or market timing. It is for educational purposes only and not financial advice.
           </div>
         </div>

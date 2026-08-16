@@ -458,9 +458,12 @@ function getAdjScore(base: OccFit, priceMult: number, rentMult: number): number 
   return Math.max(10, Math.min(99, base.score + Math.round(housingDelta * 0.52)))
 }
 
-function getSortValue(cityId:string, occ:string, dimId:string):number {
-  const fit  = FIT_MATRIX[cityId]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
-  const city = CITY_BASE[cityId]
+function getSortValue(
+  fitMatrix: typeof FIT_MATRIX, cityBase: typeof CITY_BASE,
+  cityId:string, occ:string, dimId:string
+):number {
+  const fit  = fitMatrix[cityId]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
+  const city = cityBase[cityId]
   switch(dimId) {
     case 'score':    return fit.score
     case 'hpiYears': return fit.hpiYears
@@ -522,6 +525,21 @@ export default function RankingPage() {
   const [liveHpi,     setLiveHpi    ] = useState<Record<string,number>>({})
   const [currentCity, setCurrentCity] = useState<string|null>(null)
 
+  // Dynamic data from Supabase (falls back to hardcoded constants)
+  const [fitMatrix, setFitMatrix] = useState<typeof FIT_MATRIX>(FIT_MATRIX)
+  const [cityBase,  setCityBase ] = useState<typeof CITY_BASE>(CITY_BASE)
+
+  useEffect(() => {
+    fetch('/api/city-scores')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d) return
+        if (d.fitMatrix)   setFitMatrix(d.fitMatrix)
+        if (d.cityIndices) setCityBase(d.cityIndices)
+      })
+      .catch(() => { /* silently use hardcoded fallback */ })
+  }, [])
+
   useEffect(() => {
     const p = new URLSearchParams(window.location.search)
     const o = p.get('occupation')
@@ -529,10 +547,10 @@ export default function RankingPage() {
     const r = p.get('region')
     if (r && REGIONS.find(x=>x.id===r)) setRegion(r)
     const c = p.get('current')
-    if (c && CITY_BASE[c]) setCurrentCity(c)
+    if (c && cityBase[c]) setCurrentCity(c)
     const h = p.get('housing')
     if (h && PROP_TYPES.find(pt=>pt.id===h)) setPropType(h)
-  }, [])
+  }, [cityBase])
 
   useEffect(() => {
     async function fetchHpi() {
@@ -561,15 +579,15 @@ export default function RankingPage() {
   const prop = PROP_TYPES.find(pt=>pt.id===propType) ?? PROP_TYPES[1]
 
   const allCities = regionObj.cities
-    .filter(id => CITY_BASE[id])
+    .filter(id => cityBase[id])
     .map(id => {
-      const city = CITY_BASE[id]
+      const city = cityBase[id]
       if (mode === 'index') {
         const score = cityIndexScore(city.tai, city.eoi, city.hai, city.eqi, city.tci, city.psi)
         const fit: OccFit = { score, hpiYears: 0, rpi: 0, eoi: 'Mid' as EoiVal }
         return { id, city, fit, insight: '' }
       }
-      const fitBase  = FIT_MATRIX[id]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
+      const fitBase  = fitMatrix[id]?.[occ] ?? { score:50, hpiYears:10, rpi:40, eoi:'Mid' as EoiVal }
       const baseHpi  = liveHpi[id] ?? fitBase.hpiYears
       const hpiYears = parseFloat((baseHpi * prop.priceMult).toFixed(1))
       const rpi      = Math.round(fitBase.rpi * prop.rentMult)
@@ -582,13 +600,13 @@ export default function RankingPage() {
     .sort((a,b) => {
       if (mode === 'index') return b.fit.score - a.fit.score
       if (isUnemployed) {
-        const eoiA = getSortValue(a.id, occ, 'eoi')
-        const eoiB = getSortValue(b.id, occ, 'eoi')
+        const eoiA = getSortValue(fitMatrix, cityBase, a.id, occ, 'eoi')
+        const eoiB = getSortValue(fitMatrix, cityBase, b.id, occ, 'eoi')
         if (eoiA !== eoiB) return eoiB - eoiA
         return b.fit.score - a.fit.score
       }
-      const vA = sortDim === 'score' ? a.fit.score : getSortValue(a.id, occ, sortDim)
-      const vB = sortDim === 'score' ? b.fit.score : getSortValue(b.id, occ, sortDim)
+      const vA = sortDim === 'score' ? a.fit.score : getSortValue(fitMatrix, cityBase, a.id, occ, sortDim)
+      const vB = sortDim === 'score' ? b.fit.score : getSortValue(fitMatrix, cityBase, b.id, occ, sortDim)
       return dim.lowerBetter ? vA-vB : vB-vA
     })
 
@@ -661,7 +679,7 @@ export default function RankingPage() {
           <div style={{ marginBottom:16, padding:'10px 16px', background:'rgba(79,142,247,0.08)', border:'1px solid rgba(79,142,247,0.20)', borderRadius:12, display:'flex', alignItems:'center', gap:12 }}>
             <span style={{ color:'#60A5FA', fontSize:13 }}>📍</span>
             <span style={{ color:'rgba(255,255,255,0.65)', fontSize:13 }}>
-              <strong style={{ color:'white' }}>{CITY_BASE[currentCity].name}</strong>
+              <strong style={{ color:'white' }}>{cityBase[currentCity]?.name}</strong>
               {' '}ranks <strong style={{ color:rankStyle(currentRank).color }}>#{currentRank}</strong>
               {' '}out of {allCities.length} cities for {occName} in {regionObj.label}
             </span>
@@ -835,7 +853,7 @@ export default function RankingPage() {
                         onClick={e=>e.stopPropagation()}
                         className="quick-link"
                         style={{ color:'rgba(255,255,255,0.40)', fontSize:12, fontWeight:600, textDecoration:'none' }}>
-                        Compare with {CITY_BASE[compareTo]?.name ?? 'another city'} →
+                        Compare with {cityBase[compareTo]?.name ?? 'another city'} →
                       </a>
                     </div>
                   </div>

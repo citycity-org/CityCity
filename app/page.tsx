@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { MarketPulse } from '@/components/MarketPulse'
+import SituationAdvisor from '@/components/SituationAdvisor'
 
 declare global {
   interface Window { d3: any; topojson: any }
@@ -768,6 +769,84 @@ export default function Home() {
 
       {/* ── SECTION 2: City Pulse ────────────────────────────────────────── */}
       <MarketPulse compact />
+
+      {/* ── SECTION: Start with Your Situation ───────────────────────────── */}
+      <section style={{ background: '#04091a', padding: '56px 24px 16px' }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-1 h-6 rounded-full" style={{ background: '#14B8A6' }} />
+            <h2 className="text-xl font-bold text-white">Start with your situation</h2>
+            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>Where are you in your journey?</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            {/* Card 1 — Moving to Canada */}
+            <a href="/ranking"
+              className="group block rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1"
+              style={{ background: 'rgba(20,184,166,0.06)', border: '1px solid rgba(20,184,166,0.18)' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black"
+                  style={{ background: 'rgba(20,184,166,0.15)', color: '#14B8A6' }}>01</div>
+                <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#14B8A6' }}>New to Canada</span>
+              </div>
+              <h3 className="text-base font-bold text-white mb-2 leading-snug">Moving to Canada</h3>
+              <p className="text-sm leading-relaxed mb-5" style={{ color: 'rgba(255,255,255,0.48)' }}>
+                Choosing where to land. Compare cities by career fit, housing affordability, and quality of life — before you commit.
+              </p>
+              <div className="flex items-center gap-1.5 text-xs font-semibold transition-all group-hover:gap-2.5"
+                style={{ color: '#14B8A6' }}>
+                Find your city <span>→</span>
+              </div>
+            </a>
+
+            {/* Card 2 — Relocating within Canada */}
+            <a href="/compare"
+              className="group block rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1"
+              style={{ background: 'rgba(79,142,247,0.06)', border: '1px solid rgba(79,142,247,0.18)' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black"
+                  style={{ background: 'rgba(79,142,247,0.15)', color: '#4F8EF7' }}>02</div>
+                <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#4F8EF7' }}>Already in Canada</span>
+              </div>
+              <h3 className="text-base font-bold text-white mb-2 leading-snug">Considering a Move</h3>
+              <p className="text-sm leading-relaxed mb-5" style={{ color: 'rgba(255,255,255,0.48)' }}>
+                Already settled but wondering if another city offers more. See what changes — and what it costs — to make the switch.
+              </p>
+              <div className="flex items-center gap-1.5 text-xs font-semibold transition-all group-hover:gap-2.5"
+                style={{ color: '#4F8EF7' }}>
+                Compare cities <span>→</span>
+              </div>
+            </a>
+
+            {/* Card 3 — Career & Income Planning */}
+            <a href="/calculate"
+              className="group block rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1"
+              style={{ background: 'rgba(253,224,71,0.06)', border: '1px solid rgba(253,224,71,0.18)' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black"
+                  style={{ background: 'rgba(253,224,71,0.15)', color: '#FDE047' }}>03</div>
+                <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#FDE047' }}>Career Planning</span>
+              </div>
+              <h3 className="text-base font-bold text-white mb-2 leading-snug">Planning My Career Path</h3>
+              <p className="text-sm leading-relaxed mb-5" style={{ color: 'rgba(255,255,255,0.48)' }}>
+                Where does your occupation lead furthest? Model your income, taxes, and path to homeownership across cities.
+              </p>
+              <div className="flex items-center gap-1.5 text-xs font-semibold transition-all group-hover:gap-2.5"
+                style={{ color: '#FDE047' }}>
+                Run the numbers <span>→</span>
+              </div>
+            </a>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION: Situation Advisor ────────────────────────────────────── */}
+      <section style={{ background: '#04091a', padding: '16px 24px 56px' }}>
+        <SituationAdvisor />
+      </section>
 
       {/* ── SECTION 3: City Insights ──────────────────────────────────────── */}
       <section style={{ background: '#070d1f', padding: '64px 24px' }}>
