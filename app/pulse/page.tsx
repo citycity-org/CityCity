@@ -32,7 +32,7 @@ export default function PulsePage() {
             <ContextCard
               icon="📅"
               title="Update Schedule"
-              body="BoC policy rate is fetched live. CPI and unemployment figures are updated monthly after official releases from Statistics Canada (CA) and the Bureau of Labor Statistics (US)."
+              body="BoC policy rate and CA CPI/unemployment are fetched live — no manual updates needed. StatsCan figures refresh automatically within hours of each official release. US figures (Fed rate, BLS CPI, BLS unemployment) are updated manually after each release."
             />
             <ContextCard
               icon="🏠"

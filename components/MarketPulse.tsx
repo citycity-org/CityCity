@@ -4,12 +4,44 @@ import Link from 'next/link'
 import {
   CA_CONFIG, US_CONFIG,
   rateInsight, cpiInsight, unemploymentInsight,
-  type CountryConfig,
+  type CountryConfig, type Indicator,
 } from '@/lib/market-config'
 
 // ── City news types ───────────────────────────────────────────────────────────
 interface NewsItem  { title: string; link: string; date: string }
 interface CityNews  { city: string; color: string; items: NewsItem[] }
+
+// ── StatsCan live macro data ──────────────────────────────────────────────────
+interface LiveIndicator { value: number; prev: number; date: string; source: string }
+interface StatscanMacro { cpi: LiveIndicator; unemployment: LiveIndicator; liveAt: string }
+
+async function fetchStatscan(): Promise<StatscanMacro | null> {
+  try {
+    const res = await fetch('/api/statscan-macro')
+    if (!res.ok) return null
+    const data: StatscanMacro & { error?: string } = await res.json()
+    return data.error ? null : data
+  } catch {
+    return null
+  }
+}
+
+// Merge live StatsCan data into CA_CONFIG — BoC rate kept from Valet API
+function buildCAConfig(live: StatscanMacro | null): CountryConfig {
+  if (!live) return CA_CONFIG
+  const cpi: Indicator = {
+    value: live.cpi.value, prev: live.cpi.prev,
+    date: live.cpi.date, source: 'Statistics Canada',
+  }
+  const unemployment: Indicator = {
+    value: live.unemployment.value, prev: live.unemployment.prev,
+    date: live.unemployment.date, source: 'Statistics Canada LFS',
+  }
+  return {
+    ...CA_CONFIG, cpi, unemployment,
+    updatedAt: `${live.unemployment.date} · Auto-updated`,
+  }
+}
 
 // ── BoC Valet API ─────────────────────────────────────────────────────────────
 const BOC_API = 'https://www.bankofcanada.ca/valet/observations/V39079/json?recent=1'
@@ -298,6 +330,7 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
   const [bocRate, setBocRate]         = useState<number | null>(null)
   const [loading, setLoading]         = useState(true)
   const [selectedCode, setSelected]   = useState<string>('CA')
+  const [statscan, setStatscan]       = useState<StatscanMacro | null>(null)
 
   // City news state
   const [news, setNews]               = useState<CityNews[]>([])
@@ -307,6 +340,7 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
 
   useEffect(() => {
     fetchBoCRate().then(r => { setBocRate(r); setLoading(false) })
+    fetchStatscan().then(d => { if (d) setStatscan(d) })
   }, [])
 
   // Fetch city news once on mount
@@ -332,7 +366,9 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
   }, [news])
 
   const liveRate = loading ? undefined : bocRate
-  const active = COUNTRIES.find(c => c.code === selectedCode) ?? COUNTRIES[0]
+  const caConfig = buildCAConfig(statscan)   // live StatsCan data merged into CA_CONFIG
+  const active   = COUNTRIES.find(c => c.code === selectedCode) ?? COUNTRIES[0]
+  const activeConfig = active.code === 'CA' ? caConfig : active.config
 
   if (compact) {
     return (
@@ -386,12 +422,12 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
 
           {/* 3-card grid */}
           <CompactCards
-            config={active.config}
+            config={activeConfig}
             liveRate={active.code === 'CA' ? liveRate : undefined}
           />
 
           {/* Source footer — country-specific */}
-          <SourceFooter updatedAt={active.config.updatedAt} sources={active.config.sources} />
+          <SourceFooter updatedAt={activeConfig.updatedAt} sources={activeConfig.sources} />
 
           {/* ── City News Strip ─────────────────────────────────── */}
           {news.length > 0 && (() => {
@@ -554,11 +590,11 @@ export function MarketPulse({ compact = false }: { compact?: boolean }) {
         </div>
 
         <FullCountry
-          config={active.config}
+          config={activeConfig}
           liveRate={active.code === 'CA' ? liveRate : undefined}
         />
 
-        <SourceFooter updatedAt={active.config.updatedAt} sources={active.config.sources} />
+        <SourceFooter updatedAt={activeConfig.updatedAt} sources={activeConfig.sources} />
 
         <div style={{
           marginTop: 12, padding: '12px 18px',
