@@ -19,18 +19,27 @@ interface City {
   score?: number; tai?: number; eoi?: number; eqi?: number
   hpiYears?: number
   rpi?: number
+  // Label positioning — avoids overlap in dense clusters
+  labelDx?: number          // horizontal offset from dot centre (px)
+  labelDy?: number          // vertical offset from dot centre (px), default -18
+  labelAlign?: CanvasTextAlign  // 'center' | 'left' | 'right'
+  labelText?: string        // override display name (e.g. abbreviate)
 }
 
 const CITIES: City[] = [
-  { id: 'vancouver', name: 'Vancouver',   nameEn: 'Vancouver',   lat: 49.25,  lng: -123.12, active: true,  score: 70, tai: 72, eoi: 80, eqi: 90, hpiYears: 10.2, rpi: 43.6 },
-  { id: 'toronto',   name: 'Toronto',     nameEn: 'Toronto',     lat: 43.65,  lng: -79.38,  active: true,  score: 70, tai: 68, eoi: 92, eqi: 75, hpiYears: 9.6,  rpi: 41.2 },
-  { id: 'calgary',   name: 'Calgary',     nameEn: 'Calgary',     lat: 51.05,  lng: -114.07, active: true,  score: 72, tai: 90, eoi: 65, eqi: 82, hpiYears: 3.9,  rpi: 24.1 },
-  { id: 'montreal',  name: 'Montréal',    nameEn: 'Montréal',    lat: 45.50,  lng: -73.57,  active: true,  score: 75, tai: 42, eoi: 72, eqi: 78, hpiYears: 5.5,  rpi: 30.2 },
-  { id: 'ottawa',    name: 'Ottawa',      nameEn: 'Ottawa',      lat: 45.42,  lng: -75.69,  active: true,  score: 73, tai: 68, eoi: 75, eqi: 80, hpiYears: 6.8,  rpi: 28.4 },
-  { id: 'new-york',   name: 'New York City', nameEn: 'New York City', lat: 40.71, lng: -74.01,  active: true,  country: 'US', score: 68, tai: 30, eoi: 92, eqi: 62, hpiYears: 14.8, rpi: 29.2 },
-  { id: 'san-francisco', name: 'San Francisco', nameEn: 'San Francisco', lat: 37.77, lng: -122.42, active: true, country: 'US', score: 65, tai: 35, eoi: 95, eqi: 70, hpiYears: 15.6, rpi: 27.6 },
-  { id: 'seattle',   name: 'Seattle',     nameEn: 'Seattle',     lat: 47.61,  lng: -122.33, active: true,  country: 'US', score: 75, tai: 95, eoi: 88, eqi: 78, hpiYears: 8.8,  rpi: 21.3 },
-  { id: 'boston',    name: 'Boston',      nameEn: 'Boston',      lat: 42.36,  lng: -71.06,  active: true,  country: 'US', score: 72, tai: 60, eoi: 85, eqi: 75, hpiYears: 11.8, rpi: 24.4 },
+  // ── Active cities — label offsets designed to eliminate cluster overlap ──────
+  // Western cluster: Vancouver / Calgary / Seattle are tight on-screen
+  { id: 'vancouver',     name: 'Vancouver',      nameEn: 'Vancouver',      lat: 49.25,  lng: -123.12, active: true,  score: 70, tai: 72, eoi: 80, eqi: 90, hpiYears: 10.2, rpi: 43.6, labelDx: -8, labelDy: -20, labelAlign: 'right'  },
+  { id: 'calgary',       name: 'Calgary',         nameEn: 'Calgary',        lat: 51.05,  lng: -114.07, active: true,  score: 72, tai: 90, eoi: 65, eqi: 82, hpiYears: 3.9,  rpi: 24.1, labelDx:  8, labelDy: -20, labelAlign: 'left'   },
+  { id: 'seattle',       name: 'Seattle',         nameEn: 'Seattle',        lat: 47.61,  lng: -122.33, active: true,  country: 'US', score: 75, tai: 95, eoi: 88, eqi: 78, hpiYears: 8.8,  rpi: 21.3, labelDx:  0, labelDy:  24, labelAlign: 'center' },
+  // Eastern cluster: Ottawa / Montréal are nearly the same latitude; Toronto / Boston / NYC fan out below
+  { id: 'ottawa',        name: 'Ottawa',          nameEn: 'Ottawa',         lat: 45.42,  lng: -75.69,  active: true,  score: 73, tai: 68, eoi: 75, eqi: 80, hpiYears: 6.8,  rpi: 28.4, labelDx: -8, labelDy: -20, labelAlign: 'right'  },
+  { id: 'montreal',      name: 'Montréal',        nameEn: 'Montréal',       lat: 45.50,  lng: -73.57,  active: true,  score: 75, tai: 42, eoi: 72, eqi: 78, hpiYears: 5.5,  rpi: 30.2, labelDx:  8, labelDy: -20, labelAlign: 'left'   },
+  { id: 'toronto',       name: 'Toronto',         nameEn: 'Toronto',        lat: 43.65,  lng: -79.38,  active: true,  score: 70, tai: 68, eoi: 92, eqi: 75, hpiYears: 9.6,  rpi: 41.2, labelDx: -8, labelDy:  24, labelAlign: 'right'  },
+  { id: 'boston',        name: 'Boston',          nameEn: 'Boston',         lat: 42.36,  lng: -71.06,  active: true,  country: 'US', score: 72, tai: 60, eoi: 85, eqi: 75, hpiYears: 11.8, rpi: 24.4, labelDx: 10, labelDy:   4, labelAlign: 'left'   },
+  { id: 'new-york',      name: 'New York City',   nameEn: 'New York City',  lat: 40.71,  lng: -74.01,  active: true,  country: 'US', score: 68, tai: 30, eoi: 92, eqi: 62, hpiYears: 14.8, rpi: 29.2, labelDx:  0, labelDy:  24, labelAlign: 'center', labelText: 'New York' },
+  // Standalone — centred label is fine
+  { id: 'san-francisco', name: 'San Francisco',   nameEn: 'San Francisco',  lat: 37.77,  lng: -122.42, active: true,  country: 'US', score: 65, tai: 35, eoi: 95, eqi: 70, hpiYears: 15.6, rpi: 27.6, labelDx:  0, labelDy: -20, labelAlign: 'center' },
   { id: 'london',    name: 'London',      nameEn: 'London',      lat: 51.51,  lng: -0.13,   active: false },
   { id: 'tokyo',     name: 'Tokyo',       nameEn: 'Tokyo',       lat: 35.68,  lng: 139.69,  active: false },
   { id: 'sydney',    name: 'Sydney',      nameEn: 'Sydney',      lat: -33.87, lng: 151.21,  active: false },
@@ -255,6 +264,8 @@ export default function Home() {
     setSelectedCity(city)
     setPanelOpen(true)
     autoRotate.current = false
+    // Bridge: clicking a live city on the globe pre-fills the hero city dropdown
+    if (city.active) setHeroCity(city.id)
   }, [])
 
   const closePanel = useCallback(() => {
@@ -382,14 +393,28 @@ export default function Home() {
           ctx.fillStyle = '#FDE047'; ctx.fill()
           ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 1; ctx.stroke()
 
-          // Name label
+          // Name label — per-city offsets prevent cluster overlap
           if (r > baseR * 0.85) {
             ctx.save()
-            ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 6
-            ctx.font = `bold ${Math.max(8, Math.min(11, r / baseR * 9))}px -apple-system,system-ui,sans-serif`
-            ctx.textAlign = 'center'
-            ctx.fillStyle = 'rgba(255,255,255,0.92)'
-            ctx.fillText(city.nameEn, x, y - 18)
+            const fs   = Math.max(8, Math.min(11, r / baseR * 9))
+            const lx   = x + (city.labelDx ?? 0)
+            const ly   = y + (city.labelDy ?? -18)
+            const text = city.labelText ?? city.nameEn
+            ctx.font      = `bold ${fs}px -apple-system,system-ui,sans-serif`
+            ctx.textAlign = city.labelAlign ?? 'center'
+            // Dark pill behind text for readability on any background
+            const tw = ctx.measureText(text).width
+            const pad = 3
+            const bgX = ctx.textAlign === 'center' ? lx - tw / 2 - pad
+                      : ctx.textAlign === 'right'  ? lx - tw - pad
+                      : lx - pad
+            ctx.fillStyle = 'rgba(4,9,26,0.60)'
+            ctx.beginPath()
+            ctx.roundRect(bgX, ly - fs + 1, tw + pad * 2, fs + 3, 3)
+            ctx.fill()
+            ctx.shadowColor = 'rgba(0,0,0,0.8)'; ctx.shadowBlur = 4
+            ctx.fillStyle = 'rgba(255,255,255,0.95)'
+            ctx.fillText(text, lx, ly)
             ctx.restore()
           }
 
@@ -589,9 +614,28 @@ export default function Home() {
               </h1>
 
               {/* Subtitle */}
-              <p className="text-sm leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.60)' }}>
+              <p className="text-sm leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.60)' }}>
                 City intelligence for your next chapter — built on career, tax, housing, and opportunity.
               </p>
+
+              {/* What you get — outcome chips */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 }}>
+                {[
+                  { icon: '🏠', label: 'Years to own' },
+                  { icon: '💰', label: 'Tax advantage' },
+                  { icon: '📊', label: 'Employment score' },
+                ].map(({ icon, label }) => (
+                  <span key={label} style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.55)',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.11)',
+                    borderRadius: 20, padding: '4px 10px',
+                  }}>
+                    {icon} {label}
+                  </span>
+                ))}
+              </div>
 
               {/* Selectors */}
               <div className="space-y-3 mb-4">
@@ -630,24 +674,44 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* CTA */}
+              {/* CTA — always shows gradient; text guides user when incomplete */}
               <button
                 onClick={handleHeroGo}
                 disabled={!heroOccupation || !heroCity}
-                className="w-full py-3 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90 active:opacity-75"
-                style={{ background: heroOccupation && heroCity ? 'linear-gradient(135deg, #4F8EF7, #5B5CF0)' : 'rgba(255,255,255,0.10)', cursor: heroOccupation && heroCity ? 'pointer' : 'not-allowed' }}
+                className="w-full py-3 rounded-xl text-sm font-bold text-white transition-opacity active:opacity-75"
+                style={{
+                  background: 'linear-gradient(135deg, #4F8EF7, #5B5CF0)',
+                  opacity: heroOccupation && heroCity ? 1 : 0.45,
+                  cursor: heroOccupation && heroCity ? 'pointer' : 'default',
+                }}
               >
-                View My City Fit Score →
+                {heroOccupation && heroCity ? 'View My City Fit Score →' : 'Select occupation & city above'}
               </button>
 
-              {/* Quick links */}
-              <div className="flex items-center gap-3 mt-4">
-                <a href="/ranking"   className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>Rankings</a>
-                <span style={{ color: 'rgba(255,255,255,0.35)' }}>·</span>
-                <a href="/compare"   className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>Compare</a>
-                <span style={{ color: 'rgba(255,255,255,0.35)' }}>·</span>
-                <a href="/calculate" className="text-xs transition-colors hover:text-white" style={{ color: 'rgba(255,255,255,0.55)' }}>Calculate</a>
+              {/* Quick links — pill buttons, easier to tap */}
+              <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
+                {[
+                  { href: '/ranking',   label: 'Rankings',  icon: '📊' },
+                  { href: '/compare',   label: 'Compare',   icon: '⚖️' },
+                  { href: '/calculate', label: 'Calculate', icon: '🧮' },
+                ].map(link => (
+                  <a key={link.href} href={link.href} style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 5,
+                    fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.60)',
+                    background: 'rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    borderRadius: 8, padding: '6px 12px',
+                    textDecoration: 'none', transition: 'color 0.15s',
+                  }}>
+                    {link.icon} {link.label}
+                  </a>
+                ))}
               </div>
+
+              {/* Globe bridge hint */}
+              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.22)', marginTop: 12, textAlign: 'center' }}>
+                or tap a city on the globe to explore →
+              </p>
             </div>
           </div>
         )}
@@ -710,7 +774,7 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h2 className="text-xl font-bold text-white leading-tight">{selectedCity.nameEn}</h2>
-                    <div className="text-white/40 text-sm">Canada</div>
+                    <div className="text-white/40 text-sm">{selectedCity.country === 'US' ? 'United States' : 'Canada'}</div>
                   </div>
                   {selectedCity.active && selectedCity.score !== undefined ? (
                     <div className="text-right">
