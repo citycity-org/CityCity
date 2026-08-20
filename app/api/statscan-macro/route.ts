@@ -48,10 +48,17 @@ async function fetchVector(vectorId: string, latestN: number): Promise<DataPoint
 
   const json: unknown = await res.json()
 
-  // Response is an array; each element wraps one vector
+  // Log first 800 chars so we can see the actual structure in Vercel logs
+  console.log(`[statscan] vector ${vectorId} raw:`, JSON.stringify(json).slice(0, 800))
+
+  // Response can be either:
+  //   [{status, object: {vectorDataPoint}}]  ← most common
+  //   [{responseStatusCode, vectorDataPoint}] ← some endpoints
   const entry  = (Array.isArray(json) ? json[0] : json) as Record<string, unknown> | null
-  const obj    = entry?.['object'] as Record<string, unknown> | undefined
+  const obj    = (entry?.['object'] ?? entry) as Record<string, unknown> | undefined
   const pts    = obj?.['vectorDataPoint'] as Array<Record<string, unknown>> | undefined
+
+  console.log(`[statscan] vector ${vectorId} pts count:`, pts?.length ?? 'undefined')
 
   if (!pts?.length) throw new Error(`No data points returned for ${vectorId}`)
 
