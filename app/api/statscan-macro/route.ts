@@ -12,8 +12,8 @@ import { NextResponse } from 'next/server'
 // Cache: 4h server-side (data changes at most once per month).
 
 const WDS_BASE    = 'https://www150.statcan.gc.ca/t1/tbl1/en/downloadData/v2/getDataFromVectorsAndLatestNPeriods'
-const CPI_VECTOR  = 'v41690973'   // CPI All-items index, Canada
-const UNEMP_VECTOR = 'v2062815'   // Unemployment rate, Canada
+const CPI_VECTOR   = '41690973'   // CPI All-items index, Canada (numeric — no "v" prefix in URL)
+const UNEMP_VECTOR = '2062815'    // Unemployment rate, Canada (numeric)
 
 export interface MacroIndicator {
   value:  number
