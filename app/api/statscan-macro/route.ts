@@ -1,30 +1,35 @@
 import { NextResponse } from 'next/server'
 
 // ── Statistics Canada WDS API ─────────────────────────────────────────────────
-// Same pattern as the BoC Valet API already in use.
 // Vector IDs:
-//   v41690973 — Table 18-10-0004-01, CPI All-items, Canada (index value)
-//   v2062815  — Table 14-10-0017-01, Unemployment rate, Canada, both sexes 15+
+//   41690973 — Table 18-10-0004-01, CPI All-items, Canada (index value)
+//   2062815  — Table 14-10-0017-01, Unemployment rate, Canada (returns 404 — wrong ID)
 //
-// CPI is an INDEX value — we calculate YoY % from 14 periods (current vs 12m ago).
-// Unemployment is returned directly as the rate %.
+// CPI is an INDEX value — calculate YoY % from 14 periods (current vs 12m ago).
+// Unemployment: correct vector ID still unknown; falls back to static config.
 //
-// Cache: 4h server-side (data changes at most once per month).
+// If StatsCan API is unreachable (Vercel IP blocked / rate limited),
+// the route returns static fallback values so MarketPulse always renders.
 
-const WDS_BASE    = 'https://www150.statcan.gc.ca/t1/tbl1/en/downloadData/v2/getDataFromVectorsAndLatestNPeriods'
-const CPI_VECTOR   = '41690973'   // CPI All-items index, Canada (numeric — no "v" prefix in URL)
-const UNEMP_VECTOR = '2062815'    // Unemployment rate, Canada (numeric)
+const WDS_BASE     = 'https://www150.statcan.gc.ca/t1/tbl1/en/downloadData/v2/getDataFromVectorsAndLatestNPeriods'
+const CPI_VECTOR   = '41690973'
+const UNEMP_VECTOR = '2062815'
+
+// ── Static fallback (updated manually when auto-fetch fails) ──────────────────
+const FALLBACK_CPI  = { value: 1.9, prev: 1.8, date: 'Jul 2026', source: 'Statistics Canada · Manual' }
+const FALLBACK_UNEMP = null   // null → MarketPulse uses CA_CONFIG.unemployment
 
 export interface MacroIndicator {
   value:  number
   prev:   number
-  date:   string   // e.g. "Jul 2026"
+  date:   string
   source: string
 }
 
 export interface StatscanMacro {
   cpi:          MacroIndicator
-  unemployment: MacroIndicator | null   // null if vector unavailable
+  unemployment: MacroIndicator | null
+  live:         boolean          // true = fetched from API this request, false = fallback
   liveAt:       string
 }
 
@@ -33,46 +38,42 @@ export interface StatscanMacro {
 interface DataPoint { refPer: string; value: number }
 
 async function fetchVector(vectorId: string, latestN: number): Promise<DataPoint[]> {
-  // StatsCan WDS API requires POST with JSON body — GET returns 404
   const res = await fetch(WDS_BASE, {
     method: 'POST',
-    next: { revalidate: 14400 },   // 4-hour server cache
+    // no next.revalidate here — caching at the HTTP response level instead
     headers: {
       'Content-Type': 'application/json',
       'Accept':       'application/json',
-      'User-Agent':   'Lakive/1.0 (+https://lakive.com)',
+      'User-Agent':   'Mozilla/5.0 (compatible; Lakive/1.0; +https://lakive.com)',
     },
     body: JSON.stringify([{ vectorId: parseInt(vectorId, 10), latestN }]),
   })
+
+  const text = await res.text()
+  console.log(`[statscan] vector ${vectorId} status=${res.status} body=${text.slice(0, 600)}`)
+
   if (!res.ok) throw new Error(`StatsCan HTTP ${res.status} for ${vectorId}`)
 
-  const json: unknown = await res.json()
+  const json: unknown = JSON.parse(text)
 
-  // Log first 800 chars so we can see the actual structure in Vercel logs
-  console.log(`[statscan] vector ${vectorId} raw:`, JSON.stringify(json).slice(0, 800))
-
-  // Response can be either:
-  //   [{status, object: {vectorDataPoint}}]  ← most common
-  //   [{responseStatusCode, vectorDataPoint}] ← some endpoints
+  // Handle both response shapes:
+  //   [{status, object: {vectorDataPoint}}]
+  //   [{responseStatusCode, vectorDataPoint}]
   const entry  = (Array.isArray(json) ? json[0] : json) as Record<string, unknown> | null
-  const obj    = (entry?.['object'] ?? entry) as Record<string, unknown> | undefined
-  const pts    = obj?.['vectorDataPoint'] as Array<Record<string, unknown>> | undefined
+  const obj    = (entry?.['object'] ?? entry)          as Record<string, unknown> | undefined
+  const pts    = obj?.['vectorDataPoint']               as Array<Record<string, unknown>> | undefined
 
-  console.log(`[statscan] vector ${vectorId} pts count:`, pts?.length ?? 'undefined')
+  if (!pts?.length) throw new Error(`No data points for ${vectorId}`)
 
-  if (!pts?.length) throw new Error(`No data points returned for ${vectorId}`)
-
-  // Sort newest-first (API may return oldest-first)
   return (pts as Array<{ refPerRaw?: string; refPer?: string; value: number }>)
     .map(p => ({
-      refPer: (p.refPerRaw ?? p.refPer ?? '').toString().slice(0, 7),  // "2026-07"
+      refPer: (p.refPerRaw ?? p.refPer ?? '').toString().slice(0, 7),
       value:  p.value,
     }))
     .filter(p => p.refPer && !isNaN(p.value))
     .sort((a, b) => b.refPer.localeCompare(a.refPer))
 }
 
-// "2026-07" → "Jul 2026"
 function fmtPeriod(refPer: string): string {
   try {
     const [yr, mo] = refPer.split('-')
@@ -86,69 +87,52 @@ function fmtPeriod(refPer: string): string {
 // ── Route handler ─────────────────────────────────────────────────────────────
 
 export async function GET() {
-  try {
-    // Fetch independently so a single bad vector doesn't block the other
-    const [cpiResult, unempResult] = await Promise.allSettled([
-      fetchVector(CPI_VECTOR, 14),
-      fetchVector(UNEMP_VECTOR, 2),
-    ])
+  const [cpiResult, unempResult] = await Promise.allSettled([
+    fetchVector(CPI_VECTOR, 14),
+    fetchVector(UNEMP_VECTOR, 2),
+  ])
 
-    const cpiPts   = cpiResult.status   === 'fulfilled' ? cpiResult.value   : []
-    const unempPts = unempResult.status === 'fulfilled' ? unempResult.value  : []
+  if (cpiResult.status === 'rejected')
+    console.error('[statscan] CPI fetch failed:', String(cpiResult.reason))
+  if (unempResult.status === 'rejected')
+    console.error('[statscan] Unemp fetch failed:', String(unempResult.reason))
 
-    if (cpiResult.status === 'rejected') console.error('[statscan] CPI fetch failed:', cpiResult.reason)
-    if (unempResult.status === 'rejected') console.error('[statscan] Unemp fetch failed:', unempResult.reason)
+  const cpiPts   = cpiResult.status   === 'fulfilled' ? cpiResult.value  : []
+  const unempPts = unempResult.status === 'fulfilled' ? unempResult.value : []
 
-    // ── CPI: calculate YoY % from index values ───────────────────────────────
-    // pts[0]  = most recent month's index
-    // pts[12] = 12 months prior index  → YoY = (pts[0] / pts[12] - 1) * 100
-    // pts[1]  = previous month's index → prev YoY = (pts[1] / pts[13] - 1) * 100
-    if (cpiPts.length < 14) {
-      throw new Error(`Insufficient CPI data — expected 14 points, got ${cpiPts.length}`)
+  // ── CPI ─────────────────────────────────────────────────────────────────────
+  let cpi: MacroIndicator
+  let live = false
+
+  if (cpiPts.length >= 14) {
+    const cur  = (cpiPts[0].value  / cpiPts[12].value - 1) * 100
+    const prev = (cpiPts[1].value  / cpiPts[13].value - 1) * 100
+    if (cur >= -5 && cur <= 20) {
+      cpi  = { value: parseFloat(cur.toFixed(1)), prev: parseFloat(prev.toFixed(1)),
+               date: fmtPeriod(cpiPts[0].refPer), source: 'Statistics Canada (auto)' }
+      live = true
+    } else {
+      console.warn(`[statscan] CPI out of range: ${cur.toFixed(2)}% — using fallback`)
+      cpi = FALLBACK_CPI
     }
-
-    const cpiCurrent = (cpiPts[0].value  / cpiPts[12].value - 1) * 100
-    const cpiPrev    = (cpiPts[1].value  / cpiPts[13].value - 1) * 100
-
-    // Sanity check — CPI should be within -5% … +20%
-    if (cpiCurrent < -5 || cpiCurrent > 20) {
-      throw new Error(`CPI out of expected range: ${cpiCurrent.toFixed(2)}%`)
-    }
-
-    const cpi: MacroIndicator = {
-      value:  parseFloat(cpiCurrent.toFixed(1)),
-      prev:   parseFloat(cpiPrev.toFixed(1)),
-      date:   fmtPeriod(cpiPts[0].refPer),
-      source: 'Statistics Canada (auto)',
-    }
-
-    // ── Unemployment: rate returned directly (optional — falls back to null) ───
-    const unemployment: MacroIndicator | null = (() => {
-      if (!unempPts.length) return null
-      const val  = parseFloat(unempPts[0].value.toFixed(1))
-      const prev = unempPts.length > 1 ? parseFloat(unempPts[1].value.toFixed(1)) : val
-      if (val < 0 || val > 25) return null
-      return { value: val, prev, date: fmtPeriod(unempPts[0].refPer), source: 'Statistics Canada LFS (auto)' }
-    })()
-
-    // Keep legacy variable names for the block below
-    const unempVal  = unemployment?.value  ?? 0
-    const unempPrev = unemployment?.prev   ?? 0
-
-    const body: StatscanMacro = { cpi, unemployment, liveAt: new Date().toISOString() }
-
-    return NextResponse.json(body, {
-      headers: { 'Cache-Control': 'public, s-maxage=14400, stale-while-revalidate=3600' },
-    })
-
-  } catch (err) {
-    console.error('[statscan-macro] Error:', err)
-    return NextResponse.json(
-      { error: String(err) },
-      {
-        status: 503,
-        headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60' },
-      }
-    )
+  } else {
+    cpi = FALLBACK_CPI
   }
+
+  // ── Unemployment ─────────────────────────────────────────────────────────────
+  const unemployment: MacroIndicator | null = (() => {
+    if (!unempPts.length) return FALLBACK_UNEMP
+    const val  = parseFloat(unempPts[0].value.toFixed(1))
+    const prev = unempPts.length > 1 ? parseFloat(unempPts[1].value.toFixed(1)) : val
+    if (val < 0 || val > 25) return FALLBACK_UNEMP
+    return { value: val, prev, date: fmtPeriod(unempPts[0].refPer), source: 'Statistics Canada LFS (auto)' }
+  })()
+
+  const body: StatscanMacro = { cpi, unemployment, live, liveAt: new Date().toISOString() }
+
+  // Short cache when using fallback so we retry sooner
+  const maxAge = live ? 14400 : 3600
+  return NextResponse.json(body, {
+    headers: { 'Cache-Control': `public, s-maxage=${maxAge}, stale-while-revalidate=600` },
+  })
 }
