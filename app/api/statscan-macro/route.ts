@@ -33,13 +33,16 @@ export interface StatscanMacro {
 interface DataPoint { refPer: string; value: number }
 
 async function fetchVector(vectorId: string, latestN: number): Promise<DataPoint[]> {
-  const url = `${WDS_BASE}?vectorIds=${vectorId}&latestN=${latestN}`
-  const res = await fetch(url, {
+  // StatsCan WDS API requires POST with JSON body — GET returns 404
+  const res = await fetch(WDS_BASE, {
+    method: 'POST',
     next: { revalidate: 14400 },   // 4-hour server cache
     headers: {
-      Accept:       'application/json',
-      'User-Agent': 'Lakive/1.0 (+https://lakive.com)',
+      'Content-Type': 'application/json',
+      'Accept':       'application/json',
+      'User-Agent':   'Lakive/1.0 (+https://lakive.com)',
     },
+    body: JSON.stringify([{ vectorId: parseInt(vectorId, 10), latestN }]),
   })
   if (!res.ok) throw new Error(`StatsCan HTTP ${res.status} for ${vectorId}`)
 
