@@ -14,7 +14,7 @@ interface CityNews  { city: string; color: string; items: NewsItem[] }
 // ── StatsCan live macro data ──────────────────────────────────────────────────
 interface LiveIndicator { value: number; prev: number; date: string; source: string }
 interface StatscanMacro {
-  cpi: LiveIndicator; unemployment: LiveIndicator | null
+  cpi: LiveIndicator; unemployment: LiveIndicator
   live: boolean; liveAt: string
 }
 
@@ -29,17 +29,17 @@ async function fetchStatscan(): Promise<StatscanMacro | null> {
   }
 }
 
-// Merge live StatsCan data into CA_CONFIG — BoC rate kept from Valet API
+// Merge live data into CA_CONFIG — BoC rate kept from Valet API
 function buildCAConfig(live: StatscanMacro | null): CountryConfig {
   if (!live) return CA_CONFIG
   const cpi: Indicator = {
     value: live.cpi.value, prev: live.cpi.prev,
     date: live.cpi.date, source: live.cpi.source,
   }
-  const unemployment: Indicator = live.unemployment ? {
+  const unemployment: Indicator = {
     value: live.unemployment.value, prev: live.unemployment.prev,
     date: live.unemployment.date, source: live.unemployment.source,
-  } : CA_CONFIG.unemployment
+  }
   const label = live.live ? `${cpi.date} · Auto-updated` : `${cpi.date} · Manual`
   return { ...CA_CONFIG, cpi, unemployment, updatedAt: label }
 }
