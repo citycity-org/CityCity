@@ -24,8 +24,8 @@ export interface MacroIndicator {
 
 export interface StatscanMacro {
   cpi:          MacroIndicator
-  unemployment: MacroIndicator
-  liveAt:       string   // ISO timestamp of this fetch
+  unemployment: MacroIndicator | null   // null if vector unavailable
+  liveAt:       string
 }
 
 // ── Internal helpers ──────────────────────────────────────────────────────────
@@ -80,11 +80,17 @@ function fmtPeriod(refPer: string): string {
 
 export async function GET() {
   try {
-    // Fetch in parallel — CPI needs 14 periods to compute both current & prev YoY
-    const [cpiPts, unempPts] = await Promise.all([
+    // Fetch independently so a single bad vector doesn't block the other
+    const [cpiResult, unempResult] = await Promise.allSettled([
       fetchVector(CPI_VECTOR, 14),
       fetchVector(UNEMP_VECTOR, 2),
     ])
+
+    const cpiPts   = cpiResult.status   === 'fulfilled' ? cpiResult.value   : []
+    const unempPts = unempResult.status === 'fulfilled' ? unempResult.value  : []
+
+    if (cpiResult.status === 'rejected') console.error('[statscan] CPI fetch failed:', cpiResult.reason)
+    if (unempResult.status === 'rejected') console.error('[statscan] Unemp fetch failed:', unempResult.reason)
 
     // ── CPI: calculate YoY % from index values ───────────────────────────────
     // pts[0]  = most recent month's index
@@ -109,25 +115,18 @@ export async function GET() {
       source: 'Statistics Canada (auto)',
     }
 
-    // ── Unemployment: rate returned directly ─────────────────────────────────
-    if (!unempPts.length) throw new Error('No unemployment data returned')
+    // ── Unemployment: rate returned directly (optional — falls back to null) ───
+    const unemployment: MacroIndicator | null = (() => {
+      if (!unempPts.length) return null
+      const val  = parseFloat(unempPts[0].value.toFixed(1))
+      const prev = unempPts.length > 1 ? parseFloat(unempPts[1].value.toFixed(1)) : val
+      if (val < 0 || val > 25) return null
+      return { value: val, prev, date: fmtPeriod(unempPts[0].refPer), source: 'Statistics Canada LFS (auto)' }
+    })()
 
-    const unempVal  = parseFloat(unempPts[0].value.toFixed(1))
-    const unempPrev = unempPts.length > 1
-      ? parseFloat(unempPts[1].value.toFixed(1))
-      : unempVal
-
-    // Sanity check — unemployment should be 0%–25%
-    if (unempVal < 0 || unempVal > 25) {
-      throw new Error(`Unemployment out of expected range: ${unempVal}%`)
-    }
-
-    const unemployment: MacroIndicator = {
-      value:  unempVal,
-      prev:   unempPrev,
-      date:   fmtPeriod(unempPts[0].refPer),
-      source: 'Statistics Canada LFS (auto)',
-    }
+    // Keep legacy variable names for the block below
+    const unempVal  = unemployment?.value  ?? 0
+    const unempPrev = unemployment?.prev   ?? 0
 
     const body: StatscanMacro = { cpi, unemployment, liveAt: new Date().toISOString() }
 

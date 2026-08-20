@@ -13,7 +13,7 @@ interface CityNews  { city: string; color: string; items: NewsItem[] }
 
 // ── StatsCan live macro data ──────────────────────────────────────────────────
 interface LiveIndicator { value: number; prev: number; date: string; source: string }
-interface StatscanMacro { cpi: LiveIndicator; unemployment: LiveIndicator; liveAt: string }
+interface StatscanMacro { cpi: LiveIndicator; unemployment: LiveIndicator | null; liveAt: string }
 
 async function fetchStatscan(): Promise<StatscanMacro | null> {
   try {
@@ -33,13 +33,13 @@ function buildCAConfig(live: StatscanMacro | null): CountryConfig {
     value: live.cpi.value, prev: live.cpi.prev,
     date: live.cpi.date, source: 'Statistics Canada',
   }
-  const unemployment: Indicator = {
+  const unemployment: Indicator = live.unemployment ? {
     value: live.unemployment.value, prev: live.unemployment.prev,
     date: live.unemployment.date, source: 'Statistics Canada LFS',
-  }
+  } : CA_CONFIG.unemployment
   return {
     ...CA_CONFIG, cpi, unemployment,
-    updatedAt: `${live.unemployment.date} · Auto-updated`,
+    updatedAt: `${cpi.date} · Auto-updated`,
   }
 }
 
