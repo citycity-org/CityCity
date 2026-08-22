@@ -65,7 +65,9 @@ export async function POST(req: NextRequest) {
       messages:   [{ role: 'user', content: query }],
     })
 
-    const raw = (message.content[0] as { type: string; text: string }).text.trim()
+    const rawText = (message.content[0] as { type: string; text: string }).text.trim()
+    // Strip markdown code fences if Claude wraps output in ```json ... ```
+    const raw = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim()
     const data = JSON.parse(raw) as {
       understood:    string[]
       occupation:    string | null
