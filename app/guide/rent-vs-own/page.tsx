@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { LakiveLogo } from '../../components/LakiveLogo'
@@ -146,7 +146,7 @@ const OCC_OPTIONS = Object.entries(OCCUPATIONS)
   .map(([slug, data]) => ({ slug, name: data.name }))
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function RentVsOwnPage() {
+function RentVsOwnContent() {
   const params = useSearchParams()
   const [selectedOcc,  setSelectedOcc]  = useState(params.get('occ')  || 'software-engineer')
   const [selectedCity, setSelectedCity] = useState(params.get('city') || 'vancouver')
@@ -476,5 +476,13 @@ export default function RentVsOwnPage() {
 
       </main>
     </div>
+  )
+}
+
+export default function RentVsOwnPage() {
+  return (
+    <Suspense>
+      <RentVsOwnContent />
+    </Suspense>
   )
 }
