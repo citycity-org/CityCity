@@ -864,6 +864,17 @@ export default function CalculatePage() {
         </div>
       )}
 
+      {/* ── Data footnote ────────────────────────────────────────────────────── */}
+      {results && (
+        <div style={{ maxWidth:960, margin:'0 auto', padding:'0 24px 40px' }}>
+          <p style={{ color:'rgba(255,255,255,0.30)', fontSize:11, margin:0, lineHeight:1.7 }}>
+            <span style={{ fontWeight:600, color:'rgba(255,255,255,0.40)' }}>Data sources: </span>
+            StatCan · CMHC · Job Bank · CRA &amp; Provincial Tax Authorities · CIHI · ECCC<br/>
+            Salary data: Jul 2026 · Housing prices: Jul 2026 · CPI &amp; unemployment: auto-updated. Results are for reference only and do not constitute financial or immigration advice.
+          </p>
+        </div>
+      )}
+
       {/* ── Share Insight Modal ───────────────────────────────────────────────── */}
       {results && showShareModal && (
         <ShareModal

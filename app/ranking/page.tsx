@@ -528,6 +528,7 @@ export default function RankingPage() {
   // Dynamic data from Supabase (falls back to hardcoded constants)
   const [fitMatrix, setFitMatrix] = useState<typeof FIT_MATRIX>(FIT_MATRIX)
   const [cityBase,  setCityBase ] = useState<typeof CITY_BASE>(CITY_BASE)
+  const [copied,    setCopied   ] = useState(false)
 
   useEffect(() => {
     fetch('/api/city-scores')
@@ -711,10 +712,17 @@ export default function RankingPage() {
               }
             </p>
           </div>
-          <a href={`/calculate?occupation=${occ}`}
-            style={{ padding:'9px 16px', borderRadius:10, background:'rgba(79,142,247,0.12)', border:'1px solid rgba(79,142,247,0.28)', color:'#60A5FA', fontSize:13, fontWeight:700, textDecoration:'none', flexShrink:0, whiteSpace:'nowrap', alignSelf:'flex-start', marginTop:4 }}>
-            Calculate with my numbers →
-          </a>
+          <div style={{ display:'flex', gap:8, alignSelf:'flex-start', marginTop:4 }}>
+            <a href={`/calculate?occupation=${occ}`}
+              style={{ padding:'9px 16px', borderRadius:10, background:'rgba(79,142,247,0.12)', border:'1px solid rgba(79,142,247,0.28)', color:'#60A5FA', fontSize:13, fontWeight:700, textDecoration:'none', whiteSpace:'nowrap' }}>
+              Calculate with my numbers →
+            </a>
+            <button
+              onClick={() => { navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(()=>setCopied(false), 2000) }}
+              style={{ padding:'9px 14px', borderRadius:10, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.12)', color: copied ? '#34D399' : 'rgba(255,255,255,0.45)', fontSize:13, fontWeight:700, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0 }}>
+              {copied ? '✓ Copied!' : '🔗 Share'}
+            </button>
+          </div>
         </div>
 
         {/* ── Prompt banner: occ selected but no propType ── */}
@@ -793,7 +801,12 @@ export default function RankingPage() {
                   {/* City name + metrics */}
                   <div>
                     <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-                      <span style={{ color:'white', fontSize:18, fontWeight:800 }}>{city.name}</span>
+                      <a href={`/city/${id}`} onClick={e => e.stopPropagation()}
+                        style={{ color:'white', fontSize:18, fontWeight:800, textDecoration:'none' }}
+                        onMouseEnter={e=>(e.currentTarget.style.color='#93C5FD')}
+                        onMouseLeave={e=>(e.currentTarget.style.color='white')}>
+                        {city.name}
+                      </a>
                       <span style={{ color:'rgba(255,255,255,0.50)', fontSize:12 }}>{city.province}</span>
                       {isCurrent && (
                         <span style={{ padding:'2px 7px', borderRadius:6, background:'rgba(79,142,247,0.15)', border:'1px solid rgba(79,142,247,0.30)', color:'#60A5FA', fontSize:10, fontWeight:700 }}>Your City</span>
@@ -913,15 +926,15 @@ export default function RankingPage() {
           })}
         </div>
 
-        {/* ── More cities ── */}
+        {/* ── More cities CTA ── */}
         <div style={{ textAlign:'center', marginBottom:28, padding:'20px 24px', background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:16 }}>
           <p style={{ color:'rgba(255,255,255,0.35)', fontSize:13, margin:'0 0 12px' }}>
-            Showing top {allCities.length} cities · More cities coming soon
+            Showing {allCities.length} Canadian cities · Compare any two cities side-by-side
           </p>
-          <button disabled
-            style={{ padding:'10px 20px', borderRadius:10, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.10)', color:'rgba(255,255,255,0.30)', fontSize:13, fontWeight:700, cursor:'not-allowed' }}>
-            View More Cities · Coming Soon
-          </button>
+          <a href="/compare"
+            style={{ display:'inline-block', padding:'10px 20px', borderRadius:10, background:'rgba(79,142,247,0.12)', border:'1px solid rgba(79,142,247,0.25)', color:'#93C5FD', fontSize:13, fontWeight:700, textDecoration:'none' }}>
+            Compare Cities →
+          </a>
         </div>
 
         {/* ── Page-level CTA to Calculate ── */}
@@ -967,7 +980,7 @@ export default function RankingPage() {
             StatCan · CMHC · Job Bank · CRA & Provincial Tax Authorities · CIHI · ECCC
           </p>
           <p style={{ color:'rgba(255,255,255,0.40)', fontSize:11, marginTop:6 }}>
-            All metrics are normalized through the Lakive model and do not represent official rankings. Results are for reference only and do not constitute financial or immigration advice. Q1 2026.
+            All metrics are normalized through the Lakive model and do not represent official rankings. Results are for reference only and do not constitute financial or immigration advice. Salary data: Jul 2026 · Housing prices: Jul 2026 · CPI &amp; unemployment: auto-updated.
           </p>
         </div>
       </div>

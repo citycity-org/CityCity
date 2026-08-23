@@ -13,6 +13,7 @@ export default function NavBar() {
     { href: '/compare',    label: 'Compare'    },
     { href: '/reports',    label: 'Reports'    },
     { href: '/guide',      label: 'Guides'     },
+    { href: '/pulse',      label: 'Pulse'      },
   ]
 
   const isActive = (href: string) => {

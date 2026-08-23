@@ -103,6 +103,33 @@ export default function AboutPage() {
 
         </div>
 
+        {/* ── How Our Data Works ── */}
+        <div style={{ marginTop: 64, borderTop: '1px solid rgba(255,255,255,0.07)', paddingTop: 48 }}>
+          <div style={{ color: '#14B8A6', fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>How It Works</div>
+          <h2 style={{ color: 'white', fontSize: 24, fontWeight: 800, marginBottom: 24 }}>Our indicators, explained</h2>
+          <div style={{ display: 'grid', gap: 12, marginBottom: 28 }}>
+            {[
+              { key: 'HEY', full: 'Housing Entry Years', color: '#EF4444', desc: 'How many years of gross income it takes to afford a home — lower is better. L1 (≤5 yrs) to L5 (>18 yrs).' },
+              { key: 'EOI', full: 'Employment Opportunity Index', color: '#4F8EF7', desc: 'Job supply relative to your occupation demand in that city. Based on Job Bank posting data and LMIA approvals.' },
+              { key: 'RPI', full: 'Rent Pressure Index', color: '#F59E0B', desc: 'Percentage of a median occupation income consumed by median 2BR rent. Above 38% is high pressure.' },
+              { key: 'EQI', full: 'Environment Quality Index', color: '#14B8A6', desc: 'Composite of air quality, green space, walkability, and transit access. Sourced from ECCC and municipal data.' },
+            ].map(({ key, full, color, desc }) => (
+              <div key={key} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '14px 18px' }}>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  <span style={{ color, fontWeight: 900, fontSize: 13, minWidth: 36, paddingTop: 2 }}>{key}</span>
+                  <div>
+                    <div style={{ color: 'white', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{full}</div>
+                    <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, lineHeight: 1.6, margin: 0 }}>{desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13, lineHeight: 1.7 }}>
+            Data sources: Statistics Canada · CMHC · Job Bank · CRA & Provincial Tax Authorities · CIHI · ECCC. Salary data updated Jul 2026. Housing prices updated Jul 2026. CPI & unemployment auto-refreshed via Bank of Canada Valet API and OECD Statistics.
+          </p>
+        </div>
+
         {/* Closing */}
         <div style={{ marginTop: 64, textAlign: 'center', padding: '48px 0', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
           <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.15em', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', marginBottom: 12 }}>Lakive</div>

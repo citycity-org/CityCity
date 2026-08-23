@@ -1,4 +1,5 @@
 'use client'
+import SituationAdvisor from '@/components/SituationAdvisor'
 
 const TAGS = ['Support', 'Business', 'Media', 'Privacy']
 
@@ -8,12 +9,20 @@ export default function ContactClient() {
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
 
         {/* Header */}
-        <div style={{ marginBottom: 56 }}>
+        <div style={{ marginBottom: 40 }}>
           <div style={{ color: '#14B8A6', fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>Contact</div>
           <h1 style={{ color: 'white', fontSize: 40, fontWeight: 800, marginBottom: 20, lineHeight: 1.15 }}>Get in Touch</h1>
           <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, lineHeight: 1.75, maxWidth: 480 }}>
             Whether you have a question, found a data issue, want to discuss a partnership, or simply have feedback — we'd love to hear from you.
           </p>
+        </div>
+
+        {/* AI quick-answer — resolves most city/data questions instantly */}
+        <div style={{ marginBottom: 48, padding: '28px 28px', background: 'rgba(167,139,250,0.04)', border: '1px solid rgba(167,139,250,0.15)', borderRadius: 20 }}>
+          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 16 }}>
+            Have a city or career question?
+          </div>
+          <SituationAdvisor />
         </div>
 
         {/* Email card */}

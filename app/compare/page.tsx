@@ -1018,8 +1018,14 @@ function ComparePageInner() {
           <div style={{ background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:16, overflow:'hidden' }}>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', borderBottom:'1px solid rgba(255,255,255,0.07)', padding:'10px 20px', background:'rgba(255,255,255,0.02)' }}>
               <span style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, letterSpacing:'0.06em' }}>Dimension</span>
-              <span style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, textAlign:'center' }}>{cityA.name}</span>
-              <span style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, textAlign:'center' }}>{cityB.name}</span>
+              <a href={`/city/${slugA}`} style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, textAlign:'center', textDecoration:'none', display:'block' }}
+                onMouseEnter={e=>(e.currentTarget.style.color='#93C5FD')} onMouseLeave={e=>(e.currentTarget.style.color='rgba(255,255,255,0.38)')}>
+                {cityA.name} ↗
+              </a>
+              <a href={`/city/${slugB}`} style={{ color:'rgba(255,255,255,0.38)', fontSize:11, fontWeight:700, textAlign:'center', textDecoration:'none', display:'block' }}
+                onMouseEnter={e=>(e.currentTarget.style.color='#14B8A6')} onMouseLeave={e=>(e.currentTarget.style.color='rgba(255,255,255,0.38)')}>
+                {cityB.name} ↗
+              </a>
             </div>
             {[
               { label:'Overall Fit',     key:'score' },
@@ -1277,7 +1283,7 @@ function ComparePageInner() {
             CMHC (housing prices & rent) · Statistics Canada (income, crime) · Job Bank (job supply) · CRA & provincial tax authorities (taxes) · CIHI (healthcare) · ECCC (environment)
           </p>
           <p style={{ color:'rgba(255,255,255,0.40)', fontSize:11, marginTop:8 }}>
-            Housing metrics (price/income, rent pressure) adjusted for {pt.label} scenario. Fit score calculated dynamically using housing pressure thresholds — not an official ranking. City comparisons are for reference only and do not constitute financial or immigration advice. Q1 2026.
+            Housing metrics (price/income, rent pressure) adjusted for {pt.label} scenario. Fit score calculated dynamically using housing pressure thresholds — not an official ranking. City comparisons are for reference only and do not constitute financial or immigration advice. Salary data: Jul 2026 · Housing prices: Jul 2026 · CPI &amp; unemployment: auto-updated.
           </p>
         </div>
       </div>}

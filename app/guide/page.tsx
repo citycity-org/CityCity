@@ -51,9 +51,9 @@ const TOPICS = [
     icon: '💰', label: 'Rent vs Own',
     desc: 'When does renting make more sense than buying? A city-by-city breakdown.',
     links: [
-      { label: 'Software Engineer in Vancouver', href: '/guide/rent-vs-own' },
-      { label: 'Nurse: Calgary vs Toronto',      href: '/guide/rent-vs-own' },
-      { label: 'Electrician breakeven analysis', href: '/guide/rent-vs-own' },
+      { label: 'Software Engineer in Vancouver', href: '/guide/rent-vs-own?occ=software-engineer&city=vancouver' },
+      { label: 'Nurse in Calgary',               href: '/guide/rent-vs-own?occ=nurse&city=calgary' },
+      { label: 'Electrician in Toronto',         href: '/guide/rent-vs-own?occ=electrician&city=toronto' },
     ],
     available: true,
   },
