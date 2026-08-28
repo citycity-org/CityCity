@@ -256,12 +256,12 @@ export default function PriceSubmitPage() {
             width: 72, height: 72, borderRadius: '50%',
             background: 'rgba(20,184,166,0.1)', border: '2px solid rgba(20,184,166,0.35)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 28px', fontSize: 28,
+            margin: '0 auto 28px', fontSize: 28, color: '#14B8A6',
           }}>✓</div>
           <h1 style={{ color: 'white', fontSize: 30, fontWeight: 800, marginBottom: 16, lineHeight: 1.2 }}>
             Thanks for contributing!
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 15, lineHeight: 1.75, marginBottom: 24 }}>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 15, lineHeight: 1.75, marginBottom: 24 }}>
             Your submission helps Canadians understand the real cost of living.
             Once validated, it contributes to Lakive&apos;s community cost-of-living data.
           </p>
