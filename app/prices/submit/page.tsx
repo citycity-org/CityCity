@@ -256,8 +256,12 @@ export default function PriceSubmitPage() {
             width: 72, height: 72, borderRadius: '50%',
             background: 'rgba(20,184,166,0.1)', border: '2px solid rgba(20,184,166,0.35)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 28px', fontSize: 28, color: '#14B8A6',
-          }}>✓</div>
+            margin: '0 auto 28px',
+          }}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M7 16.5L13 22.5L25 10" stroke="#14B8A6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
           <h1 style={{ color: 'white', fontSize: 30, fontWeight: 800, marginBottom: 16, lineHeight: 1.2 }}>
             Thanks for contributing!
           </h1>
