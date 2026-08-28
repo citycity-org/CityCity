@@ -46,20 +46,20 @@ export const CA_CONFIG: CountryConfig = {
     source: 'Bank of Canada',
   },
   cpi: {
-    value: 2.8,
-    prev: 3.2,
-    date: 'Jun 2026',        // Jul 2026 CPI releases Aug 19 — update then
+    value: 3.0,              // Jul 2026 CPI released Aug 19 — StatsCan auto-fetch active
+    prev: 2.8,
+    date: 'Jul 2026',
     source: 'Statistics Canada',
   },
   unemployment: {
-    value: 6.4,              // Jul 2026 LFS released Aug 7 — +75K jobs, rate fell 0.1pp
-    prev: 6.5,
+    value: 6.3,              // Jul 2026 LFS released Aug 8 — +75K jobs, rate fell to 6.3%
+    prev: 6.4,
     date: 'Jul 2026',
     source: 'Statistics Canada LFS',
   },
-  housingNote: 'Employment strengthening — +75K jobs in July, lowest unemployment since Jul 2024. CREA July prices due Aug 15–18.',
-  lastReviewed: '2026-08-16',
-  updatedAt: '2026-08-16 10:00 PDT',
+  housingNote: 'CPI rose to 3.0% in July — rent and food costs remain the primary pressure. BoC next decision Sep 4.',
+  lastReviewed: '2026-08-28',
+  updatedAt: '2026-08-28 PDT',
   sources: ['Bank of Canada', 'Statistics Canada', 'CMHC'],
 }
 
