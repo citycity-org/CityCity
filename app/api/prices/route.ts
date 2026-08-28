@@ -18,12 +18,13 @@ export async function POST(req: NextRequest) {
 
   // ── Parse body ──────────────────────────────────────────────────────────────
   let body: {
-    city:      string
-    item_id:   string
-    price:     number
-    store?:    string
-    email?:    string
-    photo_url?: string
+    city:           string
+    item_id:        string
+    price:          number
+    observed_date?: string
+    store?:         string
+    email?:         string
+    photo_url?:     string
   }
 
   try {
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 })
   }
 
-  const { city, item_id, price, store, email, photo_url } = body
+  const { city, item_id, price, observed_date, store, email, photo_url } = body
 
   // ── Validate required fields ────────────────────────────────────────────────
   if (!city || !VALID_CITIES.has(city)) {
@@ -56,25 +57,48 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // ── Validate observed_date ──────────────────────────────────────────────────
+  const today = new Date().toISOString().split('T')[0]
+  let safeDate = today
+
+  if (observed_date) {
+    // Must be a valid date not in the future and not more than 7 days old
+    const d = new Date(observed_date)
+    const now = new Date()
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    if (!isNaN(d.getTime()) && d <= now && d >= sevenDaysAgo) {
+      safeDate = observed_date
+    }
+  }
+
   // ── Validate optional email ─────────────────────────────────────────────────
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 })
   }
+
+  // ── Compute unit price ──────────────────────────────────────────────────────
+  const unit_price = item.std_qty > 0
+    ? Math.round((price / item.std_qty) * 10000) / 10000
+    : price
 
   // ── Insert into Supabase ────────────────────────────────────────────────────
   const supabase = createServerClient()
 
   const { error: dbError } = await supabase.from('price_submissions').insert({
     city,
-    category:   item.category,
+    category:      item.category,
     item_id,
-    item_label: item.label,
+    item_label:    item.label,
     price,
-    unit:       item.unit,
-    store:      store?.trim() || null,
-    email:      email?.trim() || null,
-    photo_url:  photo_url || null,
-    status:     'pending',
+    unit:          item.unit,
+    unit_price,
+    std_qty:       item.std_qty,
+    std_unit:      item.std_unit,
+    observed_date: safeDate,
+    store:         store?.trim() || null,
+    email:         email?.trim() || null,
+    photo_url:     photo_url || null,
+    status:        'pending',
   })
 
   if (dbError) {
