@@ -973,6 +973,17 @@ export default function RankingPage() {
           </a>
         )}
 
+        {/* ── Submit Price CTA ── */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:16, padding:'16px 20px', background:'rgba(20,184,166,0.04)', border:'1px solid rgba(20,184,166,0.15)', borderRadius:14, marginBottom:20 }}>
+          <div>
+            <div style={{ color:'white', fontSize:14, fontWeight:600, marginBottom:3 }}>Know what things cost in these cities?</div>
+            <div style={{ color:'rgba(255,255,255,0.45)', fontSize:13 }}>Help us track real prices — groceries, gas, transit and more.</div>
+          </div>
+          <a href="/prices/submit" style={{ display:'inline-block', padding:'10px 20px', background:'#14B8A6', color:'white', borderRadius:8, fontWeight:700, fontSize:14, textDecoration:'none', whiteSpace:'nowrap', flexShrink:0 }}>
+            Submit a price →
+          </a>
+        </div>
+
         {/* ── Footer ── */}
         <div style={{ borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:20 }}>
           <p style={{ color:'rgba(255,255,255,0.50)', fontSize:12, margin:0 }}>
