@@ -3,7 +3,12 @@ import { createServerClient } from '@/lib/supabase-server'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import { PRICE_ITEMS_MAP } from '@/lib/price-items'
 
-const VALID_CITIES = new Set(['vancouver', 'toronto', 'calgary', 'montreal', 'ottawa'])
+const VALID_CITIES = new Set([
+  // Canada
+  'vancouver', 'toronto', 'calgary', 'montreal', 'ottawa',
+  // United States
+  'seattle', 'san-francisco', 'new-york', 'boston',
+])
 
 export async function POST(req: NextRequest) {
   // ── Rate limit: 20 submissions per hour per IP ──────────────────────────────
@@ -35,24 +40,25 @@ export async function POST(req: NextRequest) {
 
   const { city, item_id, price, observed_date, store, email, photo_url } = body
 
-  // ── Validate required fields ────────────────────────────────────────────────
+  // ── Validate city ───────────────────────────────────────────────────────────
   if (!city || !VALID_CITIES.has(city)) {
     return NextResponse.json({ error: 'Invalid city.' }, { status: 400 })
   }
 
+  // ── Validate item ───────────────────────────────────────────────────────────
   const item = PRICE_ITEMS_MAP[item_id]
   if (!item) {
     return NextResponse.json({ error: 'Unknown item.' }, { status: 400 })
   }
 
+  // ── Validate price ──────────────────────────────────────────────────────────
   if (typeof price !== 'number' || isNaN(price) || price <= 0) {
     return NextResponse.json({ error: 'Invalid price.' }, { status: 400 })
   }
 
-  // ── Price range check ───────────────────────────────────────────────────────
   if (price < item.min || price > item.max) {
     return NextResponse.json(
-      { error: `Price out of expected range for ${item.label} ($${item.min}–$${item.max}).` },
+      { error: `Price out of expected range for ${item.label} (${item.currency} ${item.min}–${item.max}).` },
       { status: 422 },
     )
   }
@@ -60,9 +66,7 @@ export async function POST(req: NextRequest) {
   // ── Validate observed_date ──────────────────────────────────────────────────
   const today = new Date().toISOString().split('T')[0]
   let safeDate = today
-
   if (observed_date) {
-    // Must be a valid date not in the future and not more than 7 days old
     const d = new Date(observed_date)
     const now = new Date()
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
@@ -71,7 +75,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ── Validate optional email ─────────────────────────────────────────────────
+  // ── Validate email ──────────────────────────────────────────────────────────
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 })
   }
@@ -81,9 +85,8 @@ export async function POST(req: NextRequest) {
     ? Math.round((price / item.std_qty) * 10000) / 10000
     : price
 
-  // ── Insert into Supabase ────────────────────────────────────────────────────
+  // ── Insert ──────────────────────────────────────────────────────────────────
   const supabase = createServerClient()
-
   const { error: dbError } = await supabase.from('price_submissions').insert({
     city,
     category:      item.category,
@@ -94,6 +97,7 @@ export async function POST(req: NextRequest) {
     unit_price,
     std_qty:       item.std_qty,
     std_unit:      item.std_unit,
+    currency:      item.currency,
     observed_date: safeDate,
     store:         store?.trim() || null,
     email:         email?.trim() || null,
