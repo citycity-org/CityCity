@@ -14,7 +14,7 @@ const OECD_UNEMP_URL = 'https://stats.oecd.org/SDMX-JSON/data/STLABOUR/CAN.LRUNT
 
 // ── Static fallback ───────────────────────────────────────────────────────────
 const FALLBACK_CPI   = { value: 3.0, prev: 2.8, date: 'Jul 2026', source: 'Statistics Canada · Manual' }
-const FALLBACK_UNEMP = { value: 6.3, prev: 6.3, date: 'Jun 2026', source: 'Statistics Canada LFS · Manual' }
+const FALLBACK_UNEMP = { value: 6.4, prev: 6.5, date: 'Jul 2026', source: 'Statistics Canada LFS · Manual' }
 
 export interface MacroIndicator {
   value:  number

@@ -52,14 +52,14 @@ export const CA_CONFIG: CountryConfig = {
     source: 'Statistics Canada',
   },
   unemployment: {
-    value: 6.3,              // Jul 2026 LFS released Aug 8 — +75K jobs, rate fell to 6.3%
-    prev: 6.4,
+    value: 6.4,              // Jul 2026 LFS released Aug 7 — +75K jobs (+0.4%), rate fell 0.1 pts to 6.4%, lowest since Jul 2024
+    prev: 6.5,
     date: 'Jul 2026',
     source: 'Statistics Canada LFS',
   },
   housingNote: 'CPI rose to 3.0% in July — rent and food costs remain the primary pressure. BoC next decision Sep 4.',
-  lastReviewed: '2026-08-28',
-  updatedAt: '2026-08-28 PDT',
+  lastReviewed: '2026-08-29',
+  updatedAt: '2026-08-29 PDT',
   sources: ['Bank of Canada', 'Statistics Canada', 'CMHC'],
 }
 
