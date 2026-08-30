@@ -891,6 +891,43 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
           </div>
         </section>
 
+        {/* ── Submit Price CTA ──────────────────────────────────────────── */}
+        <section style={{ marginTop: 40 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16,
+            padding: '20px 24px',
+            background: 'rgba(20,184,166,0.04)',
+            border: '1px solid rgba(20,184,166,0.15)',
+            borderRadius: 14,
+          }}>
+            <div>
+              <div style={{ color: 'white', fontSize: 14, fontWeight: 600, marginBottom: 4 }}>
+                Know what things cost in {city.name}?
+              </div>
+              <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>
+                Help us track the real cost of living — groceries, gas, transit and more.
+              </div>
+            </div>
+            <a
+              href={`/prices/submit?city=${slug}`}
+              style={{
+                display: 'inline-block',
+                padding: '10px 20px',
+                background: '#14B8A6',
+                color: 'white',
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: 14,
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+            >
+              Submit a price →
+            </a>
+          </div>
+        </section>
+
         {/* ── Footer ────────────────────────────────────────────────────── */}
         <p style={{ color: 'rgba(255,255,255,0.12)', fontSize: 11, textAlign: 'center' }}>
           Data: CMHC · StatCan · CIHI · Environment Canada · Job Bank · CRA<br />

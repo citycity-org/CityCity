@@ -1,5 +1,6 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { PRICE_ITEMS } from '@/lib/price-items'
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -176,8 +177,9 @@ interface LastSubmission {
   city: string; item: string; price: string; store: string; date: string
 }
 
-export default function PriceSubmitPage() {
-  const [city,         setCity]         = useState('')
+function PriceSubmitContent() {
+  const params = useSearchParams()
+  const [city,         setCity]         = useState(params.get('city') || '')
   const [itemId,       setItemId]       = useState('')
   const [price,        setPrice]        = useState('')
   const [observedDate, setObservedDate] = useState(todayISO())
@@ -481,5 +483,13 @@ export default function PriceSubmitPage() {
         </div>
       </main>
     </>
+  )
+}
+
+export default function PriceSubmitPage() {
+  return (
+    <Suspense>
+      <PriceSubmitContent />
+    </Suspense>
   )
 }
