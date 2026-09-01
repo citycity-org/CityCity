@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type OccFit = { score: number; hpiYears: number; rpi: number; eoi: 'High'|'Mid'|'Low' }
+interface PriceAggregate { item_id: string; item_label: string; category: string; avg_price: number; sample_count: number; last_seen: string }
 
 // ── Score verdict ─────────────────────────────────────────────────────────────
 function getVerdict(score: number, hpiYears?: number, rpi?: number) {
@@ -259,6 +260,8 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
   const [propType,   setPropType ] = useState('2br')
   const [hoveredOcc, setHovered  ] = useState<string | null>(null)
   const [liveHpi,    setLiveHpi  ] = useState<number | null>(null)
+  const [priceData,  setPriceData] = useState<PriceAggregate[]>([])
+  const [priceReady, setPriceReady] = useState(false)
 
   useEffect(() => {
     const p = new URLSearchParams(window.location.search)
@@ -279,6 +282,16 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
         )
       })
   }, [slug, occ, propType])
+
+  useEffect(() => {
+    setPriceReady(false)
+    supabase
+      .from('price_aggregates')
+      .select('item_id,item_label,category,avg_price,sample_count,last_seen')
+      .eq('city', slug)
+      .order('category')
+      .then(({ data }) => { setPriceData(data ?? []); setPriceReady(true) })
+  }, [slug])
 
   const pt       = PROP_TYPES.find(p => p.id === propType)!
   const fit      = matrix[occ] ?? matrix.electrician
@@ -889,6 +902,53 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
               </a>
             ))}
           </div>
+        </section>
+
+        {/* ── Community Prices ──────────────────────────────────────────── */}
+        <section style={{ marginTop: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div>
+              <div style={{ color: 'rgba(255,255,255,0.22)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 }}>Community Prices · {city.name}</div>
+              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>Crowdsourced · updated as new submissions arrive</div>
+            </div>
+            <a href="/prices" style={{ color: '#14B8A6', fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>Compare cities →</a>
+          </div>
+
+          {!priceReady ? (
+            <div style={{ padding: '24px', textAlign: 'center', color: 'rgba(255,255,255,0.2)', fontSize: 13 }}>Loading…</div>
+          ) : priceData.length === 0 ? (
+            <div style={{ padding: '24px 20px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, textAlign: 'center' }}>
+              <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14, marginBottom: 8 }}>No community prices yet for {city.name}</div>
+              <div style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12 }}>Be the first to submit — prices appear once we have enough verified data.</div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {(['grocery', 'gas', 'restaurant', 'transit'] as const).map(cat => {
+                const items = priceData.filter(p => p.category === cat)
+                if (!items.length) return null
+                const catIcons: Record<string, string> = { grocery: '🛒', gas: '⛽', restaurant: '🍽', transit: '🚌' }
+                const catLabels: Record<string, string> = { grocery: 'Grocery', gas: 'Gas', restaurant: 'Restaurant', transit: 'Transit' }
+                return (
+                  <div key={cat} style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, overflow: 'hidden' }}>
+                    <div style={{ padding: '8px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                      {catIcons[cat]} {catLabels[cat]}
+                    </div>
+                    {items.map((item, i) => (
+                      <div key={item.item_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderBottom: i < items.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
+                        <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>{item.item_label}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+                          <span style={{ color: 'white', fontWeight: 700, fontSize: 14, fontFamily: 'monospace' }}>
+                            ${item.avg_price.toFixed(2)}
+                          </span>
+                          <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11 }}>{item.sample_count} reports</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </section>
 
         {/* ── Submit Price CTA ──────────────────────────────────────────── */}
