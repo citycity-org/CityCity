@@ -14,7 +14,6 @@ export default function NavBar() {
     { href: '/reports',    label: 'Reports'    },
     { href: '/guide',      label: 'Guides'     },
     { href: '/pulse',      label: 'Pulse'      },
-    { href: '/prices',     label: 'Prices'     },
   ]
 
   const isActive = (href: string) => {
