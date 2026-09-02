@@ -145,16 +145,16 @@ export default async function SharePage({ params }: { params: Promise<{ id: stri
         {/* Confidence Layer */}
         <div style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '20px 22px', marginBottom: 16 }}>
           <div style={{ color: 'rgba(255,255,255,0.32)', fontSize: 10, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', marginBottom: 14 }}>
-            关于这份分析
+            About this analysis
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 24px' }}>
             {[
-              { label: '数据版本',  value: insight.data_version },
-              { label: '模型版本',  value: `v${insight.calculation_version}` },
-              { label: '核心指标',  value: 'HPI Years · RPI' },
-              { label: '权重分布',  value: '住房压力 52% · 城市环境 48%' },
-              { label: '数据来源',  value: 'CMHC · Statistics Canada · Job Bank' },
-              { label: '免责声明',  value: '参考工具，不构成财务或移民建议' },
+              { label: 'Data version',  value: insight.data_version },
+              { label: 'Model version', value: `v${insight.calculation_version}` },
+              { label: 'Core metrics',  value: 'HPI Years · RPI' },
+              { label: 'Weighting',     value: 'Housing pressure 52% · Urban environment 48%' },
+              { label: 'Data sources',  value: 'CMHC · Statistics Canada · Job Bank' },
+              { label: 'Disclaimer',    value: 'For reference only — not financial or immigration advice' },
             ].map(row => (
               <div key={row.label}>
                 <div style={{ color: 'rgba(255,255,255,0.28)', fontSize: 11, marginBottom: 2 }}>{row.label}</div>
