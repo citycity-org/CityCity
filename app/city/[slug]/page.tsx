@@ -469,7 +469,10 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
                     {adjScore}
                     <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.2)', fontWeight: 400 }}>/100</span>
                   </div>
-                  <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', marginTop: 4, marginBottom: 2, letterSpacing: '0.04em' }}>
+                    Scenario Score · {pt.label}
+                  </div>
+                  <div style={{ marginTop: 6, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700, background: vMain.bg, color: vMain.color, border: `1px solid ${vMain.border}` }}>
                       {vMain.label}
                     </span>
@@ -766,7 +769,7 @@ export default function CityPage({ params }: { params: Promise<{ slug: string }>
             {/* Header row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 56px 72px 64px', gap: 8, padding: '10px 20px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em' }}>Occupation</span>
-              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>Score</span>
+              <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>Base Score</span>
               <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>Yrs to Buy</span>
               <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>Jobs</span>
             </div>

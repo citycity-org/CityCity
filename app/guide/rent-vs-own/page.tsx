@@ -296,10 +296,13 @@ function RentVsOwnContent() {
               }}>
                 <div>
                   <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.38)', fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 4 }}>
-                    Breakeven Point
+                    Estimated Breakeven
                   </div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.60)' }}>
                     {breakevenLabel(result.breakevenYears)}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginTop: 5 }}>
+                    Based on current assumptions · adjust inputs above
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
