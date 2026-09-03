@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { CA_CONFIG } from '@/lib/market-config'
 
 // ── Data sources ──────────────────────────────────────────────────────────────
 // CPI:          BoC Valet API (proxies StatsCan V41690973) — monthly index values
@@ -6,15 +7,51 @@ import { NextResponse } from 'next/server'
 //
 // Both are free, public, no API key required.
 // StatsCan WDS direct endpoint returns 404 from Vercel IPs.
+//
+// SINGLE SOURCE OF TRUTH RULE:
+//   market-config.ts is always the authoritative floor.
+//   Live API data only overrides if it represents a NEWER period than market-config.
+//   This prevents stale API cache from rolling back a manual update.
 
 const BOC_CPI_URL = 'https://www.bankofcanada.ca/valet/observations/V41690973/json?recent=14'
 
 // OECD SDMX-JSON: Canada (CAN), monthly (M), harmonised unemployment rate (LRUNTTTT)
 const OECD_UNEMP_URL = 'https://stats.oecd.org/SDMX-JSON/data/STLABOUR/CAN.LRUNTTTT.M/all?lastNObservations=3'
 
-// ── Static fallback ───────────────────────────────────────────────────────────
-const FALLBACK_CPI   = { value: 3.0, prev: 2.8, date: 'Jul 2026', source: 'Statistics Canada · Manual' }
-const FALLBACK_UNEMP = { value: 6.4, prev: 6.5, date: 'Jul 2026', source: 'Statistics Canada LFS · Manual' }
+// ── Static fallback — always derived from market-config (single source of truth) ──
+const FALLBACK_CPI: MacroIndicator = {
+  value:  CA_CONFIG.cpi.value,
+  prev:   CA_CONFIG.cpi.prev,
+  date:   CA_CONFIG.cpi.date,
+  source: `${CA_CONFIG.cpi.source} · Manual`,
+}
+const FALLBACK_UNEMP: MacroIndicator = {
+  value:  CA_CONFIG.unemployment.value,
+  prev:   CA_CONFIG.unemployment.prev,
+  date:   CA_CONFIG.unemployment.date,
+  source: `${CA_CONFIG.unemployment.source} · Manual`,
+}
+
+// Parse a human-readable date string like "Jul 2026" or "2026-07" to a sortable key "2026-07"
+function parseDateKey(d: string): string {
+  // Already ISO-style: "2026-07"
+  if (/^\d{4}-\d{2}/.test(d)) return d.slice(0, 7)
+  // Human-readable: "Jul 2026", "Jun 2026", etc.
+  const months: Record<string, string> = {
+    Jan:'01', Feb:'02', Mar:'03', Apr:'04', May:'05', Jun:'06',
+    Jul:'07', Aug:'08', Sep:'09', Oct:'10', Nov:'11', Dec:'12',
+  }
+  const m = d.match(/([A-Za-z]{3})\s+(\d{4})/)
+  if (m) return `${m[2]}-${months[m[1]] ?? '01'}`
+  return ''
+}
+
+// Only use live data if it is strictly newer than the manual market-config value
+function isNewerThan(liveDate: string, configDate: string): boolean {
+  const l = parseDateKey(liveDate)
+  const c = parseDateKey(configDate)
+  return l > c
+}
 
 export interface MacroIndicator {
   value:  number
@@ -101,30 +138,34 @@ export async function GET() {
   const unempPts = unempResult.status === 'fulfilled' ? unempResult.value : []
 
   // ── CPI (YoY % from index) ────────────────────────────────────────────────
-  let cpi: MacroIndicator
+  // Only use live data if it is NEWER than market-config to prevent API lag rollback
+  let cpi: MacroIndicator = FALLBACK_CPI
   let cpiLive = false
   if (cpiPts.length >= 14) {
     const cur  = (cpiPts[0].value / cpiPts[12].value - 1) * 100
     const prev = (cpiPts[1].value / cpiPts[13].value - 1) * 100
-    if (cur >= -5 && cur <= 20) {
+    const liveDate = fmtPeriod(cpiPts[0].refPer)
+    if (cur >= -5 && cur <= 20 && isNewerThan(liveDate, CA_CONFIG.cpi.date)) {
       cpi = { value: parseFloat(cur.toFixed(1)), prev: parseFloat(prev.toFixed(1)),
-              date: fmtPeriod(cpiPts[0].refPer), source: 'Statistics Canada (auto)' }
+              date: liveDate, source: 'Statistics Canada (auto)' }
       cpiLive = true
-    } else { cpi = FALLBACK_CPI }
-  } else { cpi = FALLBACK_CPI }
+    }
+  }
 
   // ── Unemployment (OECD rate, 1-2mo lag) ──────────────────────────────────
-  let unemployment: MacroIndicator
+  // Only use live data if it is NEWER than market-config
+  let unemployment: MacroIndicator = FALLBACK_UNEMP
   let unempLive = false
   if (unempPts.length >= 1) {
     const val  = parseFloat(unempPts[0].value.toFixed(1))
     const prev = unempPts.length > 1 ? parseFloat(unempPts[1].value.toFixed(1)) : val
-    if (val >= 0 && val <= 25) {
-      unemployment = { value: val, prev, date: fmtPeriod(unempPts[0].refPer),
+    const liveDate = fmtPeriod(unempPts[0].refPer)
+    if (val >= 0 && val <= 25 && isNewerThan(liveDate, CA_CONFIG.unemployment.date)) {
+      unemployment = { value: val, prev, date: liveDate,
                        source: 'OECD / Statistics Canada (auto)' }
       unempLive = true
-    } else { unemployment = FALLBACK_UNEMP }
-  } else { unemployment = FALLBACK_UNEMP }
+    }
+  }
 
   const live = cpiLive || unempLive
   const body: StatscanMacro = { cpi, unemployment, live, liveAt: new Date().toISOString() }
