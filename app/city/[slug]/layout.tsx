@@ -14,7 +14,7 @@ const CITY_META: Record<string, { name: string; province: string; desc: string }
   calgary: {
     name: 'Calgary',
     province: 'AB',
-    desc: 'Calgary city intelligence: housing affordability, no provincial income tax advantage, salary by occupation, rent pressure, employment outlook, and quality of life scores.',
+    desc: 'Calgary city intelligence: housing affordability, no provincial sales tax (PST) advantage, salary by occupation, rent pressure, employment outlook, and quality of life scores.',
   },
   montreal: {
     name: 'Montréal',

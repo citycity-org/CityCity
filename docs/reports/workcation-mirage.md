@@ -13,7 +13,7 @@ Five findings from this report:
 
 2. **The IWG Work from Anywhere Index is structurally inaccessible to most workers.** Remote and nomadic work applies to roughly 15–20% of the Canadian labour force. Nurses, electricians, teachers, mechanics, and construction workers — the occupations that form the backbone of a city's functional economy — have no use for a workcation ranking.
 
-3. **Calgary is the most underrated city in Canada for long-term settlement.** With a HEY of 3.9 years, no provincial income tax, and rising employment demand across trades and healthcare, it outperforms its global lifestyle ranking by a wide margin.
+3. **Calgary is the most underrated city in Canada for long-term settlement.** With a HEY of 3.9 years, no provincial sales tax (PST), and rising employment demand across trades and healthcare, it outperforms its global lifestyle ranking by a wide margin.
 
 4. **Ottawa is the most consistently balanced city across occupation types.** It offers moderate housing pressure, stable government-anchored employment demand, and strong public infrastructure — without the extreme costs of Vancouver or Toronto.
 
@@ -112,7 +112,7 @@ Toronto makes sense for occupations where income growth is fast and high — sen
 
 Calgary appears on no global lifestyle ranking of note. It has no coastline, a reputation for cold winters, and a downtown that still bears the marks of the 2015 oil collapse.
 
-It also has no provincial income tax. A two-bedroom condo down payment takes approximately **3.9 income years** for a median earner — less than a third of Vancouver's equivalent figure. Rent consumes 22–28% of take-home pay across most occupations, leaving real capacity to save and invest.
+It also has no provincial sales tax (PST). A two-bedroom condo down payment takes approximately **3.9 income years** for a median earner — less than a third of Vancouver's equivalent figure. Rent consumes 22–28% of take-home pay across most occupations, leaving real capacity to save and invest.
 
 For trades and healthcare workers specifically, Calgary combines competitive wages with employment demand that has risen consistently since 2023, driven by infrastructure investment and population growth from interprovincial migration.
 

@@ -29,7 +29,7 @@ const TOPICS = [
   },
   {
     icon: '🧾', label: 'Tax Environment',
-    desc: 'Alberta has no provincial income tax. What does that mean for your take-home pay?',
+    desc: 'Alberta has no provincial sales tax (PST). What does that mean for your take-home pay?',
     links: [
       { label: 'Why Calgary saves you money', href: '/city/calgary' },
       { label: 'Engineer in Calgary', href: '/guide/civil-engineer/calgary' },

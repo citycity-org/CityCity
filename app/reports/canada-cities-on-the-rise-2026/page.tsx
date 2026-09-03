@@ -9,10 +9,10 @@ const CITIES = [
   {
     id: 'calgary', name: 'Calgary', color: '#EF4444', rank: 1,
     fitScore: 79, hpiYears: 5.9, rpi: 28, rent: '$1,950',
-    province: 'Alberta', tax: 'No provincial income tax',
+    province: 'Alberta', tax: 'No provincial sales tax (PST)',
     eoiBreadth: 9, label: 'Trades & Healthcare Capital',
     bestFor: 'Trades workers, healthcare professionals, home ownership seekers',
-    snap: ['#1 Healthcare · #1 Skilled Trades', 'Most affordable major city in Canada', 'No provincial income tax (saves $3K–$8K/yr)'],
+    snap: ['#1 Healthcare · #1 Skilled Trades', 'Most affordable major city in Canada', 'No PST · lower provincial income tax rates (saves $3K–$8K/yr)'],
     topOccupations: [
       { name: 'Family Physician', fit: 92, eoi: 'High' as const, hpi: 2.5 },
       { name: 'Electrician',       fit: 91, eoi: 'High' as const, hpi: 3.9 },

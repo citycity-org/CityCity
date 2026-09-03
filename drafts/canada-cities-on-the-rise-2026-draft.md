@@ -94,13 +94,13 @@ Rent / income ratio──┘   HPI Years · RPI
 ### 🔴 Calgary — Canada's Trades & Healthcare Capital
 
 **City Fit Score: 79 (average across occupations)**  
-**Province:** Alberta | **No provincial income tax** | **Median 2BR rent:** ~$1,950/mo
+**Province:** Alberta | **No provincial sales tax (PST)** | **Median 2BR rent:** ~$1,950/mo
 
 > **Best For:** Trades workers, healthcare professionals, and anyone who wants to own a home and build financial security without sacrificing career quality.
 
 Calgary is Canada's most compelling story in 2026. For the second consecutive year, it leads national rankings for working professionals in trades and healthcare — not because it's glamorous, but because the numbers add up unlike anywhere else.
 
-The city's No Provincial Income Tax advantage (Alberta levies GST only — no PST) effectively gives every worker a raise of $3,000–$8,000 annually compared to Ontario or BC equivalents. Add housing that remains attainable by major-city standards, and the math becomes difficult to argue with.
+Alberta's no-PST advantage — combined with lower provincial income tax rates (10% flat vs 15–20% in Ontario/BC) — effectively gives most workers an after-tax raise of $3,000–$8,000 annually compared to Ontario or BC equivalents. Add housing that remains attainable by major-city standards, and the math becomes difficult to argue with.
 
 **Who Calgary is for:**
 

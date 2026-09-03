@@ -187,7 +187,7 @@ export default function WorkcationMiragePage() {
           {[
             ['Vancouver ranks #5 globally for workcations but last among Canadian cities for housing affordability.', 'Its Housing Entry Barrier (HEY) of 13.0 years means a median earner needs over a decade of disciplined saving to reach a down payment — the highest of any major Canadian city.'],
             ['The IWG Work from Anywhere Index is structurally inaccessible to most workers.', 'Remote and nomadic work applies to roughly 15–20% of the Canadian labour force. Nurses, electricians, teachers, mechanics, and construction workers have no use for a workcation ranking.'],
-            ['Calgary is the most underrated city in Canada for long-term settlement.', 'With a HEY of 3.9 years, no provincial income tax, and rising employment demand across trades and healthcare, it outperforms its global lifestyle ranking by a wide margin.'],
+            ['Calgary is the most underrated city in Canada for long-term settlement.', 'With a HEY of 3.9 years, no provincial sales tax (PST), and rising employment demand across trades and healthcare, it outperforms its global lifestyle ranking by a wide margin.'],
             ['Ottawa is the most consistently balanced city across occupation types.', 'It offers moderate housing pressure, stable government-anchored employment demand, and strong public infrastructure — without the extreme costs of Vancouver or Toronto.'],
             ['Global desirability and personal settlement suitability are often inversely correlated.', 'The cities that generate the most aspiration are not always the cities where most people will thrive over a 10- or 20-year horizon.'],
           ].map(([bold, rest], i) => (
@@ -258,7 +258,7 @@ export default function WorkcationMiragePage() {
 
         <H3>Calgary — The City the Rankings Overlook</H3>
         <P>Calgary appears on no global lifestyle ranking of note. It has no coastline, a reputation for cold winters, and a downtown that still bears the marks of the 2015 oil collapse.</P>
-        <P>It also has no provincial income tax. A two-bedroom condo down payment takes approximately <strong>3.9 income years</strong> for a median earner — less than a third of Vancouver&apos;s equivalent figure. Rent consumes 22–28% of take-home pay across most occupations, leaving real capacity to save and invest.</P>
+        <P>It also has no provincial sales tax (PST). A two-bedroom condo down payment takes approximately <strong>3.9 income years</strong> for a median earner — less than a third of Vancouver&apos;s equivalent figure. Rent consumes 22–28% of take-home pay across most occupations, leaving real capacity to save and invest.</P>
         <P>For trades and healthcare workers specifically, Calgary combines competitive wages with employment demand that has risen consistently since 2023, driven by infrastructure investment and population growth from interprovincial migration.</P>
         <P>The city is building quietly. It lacks Vancouver&apos;s scenery and Toronto&apos;s institutional prestige. What it offers instead is a more direct path from arrival to stability — and for many occupations, that is the more relevant metric.</P>
         <Verdict city="Calgary" text="Underrated by lifestyle indices, overperforming on the variables that determine long-term financial wellbeing." />
