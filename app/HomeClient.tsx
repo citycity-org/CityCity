@@ -297,8 +297,8 @@ export default function Home() {
     const dpr = window.devicePixelRatio || 1
 
     const NAV_H = 56
-    const W = window.innerWidth
-    const H = window.innerHeight - NAV_H
+    let W = window.innerWidth
+    let H = window.innerHeight - NAV_H
     canvas.width  = W * dpr
     canvas.height = H * dpr
     canvas.style.width  = W + 'px'
@@ -307,8 +307,8 @@ export default function Home() {
     ctx.scale(dpr, dpr)
 
     const baseR = Math.min(W, H) * 0.40
-    const cx    = W / 2
-    const cy    = H / 2
+    let cx    = W / 2
+    let cy    = H / 2
     minScaleRef.current = baseR * 0.75
     maxScaleRef.current = baseR * 5
     if (scaleRef.current === 0) scaleRef.current = baseR
@@ -527,6 +527,20 @@ export default function Home() {
     canvas.addEventListener('touchmove',  onTouchMove,  { passive: false })
     canvas.addEventListener('touchend',   onTouchEnd)
 
+    function handleResize() {
+      W = window.innerWidth
+      H = window.innerHeight - NAV_H
+      cx = W / 2
+      cy = H / 2
+      canvas.width  = W * dpr
+      canvas.height = H * dpr
+      canvas.style.width  = W + 'px'
+      canvas.style.height = H + 'px'
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      projection.translate([cx, cy])
+    }
+    window.addEventListener('resize', handleResize)
+
     return () => {
       cancelAnimationFrame(animFrame.current)
       canvas.removeEventListener('pointerdown', onPointerDown)
@@ -535,6 +549,7 @@ export default function Home() {
       canvas.removeEventListener('touchstart', onTouchStart)
       canvas.removeEventListener('touchmove',  onTouchMove)
       canvas.removeEventListener('touchend',   onTouchEnd)
+      window.removeEventListener('resize', handleResize)
     }
   }, [ready, openCity, closePanel])
 
