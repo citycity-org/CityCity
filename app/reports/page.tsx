@@ -123,6 +123,46 @@ export default function ReportsPage() {
             Latest Report
           </div>
 
+          {/* Monthly Report August 2026 */}
+          <div style={{ background: 'linear-gradient(135deg,rgba(20,184,166,0.12),rgba(245,158,11,0.05))', border: '1px solid rgba(20,184,166,0.35)', borderRadius: 24, overflow: 'hidden', marginBottom: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 0 }}>
+              <div style={{ width: 5, background: 'linear-gradient(to bottom,#14B8A6,#D97706)', borderRadius: '4px 0 0 4px' }} />
+              <div style={{ padding: '36px 36px 32px' }}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+                  <Tag label="Monthly Report" color="#14B8A6" bg="rgba(20,184,166,0.12)" />
+                  <Tag label="5 Cities" color="#93C5FD" bg="rgba(79,142,247,0.10)" />
+                  <Tag label="Economy · Jobs · BoC Warning" color="#FCD34D" bg="rgba(245,158,11,0.10)" />
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.28)', marginLeft: 4 }}>September 2026</span>
+                </div>
+                <h2 style={{ fontSize: 'clamp(18px,3vw,26px)', fontWeight: 900, lineHeight: 1.25, margin: '0 0 14px', letterSpacing: '-0.01em' }}>
+                  Canada Is Growing Again.<br />
+                  But Is Life Getting More Affordable?
+                </h2>
+                <p style={{ color: 'rgba(255,255,255,0.50)', fontSize: 14, lineHeight: 1.75, maxWidth: 600, margin: '0 0 28px' }}>
+                  August 2026 monthly report: July CPI rose to 3.0%, the Bank of Canada held at 2.25% but issued
+                  its first inflation warning in two years, and the labour market added 25,000 net jobs. Canada&apos;s
+                  economy is growing — but affordability gains are stalling. Lakive city scores, HPI, RPI and
+                  EOI data for 5 cities, plus Oct 28 BoC decision preview.
+                </p>
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 20, background: 'rgba(20,184,166,0.10)', border: '1px solid rgba(20,184,166,0.25)', color: '#14B8A6', fontSize: 12, fontWeight: 700 }}>
+                    ✓ Published September 5, 2026
+                  </span>
+                  <Link href="/reports/monthly-report-august-2026" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 22px', borderRadius: 12, background: 'linear-gradient(135deg,#14B8A6,#D97706)', color: 'white', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+                    Read report →
+                  </Link>
+                  <a href="/reports/pdf/Lakive_Monthly_Report_August_2026_v1.pdf" target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 12, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+                    ↓ PDF
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 20, marginTop: 40 }}>
+            Also Published
+          </div>
+
           {/* Workcation Mirage — August 2026 */}
           <div style={{ background: 'linear-gradient(135deg,rgba(24,95,165,0.12),rgba(79,142,247,0.05))', border: '1px solid rgba(24,95,165,0.30)', borderRadius: 24, overflow: 'hidden', marginBottom: 20 }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 0 }}>
@@ -158,10 +198,6 @@ export default function ReportsPage() {
                 </div>
               </div>
             </div>
-          </div>
-
-          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 20, marginTop: 40 }}>
-            Also Published
           </div>
 
           {/* Monthly Report July 2026 */}
