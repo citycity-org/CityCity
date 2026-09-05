@@ -64,11 +64,11 @@ const PROP_TYPES = [
 
 // ── Sort dimensions ───────────────────────────────────────────────────────────
 const SORT_DIMS = [
-  { id:'score',    label:'City Fit Score',  lowerBetter:false },
-  { id:'hpiYears', label:'Years to Buy',    lowerBetter:true  },
-  { id:'rpi',      label:'Rent Pressure',   lowerBetter:true  },
-  { id:'tai',      label:'Tax Index',       lowerBetter:false },
-  { id:'eoi',      label:'Employment',      lowerBetter:false },
+  { id:'score',    label:'Base Score',  lowerBetter:false },
+  { id:'hpiYears', label:'HEY',         lowerBetter:true  },
+  { id:'rpi',      label:'RPI',         lowerBetter:true  },
+  { id:'tai',      label:'Tax Index',   lowerBetter:false },
+  { id:'eoi',      label:'EOI',         lowerBetter:false },
   { id:'hai',      label:'Healthcare',      lowerBetter:false },
   { id:'eqi',      label:'Environment',     lowerBetter:false },
   { id:'tci',      label:'Transit',         lowerBetter:false },

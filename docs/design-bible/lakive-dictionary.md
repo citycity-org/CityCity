@@ -60,6 +60,29 @@ All terms defined here are Lakive proprietary. They are not re-defined within in
 
 ---
 
+### RPI — Rent Pressure Index
+
+| Field | Value |
+|-------|-------|
+| **Abbreviation** | RPI |
+| **Full name** | Rent Pressure Index |
+| **Unit** | % |
+| **Type** | Occupation-specific, city-level index |
+
+**Definition:** The share of gross annual household income required to cover annual rent at the benchmark unit price for a given city and housing type.
+
+**Formula:** `RPI = (Annual Rent ÷ Gross Annual Household Income) × 100%`
+
+**Example:** Monthly rent $3,000, gross annual income $100,000 → RPI = (3,000 × 12) ÷ 100,000 = 36%
+
+**Interpretation:** Lower is better. The widely-used affordability threshold is 30%. RPI below 30% = affordable; 30–40% = moderate pressure; above 40% = high pressure; above 55% = severe.
+
+**Citation format:** "RPI = 36%" or "a Rent Pressure Index of 36%". Always include the % unit.
+
+**Notes:** RPI is calculated per occupation using median gross income. It measures gross rent burden, not after-tax. Use alongside HEY to give a complete picture of housing affordability: HEY reflects the path to ownership; RPI reflects the ongoing rental cost burden.
+
+---
+
 ### EOI — Employment Opportunity Index
 
 | Field | Value |

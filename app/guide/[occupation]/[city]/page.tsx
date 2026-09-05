@@ -243,8 +243,8 @@ export default async function GuidePage(
         {/* Key stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
           {[
-            { label: 'Years to Own', value: formatYears(hpi), sub: 'Home price ÷ gross salary', color: hpiLbl.color },
-            { label: 'Rent Burden',  value: `${rpi}%`,        sub: 'of gross income', color: rpiLbl.color },
+            { label: 'HEY', value: formatYears(hpi), sub: 'Housing Entry Barrier · years', color: hpiLbl.color },
+            { label: 'RPI', value: `${rpi}%`,        sub: 'Rent Pressure Index · % of income', color: rpiLbl.color },
             { label: 'Avg Salary',   value: salaryDisplay, sub: `annual gross · ${currency}`, color: 'rgba(255,255,255,0.55)' },
             { label: 'Avg Rent 2BR', value: `$${(cty.avgRent2BR).toLocaleString()}`, sub: `per month · ${currency}`, color: 'rgba(255,255,255,0.55)' },
           ].map(s => (
@@ -266,8 +266,8 @@ export default async function GuidePage(
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
                   <th className="text-left text-xs font-medium px-4 py-3" style={{ color: 'rgba(255,255,255,0.35)' }}>City</th>
-                  <th className="text-right text-xs font-medium px-4 py-3" style={{ color: 'rgba(255,255,255,0.35)' }}>Yrs to Own</th>
-                  <th className="text-right text-xs font-medium px-4 py-3" style={{ color: 'rgba(255,255,255,0.35)' }}>Rent Burden</th>
+                  <th className="text-right text-xs font-medium px-4 py-3" style={{ color: 'rgba(255,255,255,0.35)' }}>HEY</th>
+                  <th className="text-right text-xs font-medium px-4 py-3" style={{ color: 'rgba(255,255,255,0.35)' }}>RPI</th>
                   <th className="text-right text-xs font-medium px-4 py-3 hidden sm:table-cell" style={{ color: 'rgba(255,255,255,0.35)' }}>Avg Rent</th>
                 </tr>
               </thead>
