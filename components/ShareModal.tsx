@@ -241,10 +241,10 @@ async function generateInsightCard(
   // Tagline (v1.1: no period) — two-tone
   c.font = `500 20px ${F}`
   c.fillStyle = 'rgba(255,255,255,0.88)'
-  c.fillText('From Data to ', P, 134)
-  const tg1 = c.measureText('From Data to ').width
+  c.fillText('From data to ', P, 134)
+  const tg1 = c.measureText('From data to ').width
   c.fillStyle = TEAL
-  c.fillText('Belonging', P + tg1, 134)
+  c.fillText('belonging', P + tg1, 134)
 
   // "INSIGHT CARD" chip
   c.font = `700 14px ${F}`
@@ -388,7 +388,7 @@ async function generateInsightCard(
     const provW = c.measureText(city.province).width
     c.font      = `400 16px ${F}`
     c.fillStyle = 'rgba(255,255,255,0.60)'
-    c.fillText(`  ·  HPI Years · ${city.hpiYears}×`, NAME_X + provW, mid + 24)
+    c.fillText(`  ·  HEY · ${city.hpiYears}×`, NAME_X + provW, mid + 24)
 
     // Slider bar: track + fill + knob
     rr(c, BAR_X, mid - BAR_H / 2, BAR_W, BAR_H, 4)
@@ -593,6 +593,25 @@ export default function ShareModal({ open, onClose, shareData }: Props) {
     setShowShareMenu(false)
   }
 
+  const handleShareLinkedIn = () => {
+    const url = shareUrl ?? 'https://www.lakive.com/calculate'
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank', 'noopener')
+    setShowShareMenu(false)
+  }
+
+  const handleShareFacebook = () => {
+    const url = shareUrl ?? 'https://www.lakive.com/calculate'
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'noopener')
+    setShowShareMenu(false)
+  }
+
+  const handleShareThreads = () => {
+    const url = shareUrl ?? 'https://www.lakive.com/calculate'
+    const text = `${tweetText}\n\n${url}`
+    window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, '_blank', 'noopener')
+    setShowShareMenu(false)
+  }
+
   const modalW = step === 2 ? 720 : 440
 
   return (
@@ -695,14 +714,27 @@ export default function ShareModal({ open, onClose, shareData }: Props) {
                     </button>
                     {/* Divider */}
                     <div style={{ height:1, background:'rgba(255,255,255,0.07)', margin:'0 12px' }}/>
-                    {/* Coming soon platforms */}
-                    {['LinkedIn', 'Facebook', 'Threads'].map(p => (
-                      <div key={p}
-                        style={{ padding:'11px 16px', display:'flex', alignItems:'center', gap:10, color:'rgba(255,255,255,0.25)', fontSize:13 }}>
-                        <span style={{ fontSize:11, border:'1px solid rgba(255,255,255,0.12)', borderRadius:4, padding:'1px 5px', letterSpacing:'0.03em' }}>SOON</span>
-                        {p}
-                      </div>
-                    ))}
+                    {/* LinkedIn */}
+                    <div style={{ height:1, background:'rgba(255,255,255,0.07)', margin:'0 12px' }}/>
+                    <button onClick={handleShareLinkedIn}
+                      style={{ width:'100%', padding:'12px 16px', display:'flex', alignItems:'center', gap:10, background:'none', border:'none', color:'#fff', fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left' }}>
+                      <span style={{ fontSize:14, fontWeight:900, color:'#0A66C2' }}>in</span>
+                      Share on LinkedIn
+                    </button>
+                    {/* Facebook */}
+                    <div style={{ height:1, background:'rgba(255,255,255,0.07)', margin:'0 12px' }}/>
+                    <button onClick={handleShareFacebook}
+                      style={{ width:'100%', padding:'12px 16px', display:'flex', alignItems:'center', gap:10, background:'none', border:'none', color:'#fff', fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left' }}>
+                      <span style={{ fontSize:14, fontWeight:900, color:'#1877F2' }}>f</span>
+                      Share on Facebook
+                    </button>
+                    {/* Threads */}
+                    <div style={{ height:1, background:'rgba(255,255,255,0.07)', margin:'0 12px' }}/>
+                    <button onClick={handleShareThreads}
+                      style={{ width:'100%', padding:'12px 16px', display:'flex', alignItems:'center', gap:10, background:'none', border:'none', color:'#fff', fontSize:13, fontWeight:600, cursor:'pointer', textAlign:'left' }}>
+                      <span style={{ fontSize:14, fontWeight:900 }}>@</span>
+                      Share on Threads
+                    </button>
                   </div>
                 )}
               </div>
