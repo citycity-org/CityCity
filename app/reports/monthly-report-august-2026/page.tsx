@@ -47,8 +47,8 @@ function Callout({ label, text, color = TEAL, bg = '#F0FDFA' }: { label: string;
 function KpiTable() {
   const rows = [
     { label: 'National Avg. Asking Rent (Jul 2026)', value: 'CAD $2,012', signal: '▼ 3.8% YoY · 22nd consecutive month of decline', color: GRN },
-    { label: 'Unemployment Rate (Jul 2026)', value: '6.4%', signal: '▼ 0.1% vs prior month · labour market stabilizing', color: GRN },
-    { label: 'Net Jobs Added (Jul 2026)', value: '~25,000', signal: 'Broad-based growth · services and construction leading', color: GRN },
+    { label: 'Unemployment Rate (Aug 2026)', value: '6.4%', signal: '— Held · employment rate ▼ 60.8% · participation declined', color: AMBER },
+    { label: 'Net Jobs (Aug 2026)', value: '−42,000', signal: 'Reversal after 4 months of growth · services & construction fell', color: RED },
     { label: 'BoC Policy Rate', value: '2.25%', signal: '⚠ Held — Sep 2, 2026 · first inflation warning issued · next decision Oct 28', color: AMBER },
     { label: 'CPI Inflation (Jul 2026)', value: '3.0%', signal: '▲ 0.2% vs prior · moving away from 2% target · tariff & energy pressure', color: AMBER },
     { label: 'CREA National Benchmark (Jul 2026)', value: 'CAD $710,000', signal: 'Roughly stable · ▼ 1.1% YoY · no significant recovery yet', color: GREY },
@@ -82,8 +82,8 @@ function ChangesTable() {
   const rows = [
     { dir: '▲', label: 'CPI Inflation', prev: '2.8% (Jun)', now: '3.0% (Jul) · ▲ 0.2% · tariff & energy pressure', good: false },
     { dir: '⚠', label: 'BoC Policy Tone', prev: 'Neutral hold', now: 'Inflation warning issued · rate hike back on table', good: false },
-    { dir: '▼', label: 'Unemployment rate', prev: '6.5% (Jun)', now: '6.4% (Jul) · ▼ 0.1%', good: true },
-    { dir: '▲', label: 'Net jobs added', prev: '~18,000 (Jun)', now: '~25,000 (Jul) · broad-based', good: true },
+    { dir: '—', label: 'Unemployment rate', prev: '6.4% (Jul)', now: '6.4% (Aug) · held · employment rate ▼ to 60.8%', good: false },
+    { dir: '▼', label: 'Net jobs', prev: '+25,000 (Jul)', now: '−42,000 (Aug) · reversal · services & construction fell', good: false },
     { dir: '▼', label: 'National avg. asking rent', prev: 'CAD $2,033 (Jul)', now: 'CAD $2,012 (Jul) · ▼ 3.8% YoY', good: true },
     { dir: '—', label: 'BoC Policy Rate', prev: '2.25%', now: '2.25% · Held (Sep 2)', good: false },
   ]
@@ -200,7 +200,7 @@ function OccTable() {
 // ── Looking Ahead table ───────────────────────────────────────────────────────
 function LookingAheadTable() {
   const rows = [
-    { date: 'September 4', release: 'Statistics Canada LFS — August employment', updates: 'EOI scores · city job comparisons · unemployment trend', urgent: true },
+    { date: '✓ Sep 5', release: 'Statistics Canada LFS — August employment (released)', updates: '−42,000 jobs · 6.4% unemployment · 60.8% employment rate · wages +2.0% YoY', urgent: false },
     { date: 'Mid-October', release: 'CREA August home prices', updates: 'HPI (Housing Years Index) · city ranking · compare · housing guide', urgent: false },
     { date: '~October 17', release: 'Statistics Canada CPI — September inflation', updates: 'Cost of Living · City Pulse · Monthly Report update', urgent: true },
     { date: 'October 28', release: 'Bank of Canada rate decision', updates: 'BoC Rate in City Pulse · mortgage calculator · housing guide · rate hike risk flagged', urgent: true },
@@ -282,7 +282,7 @@ export default function MonthlyReportAugust2026() {
         <div style={{ background: '#fff', borderRadius: 14, padding: '28px 32px', marginBottom: 24, border: '1px solid #E5E7EB' }}>
           <SectionHeading num={1} title="Executive Summary" />
           <Body>
-            August 2026 delivers a split signal. Canada's labour market continues its recovery — 25,000 net jobs added in July, unemployment ticking down to 6.4% — and rents are falling for a 22nd consecutive month. On that measure, the headline writes itself: Canada is growing again.
+            August 2026 delivers a sharper split than expected. Canada lost 42,000 net jobs in August — reversing four consecutive months of growth — while the unemployment rate held at 6.4% only because the participation rate fell, not because more people found work. The employment rate dropped to 60.8%. At the same time, rents are falling for a 22nd consecutive month and GDP continues to expand. The headline still holds: Canada is growing again. The question is who the growth is reaching.
           </Body>
           <Body>
             But affordability is not following. July CPI rose to 3.0%, moving away from the Bank of Canada's 2% target for the first time since the easing cycle began. On September 2, the Bank held rates at 2.25% for the seventh consecutive meeting — but issued its first explicit inflation warning, flagging US tariffs and energy prices as upside risks. A rate hike is back on the table. For workers, renters, and would-be buyers, the question is whether the gains of the past two years can survive a policy reversal.
@@ -348,33 +348,29 @@ export default function MonthlyReportAugust2026() {
         {/* Employment */}
         <div style={{ background: '#fff', borderRadius: 14, padding: '28px 32px', marginBottom: 24, border: '1px solid #E5E7EB' }}>
           <SectionHeading num={4} title="Employment Snapshot" />
-          <Source text="Source: Statistics Canada LFS, July 2026 (released August 7). August 2026 data releases September 4." />
+          <Source text="Source: Statistics Canada LFS, August 2026 (released September 5, 2026)." />
           <Body>
-            Canada's labour market added approximately 25,000 net jobs in July, marking a fourth consecutive month of positive growth. The unemployment rate fell to 6.4% — the lowest reading since January 2026. Gains were broad-based across services, construction, and healthcare, with manufacturing remaining the weak sector.
+            Canada's labour market shed 42,000 net jobs in August — ending a four-month run of positive growth. The unemployment rate held at 6.4%, but only because the participation rate fell: fewer people were actively looking for work. The employment rate dropped to 60.8%, its lowest reading since March 2026. Wage growth slowed sharply to +2.0% YoY — now below CPI at 3.0%, meaning real wages are declining for the first time since February 2026.
           </Body>
           <div style={{ paddingLeft: 16 }}>
             {[
-              'Strongest sectors: construction (+6,800), healthcare (+5,200), professional services (+4,400)',
-              'Weakest segment: manufacturing (-3,100), continuing to reflect export softness under US tariff regime',
-              'Youth (15–24): employment improving for a third consecutive month',
-              'Participation rate: edged up to 65.3% — workers re-entering the labour market',
-              'Wages: average hourly earnings +3.4% YoY — above CPI for the second consecutive month',
+              'Net employment change: −42,000 — the largest single-month decline since Q1 2025',
+              'Unemployment rate: 6.4% (held) — masked by participation rate falling, not by job gains',
+              'Employment rate: 60.8% (▼ from 61.1% in July)',
+              'Weakest sectors: construction (−9,200), professional services (−6,800), manufacturing (−4,100)',
+              'Relative resilience: healthcare and public administration — federal employment provided a partial floor',
+              'Wages: average hourly earnings +2.0% YoY — now below CPI (3.0%) for the first time since Feb 2026',
             ].map(t => (
               <div key={t} style={{ display: 'flex', gap: 10, margin: '6px 0' }}>
-                <span style={{ color: TEAL, fontWeight: 700, flexShrink: 0 }}>•</span>
+                <span style={{ color: RED, fontWeight: 700, flexShrink: 0 }}>•</span>
                 <p style={{ fontSize: 14, color: '#374151', margin: 0, lineHeight: 1.6 }}>{t}</p>
               </div>
             ))}
           </div>
           <Callout
             label="Lakive Interpretation:"
-            text="Wage growth at 3.4% YoY exceeding CPI at 3.0% is the one bright spot in the affordability picture. For workers in healthcare and trades — where wages have outpaced CPI for three consecutive months — real purchasing power is marginally improving. This is the mechanism through which growing GDP eventually translates to affordability. But it is early, and it is uneven."
-            color={BLUE} bg="#EFF6FF"
-          />
-          <Callout
-            label="⚠ Update pending:"
-            text="August 2026 LFS data releases September 4. Lakive will update EOI scores and this section before final publication on September 5."
-            color={AMBER} bg="#FFFBEB"
+            text="The August employment reversal changes the affordability calculus in a specific way: wages are now growing slower than inflation, which means real purchasing power is declining across most occupations. Combined with the BoC's inflation warning and a potential October rate hike, this is the first month since the easing cycle began where all three affordability levers — wages, rates, and cost of living — are moving in the wrong direction simultaneously. The recovery remains real at the GDP level. It is no longer showing up in household finances."
+            color={RED} bg="#FEF2F2"
           />
         </div>
 
@@ -414,7 +410,7 @@ export default function MonthlyReportAugust2026() {
             The Recovery Is Real. The Affordability Isn't.
           </h2>
           <p style={{ fontSize: 15, color: '#CBD5E1', lineHeight: 1.75, margin: 0 }}>
-            Canada's GDP is growing, unemployment is falling, and rents have declined for 22 consecutive months. By every macro measure, conditions are improving. But July CPI at 3.0% tells a different story at the household level: food costs more, gas costs more, and shelter — despite rent declines in some cities — still consumes a disproportionate share of take-home pay. The BoC's September 2 inflation warning is a signal that the policy tailwind which drove the affordability recovery since 2024 may be stalling. For workers evaluating a move, the window of maximum advantage — low rates, falling rents, softening home prices — may be narrower than it appeared in July.
+            Canada's GDP is growing, rents have declined for 22 consecutive months, and the unemployment rate held at 6.4%. By every macro headline, the recovery is intact. But underneath: August saw 42,000 net job losses — the largest single-month decline in over a year. Wages grew just 2.0% YoY, now below CPI at 3.0%, meaning real purchasing power is falling again. The BoC issued an inflation warning on September 2. The recovery is real at the aggregate level. It is no longer reaching households. The divergence between what the numbers say and what people feel is not a perception problem — it is the data.
           </p>
         </div>
 
