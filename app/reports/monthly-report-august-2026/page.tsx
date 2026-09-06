@@ -253,7 +253,7 @@ export default function MonthlyReportAugust2026() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)' }}>Published September 5, 2026 · Lakive Research</span>
             <a
-              href="/reports/pdf/Lakive_Monthly_Report_August_2026_v1.pdf"
+              href="/reports/pdf/Lakive_Monthly_Report_August_2026_v4.pdf"
               target="_blank"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6,
